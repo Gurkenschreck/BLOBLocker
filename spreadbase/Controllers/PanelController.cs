@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace spreadbase.Controllers
 {
+    [RequireHttps]
     [Authorize]
     public class PanelController : Controller
     {

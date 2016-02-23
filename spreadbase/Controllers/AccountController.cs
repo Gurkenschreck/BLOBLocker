@@ -15,6 +15,7 @@ using System.Web.Security;
 
 namespace spreadbase.Controllers
 {
+    [RequireHttps]
     [Authorize]
     public class AccountController : Controller
     {
@@ -36,6 +37,14 @@ namespace spreadbase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            if(string.IsNullOrWhiteSpace(acc.Alias))
+            {
+                ModelState.AddModelError("Name", "Please enter a name");
+            }
+            if (string.IsNullOrWhiteSpace(acc.Password))
+            {
+                ModelState.AddModelError("Password", "Please enter a password");
+            }
             // Check if info is correct
             if(ModelState.IsValid)
             {
@@ -50,8 +59,10 @@ namespace spreadbase.Controllers
 
                     newAcc = new Account();
                     newAcc.Alias = acc.Alias;
-                    newAcc.ContactEmail = acc.ContactEmail;
                     newAcc.Type = AccountType.Standard;
+                    newAcc.Additions = new AccountAdditions();
+                    newAcc.Additions.Account = newAcc;
+                    newAcc.Additions.ContactEmail = acc.Additions.ContactEmail;
 
                     string pwHash;
                     string usrHash;
@@ -82,20 +93,18 @@ namespace spreadbase.Controllers
                         newAcc.Password = symC.EncryptToString(pwHash);
                     }
                     newAcc.Config = cryptoConfig;
+                    cryptoConfig.Account = newAcc;
 
                     context.Accounts.Add(newAcc);
                     context.SaveChangesAsync();
 
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, false);
-                    Session["usr"] = usrHash;
-                    
-                    RedirectToAction("Index", "Panel");
+                    newAcc.Additions.LastLogin = DateTime.Now;
+                    newAcc.Additions.CreatedOn = DateTime.Now;
+                    return RedirectToAction("Index", "Panel");
                 }
-
-                    // Set Session
-
-                    // Redirect to Account Home
-               // }
+                
+                ModelState.AddModelError("AliasExists", "There is already an account using this alias");
             }
             
             return View(acc);
@@ -116,6 +125,14 @@ namespace spreadbase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            if(string.IsNullOrWhiteSpace(acc.Alias))
+            {
+                ModelState.AddModelError("Alias", "Invalid Alias");
+            }
+            if(string.IsNullOrWhiteSpace(acc.Password))
+            {
+                ModelState.AddModelError("Password", "Insufficient Password");
+            }
             if(ModelState.IsValid)
             {
                 // Find corresponsing existing account
@@ -126,30 +143,28 @@ namespace spreadbase.Controllers
                 // validate password
                 if (correspondingAcc != null)
                 {
-                    bool pwIsRight = false;
-                    using (var symC = new SymmetricCipher<AesManaged>(correspondingAcc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV))
+                    using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV))
                     {
                         try
                         {
-                            symC.DecryptToString(correspondingAcc.Password);
-                            pwIsRight = true;
+                            string decr = symC.DecryptToString(correspondingAcc.Password);
+
+                            FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, false);
+                            using (var hasher = new Hasher<SHA1Cng>())
+                            {
+                                Session["usr"] = hasher.HashToString(correspondingAcc.Alias);
+                            }
+                            correspondingAcc.Additions.LastLogin = DateTime.Now;
+                            return RedirectToAction("Index", "Panel");
                         }
                         catch (CryptographicException)
                         {
+                            correspondingAcc.Additions.LastFailedLogin = DateTime.Now;
                             // Log wrong password try?
                         }
                     }
-                    if (pwIsRight)
-                    {
-                        FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, false);
-                        using (var hasher = new Hasher<SHA1Cng>())
-                        {
-                            Session["usr"] = hasher.HashToString(correspondingAcc.Alias);
-                        }
-
-                        RedirectToAction("Index", "Panel");
-                    }
                 }
+                ModelState.AddModelError("AliasOrPassword", "Alias and/or password wrong");
             }
             return View(acc);
         }
@@ -158,7 +173,7 @@ namespace spreadbase.Controllers
         {
             FormsAuthentication.SignOut();
             Session.Clear();
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult Overview()

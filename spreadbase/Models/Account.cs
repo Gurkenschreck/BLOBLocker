@@ -10,11 +10,20 @@ namespace spreadbase.Models
     {
         [Key]
         public int ID { get; set; }
+        private bool isActivated = true;
+        public bool IsActivated { get { return isActivated; } set { isActivated = value; } }
+        [MaxLength(32)]
         public string Alias { get; set; }
         public string Password { get; set; }
         public byte[] Salt { get; set; }
         public virtual CryptoConfig Config { get; set; }
-        public string ContactEmail { get; set; }
-        public AccountType Type { get; set; }
+        public virtual AccountAdditions Additions { get; set; }
+
+        private AccountType type = AccountType.Standard;
+        public AccountType Type 
+        {
+            get { return type; }
+            set { type = value; }
+        }
     }
 }

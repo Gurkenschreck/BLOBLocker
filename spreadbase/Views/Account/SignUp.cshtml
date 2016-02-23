@@ -25,8 +25,8 @@
         @Html.PasswordFor(model => model.Password)
     </p>
     <p>
-        @Html.LabelFor(model => model.ContactEmail)
-        @Html.TextBoxFor(model => model.ContactEmail)
+        @Html.LabelFor(model => model.Additions.ContactEmail)
+        @Html.TextBoxFor(model => model.Additions.ContactEmail)
     </p>
     @Html.AntiForgeryToken();
     <input type="submit" value="Sign up" />

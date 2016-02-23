@@ -16,7 +16,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44301</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -139,12 +139,25 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602212211468_Initial.cs" />
-    <Compile Include="Migrations\201602212211468_Initial.Designer.cs">
-      <DependentUpon>201602212211468_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201602222323565_Initial.cs" />
+    <Compile Include="Migrations\201602222323565_Initial.Designer.cs">
+      <DependentUpon>201602222323565_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602222331180_RemoveRequired.cs" />
+    <Compile Include="Migrations\201602222331180_RemoveRequired.Designer.cs">
+      <DependentUpon>201602222331180_RemoveRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602222334596_CreatedOnFix.cs" />
+    <Compile Include="Migrations\201602222334596_CreatedOnFix.Designer.cs">
+      <DependentUpon>201602222334596_CreatedOnFix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602231741074_AddedContacts.cs" />
+    <Compile Include="Migrations\201602231741074_AddedContacts.Designer.cs">
+      <DependentUpon>201602231741074_AddedContacts.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\AccountAdditions.cs" />
     <Compile Include="Models\AccountType.cs" />
     <Compile Include="Models\CryptoConfig.cs" />
     <Compile Include="Models\SpreadBaseContext.cs" />
@@ -223,7 +236,9 @@
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -249,8 +264,17 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201602212211468_Initial.resx">
-      <DependentUpon>201602212211468_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201602222323565_Initial.resx">
+      <DependentUpon>201602222323565_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602222331180_RemoveRequired.resx">
+      <DependentUpon>201602222331180_RemoveRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602222334596_CreatedOnFix.resx">
+      <DependentUpon>201602222334596_CreatedOnFix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602231741074_AddedContacts.resx">
+      <DependentUpon>201602231741074_AddedContacts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

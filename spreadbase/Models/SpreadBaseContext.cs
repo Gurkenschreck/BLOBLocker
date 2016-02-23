@@ -10,6 +10,7 @@ namespace spreadbase.Models
     public class SpreadBaseContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<AccountAdditions> Additions { get; set; }
         public DbSet<CryptoConfig> Configs { get; set; }
 
         public SpreadBaseContext()

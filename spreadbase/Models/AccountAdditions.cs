@@ -7,14 +7,18 @@ using System.Web;
 
 namespace spreadbase.Models
 {
-    public class CryptoConfig
+    public class AccountAdditions
     {
         [Key, ForeignKey("Account")]
         public int ID { get; set; }
         public virtual Account Account { get; set; }
-        public string PublicKey { get; set; }
-        public string PrivateKey { get; set; }
-        public string PublicKeySignature { get; set; }
-        public byte[] IV { get; set; }
+        [MaxLength(32)]
+        public string ContactEmail { get; set; }
+        public virtual List<Account> Contacts { get; set; }
+
+
+        public Nullable<DateTime> LastLogin { get; set; }
+        public Nullable<DateTime> LastFailedLogin { get; set; }
+        public Nullable<DateTime> CreatedOn { get; set; }
     }
 }

@@ -1,24 +1,28 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-</head>
-<body>
-    @if(HttpContext.Current.User.Identity.IsAuthenticated)
-    {
-        <p>@Session["usr"] - @HttpContext.Current.User.Identity.Name - @Html.ActionLink("logout", "SignOut", "Account")</p>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>@ViewBag.Title</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+    </head>
+    <body>
+        @if(HttpContext.Current.User.Identity.IsAuthenticated)
+        {
+            <p>@HttpContext.Current.User.Identity.Name - @Html.ActionLink("logout", "SignOut", "Account")</p>
 
-    }
-    else{
-        <p>You are not logged in. Would you like to?</p>
-    }
-    @RenderBody()
+        }
+        else{
+            <p>You are not logged in. @Html.ActionLink("Login", "Login", "Account") - @Html.ActionLink("Sign Up", "SignUp", "Account")</p>
+        }
 
-    @Scripts.Render("~/bundles/jquery")
-    @RenderSection("scripts", required: false)
-</body>
+
+        <div id="main">
+            @RenderBody()
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @RenderSection("scripts", required: false)
+    </body>
 </html>
