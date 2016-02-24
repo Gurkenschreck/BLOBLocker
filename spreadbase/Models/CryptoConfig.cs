@@ -9,9 +9,9 @@ namespace spreadbase.Models
 {
     public class CryptoConfig
     {
-        [Key, ForeignKey("Account")]
+        [Key]
         public int ID { get; set; }
-        public virtual Account Account { get; set; }
+        
         public string PublicKey { get; set; }
         public string PrivateKey { get; set; }
         public string PublicKeySignature { get; set; }

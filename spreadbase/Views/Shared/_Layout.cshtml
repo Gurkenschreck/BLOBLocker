@@ -10,7 +10,9 @@
     <body>
         @if(HttpContext.Current.User.Identity.IsAuthenticated)
         {
-            <p>@HttpContext.Current.User.Identity.Name - @Html.ActionLink("logout", "SignOut", "Account")</p>
+            <p>
+                @Html.ActionLink("Panel Overview", "Index", "Panel") - @HttpContext.Current.User.Identity.Name - @Html.ActionLink("logout", "SignOut", "Account")
+            </p>
 
         }
         else{

@@ -10,7 +10,7 @@ namespace spreadbase.Models
     public class SpreadBaseContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
-        public DbSet<AccountAdditions> Additions { get; set; }
+        public DbSet<AccountAddition> Additions { get; set; }
         public DbSet<CryptoConfig> Configs { get; set; }
 
         public SpreadBaseContext()
@@ -21,6 +21,13 @@ namespace spreadbase.Models
             : base(ConfigurationManager.ConnectionStrings["SpreadBaseEntities"].ConnectionString)            
 #endif
         {
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>()
+                .HasRequired(p => p.Config)
+                .WithRequiredPrincipal();
         }
     }
 }

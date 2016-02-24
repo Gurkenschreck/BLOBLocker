@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -59,10 +60,8 @@ namespace spreadbase.Controllers
 
                     newAcc = new Account();
                     newAcc.Alias = acc.Alias;
-                    newAcc.Type = AccountType.Standard;
-                    newAcc.Additions = new AccountAdditions();
-                    newAcc.Additions.Account = newAcc;
-                    newAcc.Additions.ContactEmail = acc.Additions.ContactEmail;
+                    newAcc.Addition = new AccountAddition();
+                    newAcc.Addition.ContactEmail = acc.Addition.ContactEmail;
 
                     string pwHash;
                     string usrHash;
@@ -93,14 +92,17 @@ namespace spreadbase.Controllers
                         newAcc.Password = symC.EncryptToString(pwHash);
                     }
                     newAcc.Config = cryptoConfig;
-                    cryptoConfig.Account = newAcc;
+                    newAcc.Addition.LastLogin = DateTime.Now;
+
 
                     context.Accounts.Add(newAcc);
-                    context.SaveChangesAsync();
+
+                    int x = context.SaveChanges();
+                    
+                    
 
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, false);
-                    newAcc.Additions.LastLogin = DateTime.Now;
-                    newAcc.Additions.CreatedOn = DateTime.Now;
+                    
                     return RedirectToAction("Index", "Panel");
                 }
                 
@@ -150,16 +152,16 @@ namespace spreadbase.Controllers
                             string decr = symC.DecryptToString(correspondingAcc.Password);
 
                             FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, false);
-                            using (var hasher = new Hasher<SHA1Cng>())
-                            {
-                                Session["usr"] = hasher.HashToString(correspondingAcc.Alias);
-                            }
-                            correspondingAcc.Additions.LastLogin = DateTime.Now;
+                            correspondingAcc.Addition.LastLogin = DateTime.Now;
+
+                            int a = context.SaveChanges();
+
                             return RedirectToAction("Index", "Panel");
                         }
                         catch (CryptographicException)
                         {
-                            correspondingAcc.Additions.LastFailedLogin = DateTime.Now;
+                            correspondingAcc.Addition.LastFailedLogin = DateTime.Now;
+                            context.SaveChangesAsync();
                             // Log wrong password try?
                         }
                     }
@@ -179,6 +181,15 @@ namespace spreadbase.Controllers
         public ActionResult Overview()
         {
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                context.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

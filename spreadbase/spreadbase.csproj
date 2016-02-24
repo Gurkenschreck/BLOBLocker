@@ -139,21 +139,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602222323565_Initial.cs" />
-    <Compile Include="Migrations\201602222323565_Initial.Designer.cs">
-      <DependentUpon>201602222323565_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602222331180_RemoveRequired.cs" />
-    <Compile Include="Migrations\201602222331180_RemoveRequired.Designer.cs">
-      <DependentUpon>201602222331180_RemoveRequired.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602222334596_CreatedOnFix.cs" />
-    <Compile Include="Migrations\201602222334596_CreatedOnFix.Designer.cs">
-      <DependentUpon>201602222334596_CreatedOnFix.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602231741074_AddedContacts.cs" />
-    <Compile Include="Migrations\201602231741074_AddedContacts.Designer.cs">
-      <DependentUpon>201602231741074_AddedContacts.cs</DependentUpon>
+    <Compile Include="Migrations\201602242148027_Initial.cs" />
+    <Compile Include="Migrations\201602242148027_Initial.Designer.cs">
+      <DependentUpon>201602242148027_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
@@ -255,6 +243,7 @@
     <Content Include="Views\Account\SignOut.cshtml" />
     <Content Include="Views\Account\Overview.cshtml" />
     <Content Include="Views\Panel\Index.cshtml" />
+    <Content Include="Views\Panel\AddContact.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -264,17 +253,8 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201602222323565_Initial.resx">
-      <DependentUpon>201602222323565_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602222331180_RemoveRequired.resx">
-      <DependentUpon>201602222331180_RemoveRequired.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602222334596_CreatedOnFix.resx">
-      <DependentUpon>201602222334596_CreatedOnFix.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602231741074_AddedContacts.resx">
-      <DependentUpon>201602231741074_AddedContacts.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201602242148027_Initial.resx">
+      <DependentUpon>201602242148027_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

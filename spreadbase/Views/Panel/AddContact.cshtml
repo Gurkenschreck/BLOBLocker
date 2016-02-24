@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "AddContact";
+
+}
+
+<h2>AddContact</h2>
+
+Add a new contact
+<p>
+    @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
+    {
+        Html.ValidationSummary();
+
+        @:Alias: @Html.TextBox("alias")
+        @Html.AntiForgeryToken()
+        <input type="submit" value="Add" />
+    }
+</p>

@@ -8,12 +8,6 @@
 @using (Html.BeginForm())
 {
     <p>
-        @if (Model != null)
-        {
-           <span>@Model.Alias</span>
-        }
-    </p>
-    <p>
         @Html.ValidationSummary()
     </p>
     <p>
@@ -25,8 +19,8 @@
         @Html.PasswordFor(model => model.Password)
     </p>
     <p>
-        @Html.LabelFor(model => model.Additions.ContactEmail)
-        @Html.TextBoxFor(model => model.Additions.ContactEmail)
+        @Html.LabelFor(model => model.Addition.ContactEmail)
+        @Html.TextBoxFor(model => model.Addition.ContactEmail)
     </p>
     @Html.AntiForgeryToken();
     <input type="submit" value="Sign up" />

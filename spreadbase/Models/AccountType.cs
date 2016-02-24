@@ -8,6 +8,7 @@ namespace spreadbase.Models
     public enum AccountType : byte
     {
         Standard = 0,
-        Upgraded
+        Upgraded,
+        Administrator
     }
 }

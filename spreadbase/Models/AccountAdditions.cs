@@ -7,14 +7,18 @@ using System.Web;
 
 namespace spreadbase.Models
 {
-    public class AccountAdditions
+    public class AccountAddition
     {
-        [Key, ForeignKey("Account")]
+        public AccountAddition()
+        {
+            CreatedOn = DateTime.Now;
+            Contacts = new List<Account>();
+        }
+
         public int ID { get; set; }
-        public virtual Account Account { get; set; }
-        [MaxLength(32)]
+        public virtual ICollection<Account> Contacts { get; set; }
+
         public string ContactEmail { get; set; }
-        public virtual List<Account> Contacts { get; set; }
 
 
         public Nullable<DateTime> LastLogin { get; set; }
