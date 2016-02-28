@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
-namespace spreadbase.Models
+namespace SpreadBase.Models
 {
     public class CryptoConfig
     {
@@ -13,7 +13,7 @@ namespace spreadbase.Models
         public int ID { get; set; }
         
         public string PublicKey { get; set; }
-        public string PrivateKey { get; set; }
+        public byte[] PrivateKey { get; set; }
         public string PublicKeySignature { get; set; }
         public byte[] IV { get; set; }
     }

@@ -1,0 +1,72 @@
+﻿@model Dictionary<string, string>
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+<p>There are @Model.Count option(s) present.</p>
+
+View:
+@if (Model != null)
+{
+    <table>
+        <tr>
+            <th>DBKey</th>
+            <th>DBValue</th>
+            <th>ApplicationValue</th>
+        </tr>
+        @foreach (KeyValuePair<string, string> pair in Model)
+        {
+            <tr>
+                <td>@pair.Key</td>
+                <td>@pair.Value</td>
+                <td>@HttpContext.Current.ApplicationInstance.Application[pair.Key]</td>
+                <td><button id="@pair.Key @pair.Value" onclick="transferValues(this)">Edit</button></td>
+            </tr>
+        }
+        <tr>
+            <td><input id="confirmApply" type="checkbox" value="Apply-Changes-Confirmation" onclick="toggleConfirmation()"/>I want to apply the changes</td>
+            <td><button id="applyChanges" onclick="invokeApply()" disabled>Apply values</button></td>
+        </tr>
+    </table>
+}
+<hr />
+<p>
+    @Html.Partial("~/Views/Manage/Edit.cshtml", new SpreadBase.Models.Configuration())
+</p>
+<hr />
+<p>
+    @Html.Partial("~/Views/Manage/Create.cshtml", new SpreadBase.Models.Configuration())
+</p>
+
+<p id="rData" onclick="ajaxGoSetShit()">T</p>
+<script>
+    jQuery(function () {
+        console.log("onload");
+    })
+
+    function transferValues(obj) {
+        $("#editKey").val($(obj).attr("id").split(" ")[0]);
+        $("#editValue").val($(obj).attr("id").split(" ")[1]);
+    }
+
+    function toggleConfirmation() {
+        $("#applyChanges").prop('disabled', !$("#confirmApply").prop('checked'));
+    }
+
+    function invokeApply() {
+        var url = "/Manage/ApplyDBConfiguration";
+        $.post(url, null, function (data) {
+            console.log("invoked");
+        });
+    }
+
+    function ajaxGoSetShit() {
+        console.log("d");
+        var url = "/Manage/TellDate";
+        $.get(url, null, function (data) {
+            $("#rData").html(data);
+        });
+    }
+</script>

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SpreadBase.Models.Account
+@{
     ViewBag.Title = "AddContact";
 
 }
@@ -11,8 +12,12 @@ Add a new contact
     {
         Html.ValidationSummary();
 
-        @:Alias: @Html.TextBox("alias")
+        @:Alias: @Html.TextBox("addAlias")
         @Html.AntiForgeryToken()
         <input type="submit" value="Add" />
     }
+</p>
+
+<p>
+    @Html.Partial("~/Views/Panel/ContactList.cshtml", Model)
 </p>

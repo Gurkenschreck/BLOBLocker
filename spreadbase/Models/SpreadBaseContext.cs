@@ -5,13 +5,16 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
-namespace spreadbase.Models
+namespace SpreadBase.Models
 {
     public class SpreadBaseContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AccountAddition> Additions { get; set; }
-        public DbSet<CryptoConfig> Configs { get; set; }
+        public DbSet<CryptoConfig> CryptoConfigurations { get; set; }
+        public DbSet<AccountRole> AccountRoles { get; set; }
+
+        public DbSet<Configuration> SystemConfigurations { get; set; }
 
         public SpreadBaseContext()
 #if DEBUG

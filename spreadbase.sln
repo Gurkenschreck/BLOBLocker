@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "spreadbase", "spreadbase\spreadbase.csproj", "{B999F53C-C1DE-42ED-A9AC-2575A6E65A32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadBase", "spreadbase\SpreadBase.csproj", "{B999F53C-C1DE-42ED-A9AC-2575A6E65A32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "spreadbase.Tests", "spreadbase.Tests\spreadbase.Tests.csproj", "{33FDE0F0-AC50-443A-BF72-BDB261D1638A}"
 EndProject

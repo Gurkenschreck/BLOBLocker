@@ -1,0 +1,26 @@
+﻿@model Dictionary<string, string>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>There are @Model.Count settings present.</p>
+
+View:
+@if(Model != null)
+{
+    <table>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    @foreach(KeyValuePair<string, string> pair in Model)
+    {
+        <tr>
+            <td>@pair.Key</td>
+            <td>@pair.Value</td>
+        </tr>
+    }
+    </table>
+}

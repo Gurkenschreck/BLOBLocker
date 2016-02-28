@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
-namespace spreadbase.Models
+namespace SpreadBase.Models
 {
     public class AccountAddition
     {

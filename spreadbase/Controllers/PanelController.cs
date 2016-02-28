@@ -1,127 +1,90 @@
-﻿using spreadbase.Models;
+﻿using SpreadBase.Controllers;
+using SpreadBase.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace spreadbase.Controllers
+namespace SpreadBase.Controllers
 {
-    [RequireHttps]
-    [Authorize]
-    public class PanelController : Controller
+    public class PanelController : BaseController
     {
-        SpreadBaseContext context = new SpreadBaseContext();
-        //
-        // GET: /Panel/
-        /*private void FillSession()
-        {
-            if(Session["acc"] == null)
-            {
-                string name = HttpContext.User.Identity.Name;
-                var curAcc = (from acc in context.Accounts
-                             where acc.Alias == name
-                             select acc).FirstOrDefault();
-
-                if(curAcc != null)
-                {
-                    Session["acc"] = curAcc;
-                }
-            }
-        }*/
-        public ActionResult Index()
+        private Account GetCurrentAccount()
         {
             string name = HttpContext.User.Identity.Name;
-            var curAcc = (from acc in context.Accounts
-                          where acc.Alias == name
-                          select acc).FirstOrDefault();
-
-            Session["contacts"] = curAcc.Addition.Contacts.ToList<Account>();
-            return View();
+            return context.Accounts.FirstOrDefault(p => p.Alias == name);
         }
 
+        [HttpGet]
+        public ActionResult Index()
+        {
+            return View(GetCurrentAccount());
+        }
+
+        [HttpGet]
         public ActionResult AddContact()
         {
-            return View();
+            return View(GetCurrentAccount());
         }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult AddContact(string alias)
+        public ActionResult AddContact(string addAlias)
         {
-            if(string.IsNullOrWhiteSpace(alias))
+            if(string.IsNullOrWhiteSpace(addAlias))
             {
-                ModelState.AddModelError("alias", "Invalid alias");
+                ModelState.AddModelError("addAlias", "Invalid addAlias");
             }
             if(ModelState.IsValid)
             {
-                var correspondingAccount = (from acc in context.Accounts
-                                           where acc.Alias == alias
-                                           select acc).FirstOrDefault();
-
-                
-
+                var correspondingAccount = context.Accounts.FirstOrDefault(p => p.Alias == addAlias);
                 if(correspondingAccount != null)
                 {
-                    
                         string name = HttpContext.User.Identity.Name;
-                        var curAcc = (from acc in context.Accounts
-                                      where acc.Alias == name
-                                      select acc).FirstOrDefault();
+                        var curAcc = context.Accounts.FirstOrDefault(p => p.Alias == name);
 
                         curAcc.Addition.Contacts.Add(correspondingAccount);
-                        int j = context.SaveChanges();
+                        context.SaveChanges();
                 }
                 else
                 {
-                    ModelState.AddModelError("alias", "No such user found");
+                    ModelState.AddModelError("addAlias", "No such user found");
                 }
             }
-            return View();
+            return View(GetCurrentAccount());
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult ShareContacts(string alias)
+        public ActionResult ShareContacts(string shareWithAlias)
         {
-            if (string.IsNullOrWhiteSpace(alias))
+            if (string.IsNullOrWhiteSpace(shareWithAlias))
             {
-                ModelState.AddModelError("alias", "Invalid alias");
+                ModelState.AddModelError("addAlias", "Invalid addAlias");
             }
             if (ModelState.IsValid)
             {
-                var correspondingAccount = (from acc in context.Accounts
-                                            where acc.Alias == alias
-                                            select acc).FirstOrDefault();
-
+                var curAcc = context.Accounts.FirstOrDefault(acc => acc.Alias == HttpContext.User.Identity.Name);
+                var correspondingAccount = context.Accounts.FirstOrDefault(acc => acc.Alias == shareWithAlias);
                 if (correspondingAccount != null)
                 {
-                    Account curAcc = Session["user"] as Account;
-                    /*List<int> correspondingContactIds = correspondingAccount.Addition.ContactIDs.ToList();
-                    foreach(int contactId in curAcc.Addition.ContactIDs)
+
+                    ICollection<Account> corAccContacts = correspondingAccount.Addition.Contacts;
+                    foreach(Account c in curAcc.Addition.Contacts)
                     {
-                        if(!correspondingContactIds.Contains(contactId))
-                            correspondingContactIds.Add(contactId);
-                    }*/
+                        if(!corAccContacts.Contains(c))
+                            corAccContacts.Add(c);
+                    }
 
-
-
-                    context.SaveChanges();
+                    context.SaveChangesAsync();
                 }
                 else
                 {
-                    ModelState.AddModelError("alias", "No such user found");
+                    ModelState.AddModelError("addAlias", "No such user found");
                 }
             }
-            return View("~/Views/Panel/AddContact.cshtml");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                context.Dispose();
-            }
-            base.Dispose(disposing);
+            return RedirectToAction("AddContact");
         }
     }
 }

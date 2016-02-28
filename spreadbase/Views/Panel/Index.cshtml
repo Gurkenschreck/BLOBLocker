@@ -1,4 +1,6 @@
-﻿@{
+﻿@model SpreadBase.Models.Account
+
+@{
     ViewBag.Title = "Control Panel";
 }
 
@@ -11,7 +13,7 @@ Add a new contact
     {
         Html.ValidationSummary();
         
-        @:Alias: @Html.TextBox("alias")
+        @:Alias: @Html.TextBox("addAlias")
         @Html.AntiForgeryToken()
         <input type="submit" value="Add" />
     }
@@ -21,7 +23,7 @@ Share all your contacts
     @using (Html.BeginForm("ShareContacts", "Panel", FormMethod.Post))
     {
         Html.ValidationSummary();
-        @:Share with: @Html.TextBox("alias")
+        @:Share with: @Html.TextBox("shareWithAlias")
         @Html.AntiForgeryToken()
         <input type="submit" value="Add" />
     }
@@ -29,10 +31,5 @@ Share all your contacts
 
 All your contacts
 <p>
-    <ul>
-        @foreach (spreadbase.Models.Account acc in (Session["contacts"] as List<spreadbase.Models.Account>))
-        {
-            <li>@acc.Alias</li>
-        }
-    </ul>
+    @Html.Partial("~/Views/Panel/ContactList.cshtml", Model)
 </p>

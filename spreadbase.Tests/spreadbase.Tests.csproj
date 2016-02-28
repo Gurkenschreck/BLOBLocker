@@ -106,9 +106,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\spreadbase\spreadbase.csproj">
+    <ProjectReference Include="..\spreadbase\SpreadBase.csproj">
       <Project>{B999F53C-C1DE-42ED-A9AC-2575A6E65A32}</Project>
-      <Name>spreadbase</Name>
+      <Name>SpreadBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

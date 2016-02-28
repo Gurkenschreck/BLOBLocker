@@ -2,7 +2,8 @@
 using Cipha.Security.Cryptography.Asymmetric;
 using Cipha.Security.Cryptography.Hash;
 using Cipha.Security.Cryptography.Symmetric;
-using spreadbase.Models;
+using SpreadBase.Controllers;
+using SpreadBase.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,16 +15,14 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 
-namespace spreadbase.Controllers
+namespace SpreadBase.Controllers
 {
-    [RequireHttps]
-    [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
-        SpreadBaseContext context = new SpreadBaseContext();
         //
         // GET: /Account/
         [AllowAnonymous]
+        [HttpGet]
         public ActionResult SignUp()
         {
             return View();
@@ -49,14 +48,13 @@ namespace spreadbase.Controllers
             // Check if info is correct
             if(ModelState.IsValid)
             {
-                Account newAcc = (from account in context.Accounts
-                                     where account.Alias == acc.Alias
-                                     select account).FirstOrDefault();
+                Account newAcc = context.Accounts.FirstOrDefault(x => x.Alias == acc.Alias);
 
                 if(newAcc == null)
                 {
-                    int saltLenght = Convert.ToInt32(ConfigurationManager.AppSettings["SaltByteLength"]);
-                    int keySize = Convert.ToInt32(ConfigurationManager.AppSettings["RSAKeySize"]);
+                    int saltLenght = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]);
+                    int keySize = Convert.ToInt32(HttpContext.Application["security.RSAKeySize"]);
+                    bool createPersistentCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
 
                     newAcc = new Account();
                     newAcc.Alias = acc.Alias;
@@ -72,7 +70,7 @@ namespace spreadbase.Controllers
 
                     }
 
-                    var cryptoConfig = new spreadbase.Models.CryptoConfig();
+                    var cryptoConfig = new SpreadBase.Models.CryptoConfig();
                     byte[] salt;
                     byte[] iv;
 
@@ -85,34 +83,38 @@ namespace spreadbase.Controllers
                         using (var rsaC = new RSACipher<RSACryptoServiceProvider>(keySize))
                         {
                             cryptoConfig.PublicKey = rsaC.ToXmlString(false);
-                            cryptoConfig.PrivateKey = rsaC.ToEncryptedXmlString<AesManaged>(true, acc.Password, salt, iv);
-                            cryptoConfig.PublicKeySignature = rsaC.SignStringToString<SHA512Cng>(cryptoConfig.PublicKey);
+                            cryptoConfig.PrivateKey = Convert.FromBase64String(rsaC.ToEncryptedXmlString<AesManaged>(true, acc.Password, salt, iv));
+                            cryptoConfig.PublicKeySignature = rsaC.SignStringToString<SHA256Cng>(cryptoConfig.PublicKey);
                         }
 
                         newAcc.Password = symC.EncryptToString(pwHash);
                     }
                     newAcc.Config = cryptoConfig;
                     newAcc.Addition.LastLogin = DateTime.Now;
-
+                    newAcc.Roles = new List<AccountRoleLink>();
+                    newAcc.Roles.Add(new AccountRoleLink()
+                    {
+                        Account = newAcc,
+                        Role = context.AccountRoles.FirstOrDefault(x => x.RoleName == HttpContext.Application["account.DefaultRole"].ToString())
+                    });
 
                     context.Accounts.Add(newAcc);
 
-                    int x = context.SaveChanges();
+                    context.SaveChanges();
                     
-                    
-
-                    FormsAuthentication.SetAuthCookie(newAcc.Alias, false);
+                    FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
                     
                     return RedirectToAction("Index", "Panel");
                 }
                 
-                ModelState.AddModelError("AliasExists", "There is already an account using this alias");
+                ModelState.AddModelError("AliasExists", "There is already an account using this shareWithAliasias");
             }
             
             return View(acc);
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public ActionResult Login()
         {
             return View();
@@ -138,9 +140,7 @@ namespace spreadbase.Controllers
             if(ModelState.IsValid)
             {
                 // Find corresponsing existing account
-                Account correspondingAcc = (from account in context.Accounts
-                                  where account.Alias == acc.Alias
-                                  select account).FirstOrDefault();
+                Account correspondingAcc = context.Accounts.FirstOrDefault(p => p.Alias == acc.Alias);
 
                 // validate password
                 if (correspondingAcc != null)
@@ -150,11 +150,11 @@ namespace spreadbase.Controllers
                         try
                         {
                             string decr = symC.DecryptToString(correspondingAcc.Password);
+                            bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
 
-                            FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, false);
+                            FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                             correspondingAcc.Addition.LastLogin = DateTime.Now;
-
-                            int a = context.SaveChanges();
+                            context.SaveChangesAsync();
 
                             return RedirectToAction("Index", "Panel");
                         }
@@ -171,6 +171,7 @@ namespace spreadbase.Controllers
             return View(acc);
         }
 
+        [HttpGet]
         public ActionResult SignOut()
         {
             FormsAuthentication.SignOut();
@@ -178,18 +179,10 @@ namespace spreadbase.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
         public ActionResult Overview()
         {
             return View();
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                context.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

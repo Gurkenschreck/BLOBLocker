@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace spreadbase
+namespace SpreadBase
 {
     public class FilterConfig
     {

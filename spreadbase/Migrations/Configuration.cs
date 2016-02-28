@@ -1,18 +1,18 @@
-namespace spreadbase.Migrations
+namespace SpreadBase.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<spreadbase.Models.SpreadBaseContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<SpreadBase.Models.SpreadBaseContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(spreadbase.Models.SpreadBaseContext context)
+        protected override void Seed(SpreadBase.Models.SpreadBaseContext context)
         {
             //  This method will be called after migrating to the latest version.
 
