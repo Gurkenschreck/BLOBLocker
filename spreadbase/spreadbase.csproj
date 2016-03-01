@@ -129,6 +129,70 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\GlobalizationController.cs" />
+    <Compile Include="Migrations\201602292303437_AddIsEnabledAccount.cs" />
+    <Compile Include="Migrations\201602292303437_AddIsEnabledAccount.Designer.cs">
+      <DependentUpon>201602292303437_AddIsEnabledAccount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602292331594_ChangedDefinitions.cs" />
+    <Compile Include="Migrations\201602292331594_ChangedDefinitions.Designer.cs">
+      <DependentUpon>201602292331594_ChangedDefinitions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Account\Strings.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Global.de.Designer.cs">
+      <DependentUpon>Global.de.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Home\Strings.de.Designer.cs">
+      <DependentUpon>Strings.de.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Home\Strings.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Models\Models.Designer.cs">
+      <DependentUpon>Models.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Global.Designer.cs">
+      <DependentUpon>Global.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Notifications.de.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Notifications.de.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Notifications.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Notifications.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Notifications.es.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Notifications.es.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Notifications.pl.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Notifications.pl.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Panel\Strings.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Content Include="App_Code\SBRoleProvider.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -147,12 +211,31 @@
     <Compile Include="Migrations\201602270025433_Initial.Designer.cs">
       <DependentUpon>201602270025433_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602282200351_AddPools.cs" />
+    <Compile Include="Migrations\201602282200351_AddPools.Designer.cs">
+      <DependentUpon>201602282200351_AddPools.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602282214424_AddNotifications.cs" />
+    <Compile Include="Migrations\201602282214424_AddNotifications.Designer.cs">
+      <DependentUpon>201602282214424_AddNotifications.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602282230034_AddNotificationCollectionToAccAddition.cs" />
+    <Compile Include="Migrations\201602282230034_AddNotificationCollectionToAccAddition.Designer.cs">
+      <DependentUpon>201602282230034_AddNotificationCollectionToAccAddition.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602291907481_RemoveNotificationOwner.cs" />
+    <Compile Include="Migrations\201602291907481_RemoveNotificationOwner.Designer.cs">
+      <DependentUpon>201602291907481_RemoveNotificationOwner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountAdditions.cs" />
     <Compile Include="Models\AccountRole.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\CryptoConfig.cs" />
+    <Compile Include="Models\Notification.cs" />
+    <Compile Include="Models\Pool.cs" />
+    <Compile Include="Models\PoolShare.cs" />
     <Compile Include="Models\SpreadBaseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -267,6 +350,68 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201602270025433_Initial.resx">
       <DependentUpon>201602270025433_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602282200351_AddPools.resx">
+      <DependentUpon>201602282200351_AddPools.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602282214424_AddNotifications.resx">
+      <DependentUpon>201602282214424_AddNotifications.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602282230034_AddNotificationCollectionToAccAddition.resx">
+      <DependentUpon>201602282230034_AddNotificationCollectionToAccAddition.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602291907481_RemoveNotificationOwner.resx">
+      <DependentUpon>201602291907481_RemoveNotificationOwner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602292303437_AddIsEnabledAccount.resx">
+      <DependentUpon>201602292303437_AddIsEnabledAccount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602292331594_ChangedDefinitions.resx">
+      <DependentUpon>201602292331594_ChangedDefinitions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Account\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Global.de.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Global.de.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Home\Strings.de.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.de.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Home\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Models\Models.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Models.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Global.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Global.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Notifications.es.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Notifications.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Notifications.pl.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Notifications.pl.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Notifications.de.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Notifications.de.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Notifications.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Notifications.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Panel\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

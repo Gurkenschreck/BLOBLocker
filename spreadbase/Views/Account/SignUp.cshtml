@@ -1,6 +1,6 @@
 ﻿@model SpreadBase.Models.Account
 @{
-    ViewBag.Title = "SignUp";
+    ViewBag.Title = SpreadBase.Resources.Account.Strings.PageRegisterTitle;
 }
 
 <h2>SignUp</h2>
@@ -23,5 +23,5 @@
         @Html.TextBoxFor(model => model.Addition.ContactEmail)
     </p>
     @Html.AntiForgeryToken();
-    <input type="submit" value="Sign up" />
+    <input type="submit" value="@SpreadBase.Resources.Account.Strings.btn_SignUp" />
 }

@@ -58,7 +58,7 @@ namespace SpreadBase.App_Code
                 }
                 else
                 {
-                    return acc.Roles.Select(x => x.Role.RoleName).ToArray();
+                    return acc.Roles.Select(x => x.Role.Definition).ToArray();
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace SpreadBase.App_Code
 
                 foreach(AccountRoleLink role in acc.Roles)
                 {
-                    if (role.Role.RoleName == roleName)
+                    if (role.Role.Definition == roleName)
                         return true;
                 }
             }
@@ -93,7 +93,7 @@ namespace SpreadBase.App_Code
         {
             using(var context = new SpreadBaseContext())
             {
-                var role = context.AccountRoles.FirstOrDefault(r => r.RoleName == roleName);
+                var role = context.AccountRoles.FirstOrDefault(r => r.Definition == roleName);
                 if (role != null)
                     return true;
             }

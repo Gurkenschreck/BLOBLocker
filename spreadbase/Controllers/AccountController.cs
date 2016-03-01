@@ -39,11 +39,11 @@ namespace SpreadBase.Controllers
             }
             if(string.IsNullOrWhiteSpace(acc.Alias))
             {
-                ModelState.AddModelError("Name", "Please enter a name");
+                ModelState.AddModelError("InvalidAlias", Resources.Account.Strings.InavlidAlias);
             }
             if (string.IsNullOrWhiteSpace(acc.Password))
             {
-                ModelState.AddModelError("Password", "Please enter a password");
+                ModelState.AddModelError("InvalidPassword", Resources.Account.Strings.InvalidPassword);
             }
             // Check if info is correct
             if(ModelState.IsValid)
@@ -58,8 +58,11 @@ namespace SpreadBase.Controllers
 
                     newAcc = new Account();
                     newAcc.Alias = acc.Alias;
+                    newAcc.Roles = new List<AccountRoleLink>();
                     newAcc.Addition = new AccountAddition();
                     newAcc.Addition.ContactEmail = acc.Addition.ContactEmail;
+                    newAcc.Addition.LastLogin = DateTime.Now;
+                    newAcc.Addition.Notifications = new List<Notification>();
 
                     string pwHash;
                     string usrHash;
@@ -71,6 +74,8 @@ namespace SpreadBase.Controllers
                     }
 
                     var cryptoConfig = new SpreadBase.Models.CryptoConfig();
+                    newAcc.Config = cryptoConfig;
+
                     byte[] salt;
                     byte[] iv;
 
@@ -89,25 +94,29 @@ namespace SpreadBase.Controllers
 
                         newAcc.Password = symC.EncryptToString(pwHash);
                     }
-                    newAcc.Config = cryptoConfig;
-                    newAcc.Addition.LastLogin = DateTime.Now;
-                    newAcc.Roles = new List<AccountRoleLink>();
-                    newAcc.Roles.Add(new AccountRoleLink()
+
+                    string basicRoleName = HttpContext.Application["account.DefaultRole"] as string;
+                    newAcc.Roles.Add(new AccountRoleLink
                     {
                         Account = newAcc,
-                        Role = context.AccountRoles.FirstOrDefault(x => x.RoleName == HttpContext.Application["account.DefaultRole"].ToString())
+                        Role = context.AccountRoles.FirstOrDefault(x => x.Definition == basicRoleName)
                     });
 
-                    context.Accounts.Add(newAcc);
 
+                    var welcomeNotification = new Notification();
+                    string notificationMessage = HttpContext.Application["notification.WelcomeMessage"] as string;
+                    welcomeNotification.Description = string.Format(notificationMessage, newAcc.Alias);
+                    newAcc.Addition.Notifications.Add(welcomeNotification);
+
+                    context.Accounts.Add(newAcc);
+                    context.Additions.Add(newAcc.Addition);
                     context.SaveChanges();
                     
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
-                    
                     return RedirectToAction("Index", "Panel");
                 }
                 
-                ModelState.AddModelError("AliasExists", "There is already an account using this shareWithAliasias");
+                ModelState.AddModelError("AliasAlreadyExists", Resources.Account.Strings.AliasAlreadyExists);
             }
             
             return View(acc);
@@ -131,11 +140,11 @@ namespace SpreadBase.Controllers
             }
             if(string.IsNullOrWhiteSpace(acc.Alias))
             {
-                ModelState.AddModelError("Alias", "Invalid Alias");
+                ModelState.AddModelError("InvalidAlias", Resources.Account.Strings.InavlidAlias);
             }
             if(string.IsNullOrWhiteSpace(acc.Password))
             {
-                ModelState.AddModelError("Password", "Insufficient Password");
+                ModelState.AddModelError("InvalidPassword", Resources.Account.Strings.InvalidPassword);
             }
             if(ModelState.IsValid)
             {
@@ -145,28 +154,44 @@ namespace SpreadBase.Controllers
                 // validate password
                 if (correspondingAcc != null)
                 {
-                    using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV))
+                    if (correspondingAcc.IsEnabled)
                     {
-                        try
+                        using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV))
                         {
-                            string decr = symC.DecryptToString(correspondingAcc.Password);
-                            bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
+                            try
+                            {
+                                string decr = symC.DecryptToString(correspondingAcc.Password);
+                                bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
 
-                            FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
-                            correspondingAcc.Addition.LastLogin = DateTime.Now;
-                            context.SaveChangesAsync();
+                                FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
+                                correspondingAcc.Addition.LastLogin = DateTime.Now;
+                                context.SaveChangesAsync();
 
-                            return RedirectToAction("Index", "Panel");
-                        }
-                        catch (CryptographicException)
-                        {
-                            correspondingAcc.Addition.LastFailedLogin = DateTime.Now;
-                            context.SaveChangesAsync();
-                            // Log wrong password try?
+                                return RedirectToAction("Index", "Panel");
+                            }
+                            catch (CryptographicException)
+                            {
+                                correspondingAcc.Addition.LastFailedLogin = DateTime.Now;
+                                correspondingAcc.Addition.Notifications.Add(new Notification
+                                {
+                                    Description = string.Format(Resources.Notifications.FailedLogin, DateTime.Now)
+                                });
+                                context.SaveChangesAsync();
+                                // Log wrong password try?
+
+                                ModelState.AddModelError("WrongAliasOrPassword", Resources.Account.Strings.WrongAliasOrPassword);
+                            }
                         }
                     }
+                    else
+                    {
+                        ModelState.AddModelError("AccountIsDisabledError", Resources.Account.Strings.AccountIsDisabledError);
+                    }
                 }
-                ModelState.AddModelError("AliasOrPassword", "Alias and/or password wrong");
+                else
+                {
+                    ModelState.AddModelError("WrongAliasOrPassword", Resources.Account.Strings.WrongAliasOrPassword);
+                }
             }
             return View(acc);
         }

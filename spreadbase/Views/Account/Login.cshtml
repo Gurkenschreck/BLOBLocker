@@ -1,6 +1,6 @@
 ﻿@model SpreadBase.Models.Account
 @{
-    ViewBag.Title = "SignIn";
+    ViewBag.Title = SpreadBase.Resources.Account.Strings.PageLoginTitle;
 }
 
 <h2>SignIn</h2>
@@ -19,5 +19,5 @@
         @Html.PasswordFor(model => model.Password)
     </p>
     @Html.AntiForgeryToken()
-    <input type="submit" value="Sign in" />
+    <input type="submit" value="@SpreadBase.Resources.Account.Strings.btn_SignIn" />
 }

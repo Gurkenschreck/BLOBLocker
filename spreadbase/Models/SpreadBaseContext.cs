@@ -13,6 +13,9 @@ namespace SpreadBase.Models
         public DbSet<AccountAddition> Additions { get; set; }
         public DbSet<CryptoConfig> CryptoConfigurations { get; set; }
         public DbSet<AccountRole> AccountRoles { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Pool> Pools { get; set; }
+        public DbSet<PoolShare> PoolShares { get; set; }
 
         public DbSet<Configuration> SystemConfigurations { get; set; }
 

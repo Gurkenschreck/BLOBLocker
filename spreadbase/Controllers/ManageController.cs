@@ -3,6 +3,7 @@ using SpreadBase.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Providers.Entities;
@@ -49,6 +50,10 @@ namespace SpreadBase.Controllers
         [HttpPost]
         public ActionResult Edit(Configuration config)
         {
+            if (config == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             if(string.IsNullOrWhiteSpace(config.Key))
             {
                 ModelState.AddModelError("key", "Key is invalid");
@@ -80,6 +85,10 @@ namespace SpreadBase.Controllers
         [HttpPost]
         public ActionResult Create(Configuration newConfig)
         {
+            if (newConfig == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             if (string.IsNullOrWhiteSpace(newConfig.Key))
             {
                 ModelState.AddModelError("key", "invalid key");

@@ -1,7 +1,9 @@
 ﻿using SpreadBase.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -30,6 +32,21 @@ namespace SpreadBase
                 {
                     Application[conf.Key] = conf.Value;
                 }
+            }
+        }
+
+        protected void Application_AcquireRequestState(object sender, EventArgs args)
+        {
+            var custumLanguage = Session["customCulture"] as CultureInfo;
+            if (custumLanguage != null)
+            {
+                var culture = custumLanguage;
+                Thread.CurrentThread.CurrentCulture = culture;
+                Thread.CurrentThread.CurrentUICulture = culture;
+            }
+            else
+            {
+                Session["customCulture"] = Thread.CurrentThread.CurrentCulture;
             }
         }
     }

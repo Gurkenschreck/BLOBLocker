@@ -33,3 +33,17 @@ All your contacts
 <p>
     @Html.Partial("~/Views/Panel/ContactList.cshtml", Model)
 </p>
+<hr />
+Notifications
+<p>
+    <table>
+        @foreach(SpreadBase.Models.Notification not in Model.Addition.Notifications)
+        {
+        <tr>
+            <td>@not.Description</td>
+            <td>@not.CreatedOn</td>
+            <td><button value="@not.ID">X</button></td>
+        </tr>
+        }
+    </table>
+</p>
