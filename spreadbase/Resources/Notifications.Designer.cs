@@ -61,11 +61,38 @@ namespace SpreadBase.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You added {0} to your contact list..
+        /// </summary>
+        public static string AddAccount {
+            get {
+                return ResourceManager.GetString("AddAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There was a failed login attempt on {0}..
         /// </summary>
         public static string FailedLogin {
             get {
                 return ResourceManager.GetString("FailedLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} has added you to his contact list..
+        /// </summary>
+        public static string GetAdded {
+            get {
+                return ResourceManager.GetString("GetAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hello, {0}! Nice to see you here..
+        /// </summary>
+        public static string WelcomeMessage {
+            get {
+                return ResourceManager.GetString("WelcomeMessage", resourceCulture);
             }
         }
     }

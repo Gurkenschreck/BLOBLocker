@@ -1,12 +1,12 @@
-﻿@model SpreadBase.Models.Account
+﻿@model SpreadBase.Models.AccountAddition
 
 @{
     Layout = null;
 }
 
 <ul>
-    @foreach (SpreadBase.Models.Account acc in Model.Addition.Contacts)
+    @foreach (SpreadBase.Models.Contact acc in Model.Contacts)
     {
-        <li>@acc.Alias</li>
+        <li>@acc.Account.Alias</li>
     }
 </ul>

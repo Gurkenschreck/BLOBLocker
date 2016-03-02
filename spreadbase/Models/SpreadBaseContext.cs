@@ -18,6 +18,7 @@ namespace SpreadBase.Models
         public DbSet<PoolShare> PoolShares { get; set; }
 
         public DbSet<Configuration> SystemConfigurations { get; set; }
+        public DbSet<Contact> ContactLinks { get; set; }
 
         public SpreadBaseContext()
 #if DEBUG
@@ -31,9 +32,25 @@ namespace SpreadBase.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Account>()
-                .HasRequired(p => p.Config)
-                .WithRequiredPrincipal();
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Pool>()
+                .HasRequired(p => p.Owner)
+                .WithMany(t => t.Pools)
+                .HasForeignKey(a => a.OwnerID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<PoolShare>()
+                .HasRequired(p => p.Pool)
+                .WithMany(t => t.Participents)
+                .HasForeignKey(a => a.PoolID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<PoolShare>()
+                .HasRequired(p => p.SharedWith)
+                .WithMany(t => t.ForeignPools)
+                .HasForeignKey(a => a.SharedWithID)
+                .WillCascadeOnDelete(false);
         }
     }
 }

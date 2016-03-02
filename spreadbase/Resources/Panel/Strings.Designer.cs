@@ -59,5 +59,86 @@ namespace SpreadBase.Resources.Panel {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a new contact.
+        /// </summary>
+        public static string AddAccount {
+            get {
+                return ResourceManager.GetString("AddAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string btn_AddAccount {
+            get {
+                return ResourceManager.GetString("btn_AddAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Share.
+        /// </summary>
+        public static string btn_ShareWith {
+            get {
+                return ResourceManager.GetString("btn_ShareWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All your contacts.
+        /// </summary>
+        public static string ContactList {
+            get {
+                return ResourceManager.GetString("ContactList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alias:.
+        /// </summary>
+        public static string lbl_AddAccount {
+            get {
+                return ResourceManager.GetString("lbl_AddAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Share with:.
+        /// </summary>
+        public static string lbl_ShareWith {
+            get {
+                return ResourceManager.GetString("lbl_ShareWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notifications.
+        /// </summary>
+        public static string Notifications {
+            get {
+                return ResourceManager.GetString("Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Control Panel.
+        /// </summary>
+        public static string PageTitle {
+            get {
+                return ResourceManager.GetString("PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Share all your contacts with somebody.
+        /// </summary>
+        public static string ShareWith {
+            get {
+                return ResourceManager.GetString("ShareWith", resourceCulture);
+            }
+        }
     }
 }

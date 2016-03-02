@@ -7,13 +7,13 @@ namespace SpreadBase.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class AddNotificationCollectionToAccAddition : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddNotificationCollectionToAccAddition));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201602282230034_AddNotificationCollectionToAccAddition"; }
+            get { return "201603021954559_Initial"; }
         }
         
         string IMigrationMetadata.Source

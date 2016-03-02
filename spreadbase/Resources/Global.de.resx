@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LoginText" xml:space="preserve">
-    <value>In existierenden Account einloggen.</value>
+    <value>Einloggen.</value>
   </data>
   <data name="NoScriptDisclaimer" xml:space="preserve">
     <value>Du hast JavaScript in deinem Browser deaktiviert. Und das ist auch gut so! Damit diese Anwendung funktioniert wird kein Javascript vorausgesetzt. Doch Achtung: Bitte stelle bei Fehlern sicher, dass Cookies zugelassen werden. Diese sichern deinen Account bei deinem Besuch.</value>

@@ -19,15 +19,11 @@ namespace SpreadBase.Controllers
         public ActionResult Index()
         {
             var settings = new Dictionary<string, string>();
-
-
             var dbValues = context.SystemConfigurations.ToList();
-
             foreach(Configuration conf in dbValues)
             {
                 settings[conf.Key] = conf.Value;
             }
-            
             return View(settings);
         }
 
@@ -35,15 +31,11 @@ namespace SpreadBase.Controllers
         public ActionResult Overview()
         {
             var settings = new Dictionary<string, string>();
-
-            var dbValues = from conf in context.SystemConfigurations
-                           select conf;
-
+            var dbValues = context.SystemConfigurations.ToList();
             foreach (Configuration conf in dbValues)
             {
                 settings[conf.Key] = conf.Value;
             }
-
             return View(settings);
         }
 
@@ -56,7 +48,7 @@ namespace SpreadBase.Controllers
             }
             if(string.IsNullOrWhiteSpace(config.Key))
             {
-                ModelState.AddModelError("key", "Key is invalid");
+                ModelState.AddModelError("key", "SharedKey is invalid");
             }
             if (string.IsNullOrWhiteSpace(config.Value))
             {
@@ -64,10 +56,7 @@ namespace SpreadBase.Controllers
             }
             if (ModelState.IsValid)
             {
-                var dbValues = (from conf in context.SystemConfigurations
-                                where conf.Key == config.Key
-                                select conf).FirstOrDefault();
-                
+                var dbValues = context.SystemConfigurations.Where(p => p.Key == config.Key).FirstOrDefault();
                 if(dbValues == null)
                 {
                     ModelState.AddModelError("unknownKey", "Cannot change not present key");
@@ -101,7 +90,6 @@ namespace SpreadBase.Controllers
             {
                 context.SystemConfigurations.Add(newConfig);
                 context.SaveChanges();
-
             }
 
             return RedirectToAction("Overview");
@@ -117,7 +105,7 @@ namespace SpreadBase.Controllers
                     HttpContext.ApplicationInstance.Application[pair.Key] = pair.Value;
                 }
             }
-            return "finished";
+            return "ok";
         }
     }
 }

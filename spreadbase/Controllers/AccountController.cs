@@ -2,11 +2,13 @@
 using Cipha.Security.Cryptography.Asymmetric;
 using Cipha.Security.Cryptography.Hash;
 using Cipha.Security.Cryptography.Symmetric;
+using SpreadBase.App_Code.Membership;
 using SpreadBase.Controllers;
 using SpreadBase.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -52,48 +54,9 @@ namespace SpreadBase.Controllers
 
                 if(newAcc == null)
                 {
-                    int saltLenght = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]);
-                    int keySize = Convert.ToInt32(HttpContext.Application["security.RSAKeySize"]);
+                    AccountFactory fact = new AccountFactory();
+                    newAcc = fact.CreateNewAccount(this.HttpContext, acc);
                     bool createPersistentCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
-
-                    newAcc = new Account();
-                    newAcc.Alias = acc.Alias;
-                    newAcc.Roles = new List<AccountRoleLink>();
-                    newAcc.Addition = new AccountAddition();
-                    newAcc.Addition.ContactEmail = acc.Addition.ContactEmail;
-                    newAcc.Addition.LastLogin = DateTime.Now;
-                    newAcc.Addition.Notifications = new List<Notification>();
-
-                    string pwHash;
-                    string usrHash;
-                    using (var hasher = new Hasher<SHA1Cng>())
-                    {
-                        usrHash = hasher.HashToString(newAcc.Alias);
-                        pwHash = hasher.HashToString(acc.Password);
-
-                    }
-
-                    var cryptoConfig = new SpreadBase.Models.CryptoConfig();
-                    newAcc.Config = cryptoConfig;
-
-                    byte[] salt;
-                    byte[] iv;
-
-                    
-                    using (var symC = new SymmetricCipher<AesManaged>(acc.Password, out salt, out iv))
-                    {
-                        newAcc.Salt = salt;
-                        cryptoConfig.IV = iv;
-
-                        using (var rsaC = new RSACipher<RSACryptoServiceProvider>(keySize))
-                        {
-                            cryptoConfig.PublicKey = rsaC.ToXmlString(false);
-                            cryptoConfig.PrivateKey = Convert.FromBase64String(rsaC.ToEncryptedXmlString<AesManaged>(true, acc.Password, salt, iv));
-                            cryptoConfig.PublicKeySignature = rsaC.SignStringToString<SHA256Cng>(cryptoConfig.PublicKey);
-                        }
-
-                        newAcc.Password = symC.EncryptToString(pwHash);
-                    }
 
                     string basicRoleName = HttpContext.Application["account.DefaultRole"] as string;
                     newAcc.Roles.Add(new AccountRoleLink
@@ -102,9 +65,8 @@ namespace SpreadBase.Controllers
                         Role = context.AccountRoles.FirstOrDefault(x => x.Definition == basicRoleName)
                     });
 
-
                     var welcomeNotification = new Notification();
-                    string notificationMessage = HttpContext.Application["notification.WelcomeMessage"] as string;
+                    string notificationMessage = Resources.Notifications.WelcomeMessage;
                     welcomeNotification.Description = string.Format(notificationMessage, newAcc.Alias);
                     newAcc.Addition.Notifications.Add(welcomeNotification);
 
@@ -149,7 +111,7 @@ namespace SpreadBase.Controllers
             if(ModelState.IsValid)
             {
                 // Find corresponsing existing account
-                Account correspondingAcc = context.Accounts.FirstOrDefault(p => p.Alias == acc.Alias);
+                Account correspondingAcc = GetAccount(acc.Alias);
 
                 // validate password
                 if (correspondingAcc != null)
@@ -199,8 +161,11 @@ namespace SpreadBase.Controllers
         [HttpGet]
         public ActionResult SignOut()
         {
+            var customCulture = Session["customCulture"] as CultureInfo;
             FormsAuthentication.SignOut();
             Session.Clear();
+            if(customCulture != null)
+                Session["customCulture"] = customCulture;
             return RedirectToAction("Index", "Home");
         }
 

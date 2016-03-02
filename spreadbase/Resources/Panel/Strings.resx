@@ -117,4 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Add a new contact</value>
+    <comment>Description of add contact form</comment>
+  </data>
+  <data name="btn_AddAccount" xml:space="preserve">
+    <value>Add</value>
+    <comment>Label of AddAlias form buttom</comment>
+  </data>
+  <data name="btn_ShareWith" xml:space="preserve">
+    <value>Share</value>
+    <comment>Label of ShareContacts form button</comment>
+  </data>
+  <data name="ContactList" xml:space="preserve">
+    <value>All your contacts</value>
+    <comment>Description of contact list</comment>
+  </data>
+  <data name="lbl_AddAccount" xml:space="preserve">
+    <value>Alias:</value>
+    <comment>Label of AddAlias form</comment>
+  </data>
+  <data name="lbl_ShareWith" xml:space="preserve">
+    <value>Share with:</value>
+    <comment>Label of ShareContacts form</comment>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+    <comment>Description of notification list</comment>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Control Panel</value>
+    <comment>Page title</comment>
+  </data>
+  <data name="ShareWith" xml:space="preserve">
+    <value>Share all your contacts with somebody</value>
+    <comment>Description of share with form</comment>
+  </data>
 </root>

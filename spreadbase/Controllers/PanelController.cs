@@ -1,7 +1,11 @@
-﻿using SpreadBase.Controllers;
+﻿using SpreadBase.App_Code.Validation;
+using SpreadBase.Controllers;
 using SpreadBase.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -11,24 +15,17 @@ namespace SpreadBase.Controllers
 {
     public class PanelController : BaseController
     {
-        private Account GetCurrentAccount()
-        {
-            string name = HttpContext.User.Identity.Name;
-            return context.Accounts.FirstOrDefault(p => p.Alias == name);
-        }
-
         [HttpGet]
         public ActionResult Index()
         {
-            var acc = GetCurrentAccount();
-
+            var acc = GetAccount();
             return View(acc);
         }
 
         [HttpGet]
         public ActionResult AddContact()
         {
-            return View(GetCurrentAccount());
+            return View(GetAccount());
         }
 
         [ValidateAntiForgeryToken]
@@ -43,24 +40,33 @@ namespace SpreadBase.Controllers
             {
                 ModelState.AddModelError("addAlias", "Invalid addAlias");
             }
-            Account curAcc = GetCurrentAccount();
+            Account curAcc = GetAccount();
             if(ModelState.IsValid)
             {
-                var correspondingAccount = context.Accounts.FirstOrDefault(p => p.Alias == addAlias);
+                var correspondingAccount = GetAccount(addAlias);
                 if(correspondingAccount != null)
                 {
-                    curAcc.Addition.Contacts.Add(correspondingAccount);
+                    if(curAcc.Addition.Contacts.All(p => p.AccountID != correspondingAccount.ID))
+                    {
+                        curAcc.Addition.Contacts.Add(new Contact
+                        {
+                            AccountID = correspondingAccount.ID
+                        });
 
-                    Notification not1 = new Notification();
-                    not1.Description = string.Format("You added {0} to your contact list", correspondingAccount.Alias);
+                        Notification not1 = new Notification();
+                        not1.Description = string.Format(Resources.Notifications.AddAccount, correspondingAccount.Alias);
+                        curAcc.Addition.Notifications.Add(not1);
 
-                    Notification not2 = new Notification();
-                    not2.Description = string.Format("{0} added you to his list", curAcc.Alias);
-                    
-                    curAcc.Addition.Notifications.Add(not1);
-                    correspondingAccount.Addition.Notifications.Add(not2);
-                    context.SaveChanges();
+                        Notification not2 = new Notification();
+                        not2.Description = string.Format(Resources.Notifications.GetAdded, curAcc.Alias);
+                        correspondingAccount.Addition.Notifications.Add(not2);
 
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("addModel", "User already in your list.");
+                    }
                 }
                 else
                 {
@@ -80,27 +86,32 @@ namespace SpreadBase.Controllers
             }
             if (ModelState.IsValid)
             {
-                var curAcc = GetCurrentAccount();
-                var correspondingAccount = context.Accounts.FirstOrDefault(acc => acc.Alias == shareWithAlias);
+                var curAcc = GetAccount();
+                var correspondingAccount = GetAccount(shareWithAlias);
 
                 if (correspondingAccount != null)
                 {
                     if (curAcc.ID != correspondingAccount.ID)
                     {
-                        ICollection<Account> corAccContacts = correspondingAccount.Addition.Contacts;
-                        foreach (Account c in curAcc.Addition.Contacts)
+                        ICollection<Contact> corAccContacts = correspondingAccount.Addition.Contacts;
+                        foreach (Contact contact in curAcc.Addition.Contacts)
                         {
-                            if (!corAccContacts.Contains(c))
-                                corAccContacts.Add(c);
+                            if (!corAccContacts.Any(c => c.AccountID == contact.AccountID))
+                            {
+                                corAccContacts.Add(new Contact
+                                {
+                                    AccountID = contact.AccountID
+                                });
+                            }
                         }
-                        correspondingAccount.Addition.Notifications.Add(new Notification
-                        {
-                            Description = string.Format("{0} has shared all his contacts with you.", curAcc.Alias)
-                        });
-                        curAcc.Addition.Notifications.Add(new Notification
-                        {
-                            Description = string.Format("You shared all your contacts with {0}.", correspondingAccount.Alias)
-                        });
+
+                        var corNotification = new Notification();
+                        corNotification.Description = string.Format("{0} hash shared all his contacts with out.", curAcc.Alias);
+                        correspondingAccount.Addition.Notifications.Add(corNotification);
+                        
+                        var curNotification = new Notification();
+                        curNotification.Description = string.Format("You shared all your contacts with {0}.", correspondingAccount.Alias);
+                        curAcc.Addition.Notifications.Add(curNotification);
 
                         context.SaveChanges();
                     }
@@ -115,6 +126,44 @@ namespace SpreadBase.Controllers
                 }
             }
             return RedirectToAction("AddContact");
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult DisableNotification(int id)
+        {
+            var notification = context.Notifications.Where(p => p.ID == id).FirstOrDefault();
+            if (notification != null)
+            {
+                notification.IsVisible = false;
+                context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+        [ValidateAntiForgeryToken]
+        [AjaxOnly]
+        [HttpPost]
+        public string DisableNotificationAsync(int id)
+        {
+            if (id < 0)
+                return "id<0";
+            var notification = context.Notifications.Where(p => p.ID == id).FirstOrDefault();
+            if (notification == null)
+                return "notificationNotExistent";
+            else
+            {
+                notification.IsVisible = false;
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch(Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            return "ok";
         }
     }
 }

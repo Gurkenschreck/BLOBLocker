@@ -8,12 +8,8 @@ using System.Web.Mvc;
 namespace SpreadBase.Controllers
 {
     [Authorize(Roles="Moderator, Administrator")]
-    public class SupportController : Controller
+    public class SupportController : BaseController
     {
-        SpreadBaseContext context = new SpreadBaseContext();
-
-        //
-        // GET: /Support/
         [AllowAnonymous]
         [HttpGet]
         public ActionResult Index()
@@ -33,10 +29,11 @@ namespace SpreadBase.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public ActionResult ShowUser(string name)
         {
-            Account found = context.Accounts.FirstOrDefault(p => p.Alias == name);
+            Account found = GetAccount(name);
             return View(found);
         }
     }

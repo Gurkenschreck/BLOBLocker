@@ -1,49 +1,74 @@
 ﻿@model SpreadBase.Models.Account
 
 @{
-    ViewBag.Title = "Control Panel";
+    ViewBag.Title = SpreadBase.Resources.Panel.Strings.PageTitle;
 }
 
 <h2>Control Panel</h2>
 
 
-Add a new contact
+@SpreadBase.Resources.Panel.Strings.AddAccount
 <p>
     @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
     {
         Html.ValidationSummary();
-        
-        @:Alias: @Html.TextBox("addAlias")
+
+        <text>@SpreadBase.Resources.Panel.Strings.lbl_AddAccount @Html.TextBox("addAlias")</text>
         @Html.AntiForgeryToken()
-        <input type="submit" value="Add" />
+        <input type="submit" value="@SpreadBase.Resources.Panel.Strings.btn_AddAccount" />
     }
 </p>
-Share all your contacts
+@SpreadBase.Resources.Panel.Strings.ShareWith
 <p>
     @using (Html.BeginForm("ShareContacts", "Panel", FormMethod.Post))
     {
         Html.ValidationSummary();
-        @:Share with: @Html.TextBox("shareWithAlias")
+        <text>@SpreadBase.Resources.Panel.Strings.lbl_ShareWith @Html.TextBox("shareWithAlias")</text>
         @Html.AntiForgeryToken()
-        <input type="submit" value="Add" />
+        <input type="submit" value="@SpreadBase.Resources.Panel.Strings.btn_ShareWith" />
     }
 </p>
 
-All your contacts
+@SpreadBase.Resources.Panel.Strings.ContactList
 <p>
-    @Html.Partial("~/Views/Panel/ContactList.cshtml", Model)
+    @Html.Partial("~/Views/Panel/ContactList.cshtml", Model.Addition)
 </p>
 <hr />
-Notifications
+@SpreadBase.Resources.Panel.Strings.Notifications
 <p>
-    <table>
-        @foreach(SpreadBase.Models.Notification not in Model.Addition.Notifications)
+
+        @using (Html.BeginForm("DisableNotification", "Panel", FormMethod.Post))
         {
-        <tr>
-            <td>@not.Description</td>
-            <td>@not.CreatedOn</td>
-            <td><button value="@not.ID">X</button></td>
-        </tr>
+            <table>
+
+                @foreach (SpreadBase.Models.Notification not in Model.Addition.Notifications)
+                {
+                    if (not.IsVisible)
+                    {
+                    <tr>
+                        <td>@not.Description</td>
+                        <td>@not.CreatedOn</td>
+                        <td><button type="submit" name="id" value="@not.ID">X</button></td>
+                    </tr>
+                    }
+                }
+            </table>
+
+            <span id="notificationAntiForgeryToken">@Html.AntiForgeryToken()</span>
         }
-    </table>
+    <script>
+        
+        $(function () {
+            $('button[type=submit]').click(function () {
+                var url = "/Panel/DisableNotificationAsync";
+                var clickedButton = $(this);
+                var notID = clickedButton.attr('value');
+                var notAFT = $("input[name=__RequestVerificationToken]");
+                $.post(url, { id: notID, "__RequestVerificationToken": notAFT.attr('value') }, function (data) {
+                    clickedButton.parent().parent().toggle(250);
+                });
+                return false;
+            })
+        });
+    </script>
 </p>

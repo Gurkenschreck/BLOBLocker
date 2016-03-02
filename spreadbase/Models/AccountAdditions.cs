@@ -13,14 +13,14 @@ namespace SpreadBase.Models
         public AccountAddition()
         {
             CreatedOn = DateTime.Now;
-            Contacts = new List<Account>();
+            Contacts = new List<Contact>();
             Notifications = new List<Notification>();
         }
         [Key]
         public int ID { get; set; }
         [Display(Name = "AccountAddition_Contacts",
             ResourceType = typeof(Resources.Models.Models))]
-        public virtual ICollection<Account> Contacts { get; set; }
+        public virtual ICollection<Contact> Contacts { get; set; }
         [Display(Name = "AccountAddition_Notifications",
             ResourceType = typeof(Resources.Models.Models))]
         public virtual ICollection<Notification> Notifications { get; set; }

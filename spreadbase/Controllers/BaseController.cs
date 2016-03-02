@@ -21,5 +21,18 @@ namespace SpreadBase.Controllers
             }
             base.Dispose(disposing);
         }
+
+
+        protected Account GetAccount()
+        {
+            string name = HttpContext.User.Identity.Name;
+            return context.Accounts.FirstOrDefault(p => p.Alias == name);
+        }
+        protected Account GetAccount(string name)
+        {
+            if(name == null)
+                name = HttpContext.User.Identity.Name;
+            return context.Accounts.FirstOrDefault(p => p.Alias == name);
+        }
     }
 }

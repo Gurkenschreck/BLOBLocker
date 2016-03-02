@@ -153,6 +153,10 @@
     <value>Password</value>
     <comment>The password.</comment>
   </data>
+  <data name="Account_Pools" xml:space="preserve">
+    <value>Pools</value>
+    <comment>The pools</comment>
+  </data>
   <data name="Account_Roles" xml:space="preserve">
     <value>Your roles</value>
     <comment>All account roles (basic user, admin, etc)</comment>

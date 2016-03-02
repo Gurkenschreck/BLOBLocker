@@ -16,5 +16,11 @@ namespace SpreadBase.Models
         public byte[] PrivateKey { get; set; }
         public string PublicKeySignature { get; set; }
         public byte[] IV { get; set; }
+
+        // Optional
+        public int RSAKeySize { get; set; }
+        public byte[] Key { get; set; }
+        public int KeySize { get; set; }
+        public int IterationCount { get; set; }
     }
 }

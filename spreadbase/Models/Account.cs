@@ -28,11 +28,21 @@ namespace SpreadBase.Models
             ResourceType = typeof(Resources.Models.Models))]
         public byte[] Salt { get; set; }
 
+        [ForeignKey("Config")]
+        public int ConfigID { get; set; }
         public virtual CryptoConfig Config { get; set; }
+        [ForeignKey("Addition")]
+        public int AdditionID { get; set; }
         public virtual AccountAddition Addition { get; set; }
         [Display(Name = "Account_Roles",
             ResourceType = typeof(Resources.Models.Models))]
         public virtual ICollection<AccountRoleLink> Roles { get; set; }
+        [Display(Name="Account_Pools",
+            ResourceType= typeof(Resources.Models.Models))]
+        public virtual ICollection<Pool> Pools { get; set; }
+        [Display(Name = "Account_ForeignPools",
+            ResourceType = typeof(Resources.Models.Models))]
+        public virtual ICollection<PoolShare> ForeignPools { get; set; }
         [Display(Name = "Account_IsEnabled",
             ResourceType = typeof(Resources.Models.Models))]
         public bool IsEnabled { get; set; }

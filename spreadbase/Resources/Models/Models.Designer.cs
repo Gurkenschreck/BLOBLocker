@@ -88,6 +88,15 @@ namespace SpreadBase.Resources.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pools.
+        /// </summary>
+        public static string Account_Pools {
+            get {
+                return ResourceManager.GetString("Account_Pools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your roles.
         /// </summary>
         public static string Account_Roles {

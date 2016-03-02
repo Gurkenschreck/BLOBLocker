@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 
-namespace SpreadBase.App_Code
+namespace SpreadBase.App_Code.Validation
 {
     public class SBRoleProvider : RoleProvider
     {
