@@ -13,6 +13,7 @@ namespace SpreadBase.Models
         {
             CreatedOn = DateTime.Now;
             IsActive = true;
+            Participents = new List<PoolShare>();
         }
         [Key]
         public int ID { get; set; }

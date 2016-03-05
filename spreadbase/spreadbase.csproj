@@ -129,7 +129,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\Membership\AccountFactory.cs" />
+    <Compile Include="App_Code\ModelFactory\AccountFactory.cs" />
     <Compile Include="App_Code\Validation\AjaxOnlyAttribute.cs" />
     <Compile Include="Controllers\GlobalizationController.cs" />
     <Compile Include="Migrations\201603021954559_Initial.cs" />
@@ -319,6 +319,7 @@
     <Content Include="Views\Support\Faq.cshtml" />
     <Content Include="Views\Support\ShowUser.cshtml" />
     <Content Include="Views\Panel\ContactList.cshtml" />
+    <Content Include="Views\Panel\Build.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

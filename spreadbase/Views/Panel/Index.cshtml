@@ -56,19 +56,49 @@
 
             <span id="notificationAntiForgeryToken">@Html.AntiForgeryToken()</span>
         }
-    <script>
-        
-        $(function () {
-            $('button[type=submit]').click(function () {
-                var url = "/Panel/DisableNotificationAsync";
-                var clickedButton = $(this);
-                var notID = clickedButton.attr('value');
-                var notAFT = $("input[name=__RequestVerificationToken]");
-                $.post(url, { id: notID, "__RequestVerificationToken": notAFT.attr('value') }, function (data) {
-                    clickedButton.parent().parent().toggle(250);
-                });
-                return false;
-            })
-        });
-    </script>
 </p>
+<hr />
+<p>
+    @if (Model.Pools.Count > 0)
+    {
+        <table>
+            <tr>
+                <th>@Html.Label("Name")</th>
+                <th>@Html.Label("Is active")</th>
+                <th>@Html.Label("Creation date")</th>
+                <th>@Html.Label("Participent count")</th>
+            </tr>
+            @foreach (SpreadBase.Models.Pool p in Model.Pools) 
+            { 
+                <tr>
+                    <td>@p.Description</td>
+                    <td>@p.IsActive</td>
+                    <td>@p.CreatedOn</td>
+                    <td>@p.Participents.Count</td>
+                </tr>
+            }
+        </table>
+        @Html.ActionLink("Build some more!", "Build")
+    }
+    else
+    {
+        <text>It seems like you cannot call yourself the owner of a pool. @Html.ActionLink("Build your own here!", "Build")</text>
+    }
+</p>
+
+
+<script>
+
+    $(function () {
+        $('button[type=submit]').click(function () {
+            var url = "/Panel/DisableNotificationAsync";
+            var clickedButton = $(this);
+            var notID = clickedButton.attr('value');
+            var notAFT = $("input[name=__RequestVerificationToken]");
+            $.post(url, { id: notID, "__RequestVerificationToken": notAFT.attr('value') }, function (data) {
+                clickedButton.parent().parent().toggle(250);
+            });
+            return false;
+        })
+    });
+</script>

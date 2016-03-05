@@ -12,7 +12,7 @@
     </p>
     <p>
         @Html.LabelFor(model => model.Alias) *:
-        @Html.TextBoxFor(model => model.Alias)
+        @Html.EditorFor(model => model.Alias)
     </p>
     <p>
         @Html.LabelFor(model => model.Password) *:
@@ -20,8 +20,13 @@
     </p>
     <p>
         @Html.LabelFor(model => model.Addition.ContactEmail)
-        @Html.TextBoxFor(model => model.Addition.ContactEmail)
+        @Html.EditorFor(model => model.Addition.ContactEmail)
     </p>
+    if (ViewBag.IsRegistrationRestricted)
+    {
+        <p>@SpreadBase.Resources.Account.Strings.RegistrationCodeLabel *:
+        @Html.TextBox("registrationCode", "")</p>
+    }
     @Html.AntiForgeryToken();
     <input type="submit" value="@SpreadBase.Resources.Account.Strings.btn_SignUp" />
 }

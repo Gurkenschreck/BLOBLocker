@@ -161,4 +161,24 @@
     <value>Alias and/or password wrong</value>
     <comment>Wrong login creds</comment>
   </data>
+  <data name="LoginDisabled" xml:space="preserve">
+    <value>Login is currently disabled</value>
+    <comment>Login is disabled</comment>
+  </data>
+  <data name="RegistrationCodeLabel" xml:space="preserve">
+    <value>Code:</value>
+    <comment>The label of the textbox</comment>
+  </data>
+  <data name="RegistrationDisabled" xml:space="preserve">
+    <value>Registration is currently disabled</value>
+    <comment>Registration disabled</comment>
+  </data>
+  <data name="RestrictedRegistrationMessage" xml:space="preserve">
+    <value>Registration is currently restricted. You need an invitation code to pass this barrier.</value>
+    <comment>Message indicating if registration is restricted.</comment>
+  </data>
+  <data name="WrongRestrictedRegistrationCode" xml:space="preserve">
+    <value>The registration code is wrong.</value>
+    <comment>If restricted registration is enabled and the code is wrong</comment>
+  </data>
 </root>

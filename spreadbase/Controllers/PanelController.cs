@@ -1,4 +1,6 @@
-﻿using SpreadBase.App_Code.Validation;
+﻿using Cipha.Security.Cryptography.Asymmetric;
+using Cipha.Security.Cryptography.Symmetric;
+using SpreadBase.App_Code.Validation;
 using SpreadBase.Controllers;
 using SpreadBase.Models;
 using System;
@@ -8,6 +10,7 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 
@@ -20,6 +23,59 @@ namespace SpreadBase.Controllers
         {
             var acc = GetAccount();
             return View(acc);
+        }
+
+        [HttpGet]
+        public ActionResult Build()
+        {
+            Pool p = new Pool();
+            return View(p);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Build(Pool newPool)
+        {
+            if(newPool == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if(ModelState.IsValid)
+            {
+                int symKeySize = Convert.ToInt32(HttpContext.Application["security.PoolKeySize"]);
+                int rsaKeySize = Convert.ToInt32(HttpContext.Application["security.PoolRSAKeySize"]);
+                int poolSize = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]);
+                int hashIterations = Convert.ToInt32(HttpContext.Application["security.HashIterationCount"]);
+
+                Account curAcc = GetAccount();
+                Pool pool = new Pool();
+                pool.Description = newPool.Description;
+                pool.OwnerID = curAcc.ID;
+                SpreadBase.Models.CryptoConfig config = new SpreadBase.Models.CryptoConfig();
+                
+                pool.Salt = Cipha.Security.Cryptography.Utilities.GenerateBytes(poolSize);
+
+                using (var symCipher = new SymmetricCipher<AesManaged>(symKeySize))
+                {
+
+                    config.IV = symCipher.IV;
+                    config.Key = symCipher.Key;
+                    config.KeySize = symCipher.KeySize;
+                    config.IterationCount = hashIterations;
+                    using (var asymCipher = new RSACipher<RSACryptoServiceProvider>())
+                    {
+                        config.RSAKeySize = asymCipher.KeySize;
+                        config.PublicKey = asymCipher.ToXmlString(false);
+                        config.PrivateKey = Convert.FromBase64String(asymCipher.ToEncryptedXmlString<AesManaged>(true, symCipher.Key, symCipher.IV));
+                        config.PublicKeySignature = asymCipher.SignStringToString<SHA256Cng>(config.PublicKey);
+                    }
+                }
+                pool.Config = config;
+                context.Pools.Add(pool);
+                context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(newPool);
         }
 
         [HttpGet]

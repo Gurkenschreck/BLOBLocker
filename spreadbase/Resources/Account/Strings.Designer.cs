@@ -115,6 +115,15 @@ namespace SpreadBase.Resources.Account {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login is currently disabled.
+        /// </summary>
+        public static string LoginDisabled {
+            get {
+                return ResourceManager.GetString("LoginDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sign in.
         /// </summary>
         public static string PageLoginTitle {
@@ -151,11 +160,47 @@ namespace SpreadBase.Resources.Account {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code:.
+        /// </summary>
+        public static string RegistrationCodeLabel {
+            get {
+                return ResourceManager.GetString("RegistrationCodeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registration is currently disabled.
+        /// </summary>
+        public static string RegistrationDisabled {
+            get {
+                return ResourceManager.GetString("RegistrationDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registration is currently restricted. You need an invitation code to pass this barrier..
+        /// </summary>
+        public static string RestrictedRegistrationMessage {
+            get {
+                return ResourceManager.GetString("RestrictedRegistrationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alias and/or password wrong.
         /// </summary>
         public static string WrongAliasOrPassword {
             get {
                 return ResourceManager.GetString("WrongAliasOrPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The registration code is wrong..
+        /// </summary>
+        public static string WrongRestrictedRegistrationCode {
+            get {
+                return ResourceManager.GetString("WrongRestrictedRegistrationCode", resourceCulture);
             }
         }
     }

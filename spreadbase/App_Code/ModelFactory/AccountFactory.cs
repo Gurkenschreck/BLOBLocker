@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
 
-namespace SpreadBase.App_Code.Membership
+namespace SpreadBase.App_Code.ModelFactory
 {
     public class AccountFactory
     {

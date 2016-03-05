@@ -2,7 +2,7 @@
 using Cipha.Security.Cryptography.Asymmetric;
 using Cipha.Security.Cryptography.Hash;
 using Cipha.Security.Cryptography.Symmetric;
-using SpreadBase.App_Code.Membership;
+using SpreadBase.App_Code.ModelFactory;
 using SpreadBase.Controllers;
 using SpreadBase.Models;
 using System;
@@ -27,13 +27,14 @@ namespace SpreadBase.Controllers
         [HttpGet]
         public ActionResult SignUp()
         {
+            ViewBag.IsRegistrationRestricted = bool.Parse(HttpContext.Application["system.RestrictRegistration"] as string);
             return View();
         }
 
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult SignUp(Account acc)
+        public ActionResult SignUp(Account acc, string registrationCode)
         {
             if(acc == null)
             {
@@ -47,6 +48,20 @@ namespace SpreadBase.Controllers
             {
                 ModelState.AddModelError("InvalidPassword", Resources.Account.Strings.InvalidPassword);
             }
+            bool enableRegistration = bool.Parse(HttpContext.Application["system.EnableRegistration"] as string);
+            if(!enableRegistration)
+            {
+                ModelState.AddModelError("RegistrationDisabled", Resources.Account.Strings.RegistrationDisabled);
+            }
+            bool isRegistrationRestricted = bool.Parse(HttpContext.Application["system.RestrictRegistration"] as string);
+            if (isRegistrationRestricted)
+            {
+                string expectedRegistrationCode = HttpContext.Application["system.RestrictedRegistrationCode"] as string;
+                if (registrationCode != expectedRegistrationCode)
+                {
+                    ModelState.AddModelError("RegistrationDisabled", Resources.Account.Strings.RegistrationDisabled);
+                }
+            }
             // Check if info is correct
             if(ModelState.IsValid)
             {
@@ -57,6 +72,7 @@ namespace SpreadBase.Controllers
                     AccountFactory fact = new AccountFactory();
                     newAcc = fact.CreateNewAccount(this.HttpContext, acc);
                     bool createPersistentCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
+                    int cookieKeySize = Convert.ToInt32(HttpContext.Application["security.CookieCryptoKeySize"]);
 
                     string basicRoleName = HttpContext.Application["account.DefaultRole"] as string;
                     newAcc.Roles.Add(new AccountRoleLink
@@ -73,7 +89,21 @@ namespace SpreadBase.Controllers
                     context.Accounts.Add(newAcc);
                     context.Additions.Add(newAcc.Addition);
                     context.SaveChanges();
-                    
+
+                    using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV))
+                    {
+                        using (var cookieCipher = new SymmetricCipher<AesManaged>(cookieKeySize))
+                        {
+                            Session["CookieKey"] = cookieCipher.Key;
+                            Session["CookieIV"] = cookieCipher.IV; // security.CookieCryptoKeySize
+                            string key = symC.DecryptToString(newAcc.Config.PrivateKey);
+                            HttpCookie cookie = new HttpCookie("CookiePassword",
+                                cookieCipher.EncryptToString(key));
+                            cookie.Secure = true;
+                            
+                            Response.Cookies.Add(cookie);
+                        }
+                    }
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
                     return RedirectToAction("Index", "Panel");
                 }
@@ -108,6 +138,11 @@ namespace SpreadBase.Controllers
             {
                 ModelState.AddModelError("InvalidPassword", Resources.Account.Strings.InvalidPassword);
             }
+            bool loginEnabled = bool.Parse(HttpContext.Application["system.EnableLogin"] as string);
+            if (!loginEnabled)
+            {
+                ModelState.AddModelError("LoginClosed", Resources.Account.Strings.LoginDisabled);
+            }
             if(ModelState.IsValid)
             {
                 // Find corresponsing existing account
@@ -116,19 +151,29 @@ namespace SpreadBase.Controllers
                 // validate password
                 if (correspondingAcc != null)
                 {
+                    
                     if (correspondingAcc.IsEnabled)
                     {
+                        bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
+                        int cookieKeySize = Convert.ToInt32(HttpContext.Application["security.CookieCryptoKeySize"]);
+
                         using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV))
                         {
                             try
                             {
-                                string decr = symC.DecryptToString(correspondingAcc.Password);
-                                bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
-
                                 FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                                 correspondingAcc.Addition.LastLogin = DateTime.Now;
                                 context.SaveChangesAsync();
-
+                                
+                                using(var cookieCipher = new SymmetricCipher<AesManaged>(cookieKeySize))
+                                {
+                                    Session["CookieKey"] = cookieCipher.Key;
+                                    Session["CookieIV"] = cookieCipher.IV; // security.CookieCryptoKeySize
+                                    HttpCookie cookie = new HttpCookie("CookiePassword",
+                                        cookieCipher.EncryptToString(symC.Decrypt(correspondingAcc.Config.PrivateKey)));
+                                    cookie.Secure = true;
+                                    Response.Cookies.Add(cookie);
+                                }
                                 return RedirectToAction("Index", "Panel");
                             }
                             catch (CryptographicException)
@@ -164,6 +209,11 @@ namespace SpreadBase.Controllers
             var customCulture = Session["customCulture"] as CultureInfo;
             FormsAuthentication.SignOut();
             Session.Clear();
+            string[] myCookies = Request.Cookies.AllKeys;
+            foreach (string cookie in myCookies)
+            {
+                Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
+            }
             if(customCulture != null)
                 Session["customCulture"] = customCulture;
             return RedirectToAction("Index", "Home");
