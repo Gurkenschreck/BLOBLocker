@@ -1,0 +1,24 @@
+﻿@model CryptoPool.Entities.Models.Pool
+@{
+    ViewBag.Title = "Build pool";
+}
+
+<h2>Build your very own pool!</h2>
+
+
+@using(Html.BeginForm())
+{
+    <table>
+        <tr>
+            <td>@Html.ValidationSummary()</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(p => p.Description)</td>
+            <td>@Html.TextBoxFor(p => p.Description)</td>
+        </tr>
+        <tr>
+            <td>@Html.AntiForgeryToken()</td>
+            <td><button type="submit">Start building!</button></td>
+        </tr>
+    </table>
+}

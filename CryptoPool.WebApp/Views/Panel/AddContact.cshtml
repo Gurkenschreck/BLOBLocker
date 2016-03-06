@@ -1,0 +1,23 @@
+﻿@model CryptoPool.Entities.Models.Account
+@{
+    ViewBag.Title = "AddContact";
+
+}
+
+<h2>AddContact</h2>
+
+Add a new contact
+<p>
+    @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
+    {
+        Html.ValidationSummary();
+
+        @:Alias: @Html.TextBox("addAlias")
+        @Html.AntiForgeryToken()
+        <input type="submit" value="Add" />
+    }
+</p>
+
+<p>
+    @Html.Partial("~/Views/Panel/ContactList.cshtml", Model.Addition)
+</p>

@@ -1,0 +1,32 @@
+﻿@model CryptoPool.Entities.Models.Account
+@{
+    ViewBag.Title = CryptoPool.WebApp.Resources.Account.Strings.PageRegisterTitle;
+}
+
+<h2>SignUp</h2>
+
+@using (Html.BeginForm())
+{
+    <p>
+        @Html.ValidationSummary()
+    </p>
+    <p>
+        @Html.LabelFor(model => model.Alias) *:
+        @Html.EditorFor(model => model.Alias)
+    </p>
+    <p>
+        @Html.LabelFor(model => model.Password) *:
+        @Html.PasswordFor(model => model.Password)
+    </p>
+    <p>
+        @Html.LabelFor(model => model.Addition.ContactEmail)
+        @Html.EditorFor(model => model.Addition.ContactEmail)
+    </p>
+    if (ViewBag.IsRegistrationRestricted)
+    {
+        <p>@CryptoPool.WebApp.Resources.Account.Strings.RegistrationCodeLabel *:
+        @Html.TextBox("registrationCode", "")</p>
+    }
+    @Html.AntiForgeryToken();
+    <input type="submit" value="@CryptoPool.WebApp.Resources.Account.Strings.btn_SignUp" />
+}

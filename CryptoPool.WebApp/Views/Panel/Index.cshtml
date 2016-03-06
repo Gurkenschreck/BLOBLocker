@@ -1,0 +1,104 @@
+﻿@model CryptoPool.Entities.Models.Account
+
+@{
+    ViewBag.Title = CryptoPool.WebApp.Resources.Panel.Strings.PageTitle;
+}
+
+<h2>Control Panel</h2>
+
+
+@CryptoPool.WebApp.Resources.Panel.Strings.AddAccount
+<p>
+    @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
+    {
+        Html.ValidationSummary();
+
+        <text>@CryptoPool.WebApp.Resources.Panel.Strings.lbl_AddAccount @Html.TextBox("addAlias")</text>
+        @Html.AntiForgeryToken()
+        <input type="submit" value="@CryptoPool.WebApp.Resources.Panel.Strings.btn_AddAccount" />
+    }
+</p>
+@CryptoPool.WebApp.Resources.Panel.Strings.ShareWith
+<p>
+    @using (Html.BeginForm("ShareContacts", "Panel", FormMethod.Post))
+    {
+        Html.ValidationSummary();
+        <text>@CryptoPool.WebApp.Resources.Panel.Strings.lbl_ShareWith @Html.TextBox("shareWithAlias")</text>
+        @Html.AntiForgeryToken()
+        <input type="submit" value="@CryptoPool.WebApp.Resources.Panel.Strings.btn_ShareWith" />
+    }
+</p>
+
+@CryptoPool.WebApp.Resources.Panel.Strings.ContactList
+<p>
+    @Html.Partial("~/Views/Panel/ContactList.cshtml", Model.Addition)
+</p>
+<hr />
+@CryptoPool.WebApp.Resources.Panel.Strings.Notifications
+<p>
+
+        @using (Html.BeginForm("DisableNotification", "Panel", FormMethod.Post))
+        {
+            <table>
+
+                @foreach (CryptoPool.Entities.Models.Notification not in Model.Addition.Notifications)
+                {
+                    if (not.IsVisible)
+                    {
+                    <tr>
+                        <td>@not.Description</td>
+                        <td>@not.CreatedOn</td>
+                        <td><button type="submit" name="id" value="@not.ID">X</button></td>
+                    </tr>
+                    }
+                }
+            </table>
+
+            <span id="notificationAntiForgeryToken">@Html.AntiForgeryToken()</span>
+        }
+</p>
+<hr />
+<p>
+    @if (Model.Pools.Count > 0)
+    {
+        <table>
+            <tr>
+                <th>@Html.Label("Name")</th>
+                <th>@Html.Label("Is active")</th>
+                <th>@Html.Label("Creation date")</th>
+                <th>@Html.Label("Participent count")</th>
+            </tr>
+            @foreach (CryptoPool.Entities.Models.Pool p in Model.Pools) 
+            { 
+                <tr>
+                    <td>@p.Description</td>
+                    <td>@p.IsActive</td>
+                    <td>@p.CreatedOn</td>
+                    <td>@p.Participents.Count</td>
+                </tr>
+            }
+        </table>
+        @Html.ActionLink("Build some more!", "Build")
+    }
+    else
+    {
+        <text>It seems like you cannot call yourself the owner of a pool. @Html.ActionLink("Build your own here!", "Build")</text>
+    }
+</p>
+
+
+<script>
+
+    $(function () {
+        $('button[type=submit]').click(function () {
+            var url = "/Panel/DisableNotificationAsync";
+            var clickedButton = $(this);
+            var notID = clickedButton.attr('value');
+            var notAFT = $("input[name=__RequestVerificationToken]");
+            $.post(url, { id: notID, "__RequestVerificationToken": notAFT.attr('value') }, function (data) {
+                clickedButton.parent().parent().toggle(250);
+            });
+            return false;
+        })
+    });
+</script>
