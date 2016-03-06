@@ -30,6 +30,7 @@ namespace CryptoPool.WebApp
            
             using (CryptoPoolContext context = new CryptoPoolContext())
             {
+                var res = context.Database.ExecuteSqlCommand("SELECT * FROM SystemConfigurations");
                 foreach(SystemConfiguration conf in context.SystemConfigurations)
                 {
                     Application[conf.Key] = conf.Value;

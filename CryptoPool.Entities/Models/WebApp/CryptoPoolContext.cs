@@ -22,7 +22,7 @@ namespace CryptoPool.Entities.Models.WebApp
 
         public CryptoPoolContext()
 #if DEBUG
-            :base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.WebApp.CryptoPoolContext;Integrated Security=True")
+            :base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.CryptoPoolContext;Integrated Security=True")
 #endif
 #if !DEBUG
             :base(ConfigurationManager.ConnectionStrings["CryptoPoolEntities"].ConnectionString)
