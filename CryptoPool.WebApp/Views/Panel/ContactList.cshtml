@@ -1,11 +1,11 @@
-﻿@model CryptoPool.Entities.Models.AccountAddition
+﻿@model CryptoPool.Entities.Models.WebApp.AccountAddition
 
 @{
     Layout = null;
 }
 
 <ul>
-    @foreach (CryptoPool.Entities.Models.Contact acc in Model.Contacts)
+    @foreach (CryptoPool.Entities.Models.WebApp.Contact acc in Model.Contacts)
     {
         <li>@acc.Account.Alias</li>
     }

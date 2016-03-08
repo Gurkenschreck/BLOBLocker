@@ -55,7 +55,13 @@ namespace CryptoPool.Code.Membership
 
         public override string[] GetRolesForUser(string username)
         {
-            throw new NotImplementedException();
+            using (var context = new AdminToolContext())
+            {
+                var acc = context.Accounts.FirstOrDefault(p => p.Alias == username);
+
+                string[] roles = acc.Roles.Select(p => p.Role.Definition).ToArray();
+                return roles;
+            }
         }
 
         public override string[] GetUsersInRole(string roleName)

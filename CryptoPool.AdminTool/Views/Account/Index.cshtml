@@ -1,7 +1,26 @@
-﻿
+﻿@model CryptoPool.Entities.Models.AdminTool.Account
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
 
+
+@using(Html.BeginForm())
+{
+    <text>@Html.ValidationSummary()</text>
+    <table>
+        <tr>
+            <td>Alias*:</td>
+            <td>@Html.EditorFor(p => p.Alias)</td>
+        </tr>
+        <tr>
+            <td>Password*:</td>
+            <td>@Html.Password("pw")</td>
+        </tr>
+        <tr>
+            <td>@Html.AntiForgeryToken()</td>
+            <td><button type="submit">Log in</button></td>
+        </tr>
+    </table>    
+}

@@ -1,4 +1,4 @@
-﻿@model CryptoPool.Entities.Models.Account
+﻿@model CryptoPool.Entities.Models.WebApp.Account
 
 @{
     ViewBag.Title = CryptoPool.WebApp.Resources.Panel.Strings.PageTitle;
@@ -41,7 +41,7 @@
         {
             <table>
 
-                @foreach (CryptoPool.Entities.Models.Notification not in Model.Addition.Notifications)
+                @foreach (CryptoPool.Entities.Models.WebApp.Notification not in Model.Addition.Notifications)
                 {
                     if (not.IsVisible)
                     {
@@ -68,7 +68,7 @@
                 <th>@Html.Label("Creation date")</th>
                 <th>@Html.Label("Participent count")</th>
             </tr>
-            @foreach (CryptoPool.Entities.Models.Pool p in Model.Pools) 
+            @foreach (CryptoPool.Entities.Models.WebApp.Pool p in Model.Pools) 
             { 
                 <tr>
                     <td>@p.Description</td>
