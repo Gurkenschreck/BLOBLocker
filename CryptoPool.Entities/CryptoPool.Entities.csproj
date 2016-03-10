@@ -49,13 +49,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Migrations\201603061935498_CPInitial.cs" />
-    <Compile Include="Migrations\201603061935498_CPInitial.Designer.cs">
-      <DependentUpon>201603061935498_CPInitial.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\201603061950060_ATInitial.cs" />
     <Compile Include="Migrations\201603061950060_ATInitial.Designer.cs">
       <DependentUpon>201603061950060_ATInitial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603091756125_CPInitial.cs" />
+    <Compile Include="Migrations\201603091756125_CPInitial.Designer.cs">
+      <DependentUpon>201603091756125_CPInitial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603092116051_AddedPoolEnableConfigs.cs" />
+    <Compile Include="Migrations\201603092116051_AddedPoolEnableConfigs.Designer.cs">
+      <DependentUpon>201603092116051_AddedPoolEnableConfigs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603092246440_AddedUniqueIdentifierToPool.cs" />
+    <Compile Include="Migrations\201603092246440_AddedUniqueIdentifierToPool.Designer.cs">
+      <DependentUpon>201603092246440_AddedUniqueIdentifierToPool.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\AdminToolConfiguration.cs" />
     <Compile Include="Migrations\CryptoPoolConfiguration.cs" />
@@ -66,8 +74,10 @@
     <Compile Include="Models\WebApp\Account.cs" />
     <Compile Include="Models\WebApp\AccountAdditions.cs" />
     <Compile Include="Models\WebApp\AccountRole.cs" />
+    <Compile Include="Models\WebApp\AssignedMemory.cs" />
     <Compile Include="Models\WebApp\Contact.cs" />
     <Compile Include="Models\WebApp\CryptoConfiguration.cs" />
+    <Compile Include="Models\WebApp\MemoryPool.cs" />
     <Compile Include="Models\WebApp\Notification.cs" />
     <Compile Include="Models\WebApp\Pool.cs" />
     <Compile Include="Models\WebApp\PoolShare.cs" />
@@ -81,11 +91,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603061935498_CPInitial.resx">
-      <DependentUpon>201603061935498_CPInitial.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603061950060_ATInitial.resx">
       <DependentUpon>201603061950060_ATInitial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603091756125_CPInitial.resx">
+      <DependentUpon>201603091756125_CPInitial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603092116051_AddedPoolEnableConfigs.resx">
+      <DependentUpon>201603092116051_AddedPoolEnableConfigs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603092246440_AddedUniqueIdentifierToPool.resx">
+      <DependentUpon>201603092246440_AddedUniqueIdentifierToPool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

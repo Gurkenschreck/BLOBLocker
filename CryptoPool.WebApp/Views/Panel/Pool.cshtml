@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Pool";
+
+    CryptoPool.Entities.Models.WebApp.Account acc = ViewBag.CurrentAccount;
+    CryptoPool.Entities.Models.WebApp.Pool pool = ViewBag.Pool;
+    int assignedSpace = ViewBag.AssignedPoolSpace;
+    
+}
+
+<h2>Pool - @pool.Description - @assignedSpace MB</h2>
+
+@if(pool.ChatEnabled)
+{
+    <p>Chat goes here</p>
+}
+@if(pool.FileStorageEnabled)
+{
+    <p>Filestorage goes here</p>
+}
+@if(pool.LinkRepositoryEnabled)
+{
+    <p>Link repository hoes here</p>
+}
+
+<p>
+    @Html.ActionLink("Settings", "PoolConfig", new { puid = pool.UniqueIdentifier})
+</p>
+<ul>
+    <li>@pool.Owner.Alias</li>
+    @foreach(var usr in pool.Participants)
+    {
+        <li>@usr.SharedWith.Alias</li>
+    }
+</ul>

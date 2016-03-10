@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CryptoPool.Entities.Models.Models.WebApp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -45,5 +46,9 @@ namespace CryptoPool.Entities.Models.WebApp
         [Display(Name = "Account_IsEnabled",
             ResourceType = typeof(Resources.Models))]
         public bool IsEnabled { get; set; }
+
+        [ForeignKey("MemoryPool")]
+        public int MemoryPoolID { get; set; }
+        public virtual MemoryPool MemoryPool { get; set; }
     }
 }

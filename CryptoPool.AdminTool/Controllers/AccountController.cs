@@ -56,8 +56,8 @@ namespace CryptoPool.AdminTool.Controllers
         [HttpGet]
         public ActionResult LogOut()
         {
-            FormsAuthentication.SignOut();
-            Session.Clear();
+            Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
+            Session.Abandon();
             return View();
         }
     }

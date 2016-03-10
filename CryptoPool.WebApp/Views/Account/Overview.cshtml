@@ -1,4 +1,5 @@
-﻿@{
+﻿@model CryptoPool.Entities.Models.WebApp.Account
+@{
     ViewBag.Title = CryptoPool.WebApp.Resources.Account.Strings.PageOverviewTitle;
 }
 
@@ -11,3 +12,89 @@ Some cool stuff would be
     <li>Account Lock in between a timespan (like 20:00 - 16:30) for security</li>
     <li>Change/Set contact email</li>
 </ul>
+
+<hr />
+Account Information
+<table>
+    <tr>
+        <td>@Html.LabelFor(p => p.ID)</td>
+        <td>@Html.ValueFor(p => p.ID)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Alias)</td>
+        <td>@Html.ValueFor(p => p.Alias)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.IsEnabled)</td>
+        <td>@Html.ValueFor(p => p.IsEnabled)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Password)</td>
+        <td>@Html.ValueFor(p => p.Password)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Salt)</td>
+        <td>@Html.ValueFor(p => p.Salt)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Roles)</td>
+        <td>
+            @foreach(var role in Model.Roles) { <text>@role.Role,</text> }
+        </td>
+    </tr>
+</table>
+
+<hr />
+Additional
+<table>
+    <tr>
+        <td>@Html.LabelFor(p => p.Addition.ContactEmail)</td>
+        <td>@Html.ValueFor(p => p.Addition.ContactEmail)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Addition.Contacts)</td>
+        <td>
+            @foreach (var contact in Model.Addition.Contacts)
+            { <text>@contact.Account.Alias,</text> }
+        </td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Addition.CreatedOn)</td>
+        <td>@Html.ValueFor(p => p.Addition.CreatedOn)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Addition.LastFailedLogin)</td>
+        <td>@Html.ValueFor(p => p.Addition.LastFailedLogin)</td>
+    </tr>
+</table>
+<hr />
+Your memory pool
+<table>
+    <tr>
+        <td>@Html.LabelFor(p => p.MemoryPool.BasicSpace)</td>
+        <td>@Html.ValueFor(p => p.MemoryPool.BasicSpace)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.MemoryPool.AdditionalSpace)</td>
+        <td>@Html.ValueFor(p => p.MemoryPool.AdditionalSpace)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.MemoryPool.AssignedMemory)</td>
+        <td>@Html.ValueFor(p => p.MemoryPool.AssignedMemory.Count)</td>
+    </tr>
+</table>
+<hr />
+Your pools
+<table>
+    @foreach(var pool in Model.Pools)
+    {
+        <tr>
+            <td>Pool ID: @pool.ID</td>
+            <td>Is active: @pool.IsActive</td>
+            <td>Description: @pool.Description</td>
+            <td>Participant count: @pool.Participants.Count</td>
+            <td>Creation date: @pool.CreatedOn</td>
+            <td>Unique pool salt: @pool.Salt</td>
+        </tr>
+    }
+</table>

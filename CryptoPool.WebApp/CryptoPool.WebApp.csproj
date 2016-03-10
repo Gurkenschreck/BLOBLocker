@@ -299,6 +299,11 @@
     <Content Include="Views\Support\ShowUser.cshtml" />
     <Content Include="Views\Panel\ContactList.cshtml" />
     <Content Include="Views\Panel\Build.cshtml" />
+    <Content Include="Views\Panel\JoinPool.cshtml" />
+    <Content Include="Views\Panel\Pool.cshtml" />
+    <Content Include="Views\Panel\PoolConfig.cshtml" />
+    <Content Include="Views\Panel\OwnerConfiguration.cshtml" />
+    <Content Include="Views\Panel\GeneralConfiguration.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

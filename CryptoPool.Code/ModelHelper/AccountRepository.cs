@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using CryptoPool.Entities.Models.WebApp;
+using CryptoPool.Entities.Models.Models.WebApp;
 
 namespace CryptoPool.Code.ModelHelper
 {
@@ -34,12 +35,16 @@ namespace CryptoPool.Code.ModelHelper
         {
             return context.Accounts.FirstOrDefault(p => p.Alias == name);
         }
-        public Account CreateNew(string alias, string password, string contactEmail, CryptoPool.Code.ModelHelper.CryptoConfigRepository.Config cryptoConf)
+        public Account CreateNew(string alias, string password, string contactEmail, int basicSpace, CryptoPool.Code.ModelHelper.CryptoConfigRepository.Config cryptoConf)
         {
             Account acc = new Account();
             acc.Alias = alias;
             acc.Addition = new AccountAddition();
             acc.Roles = new List<AccountRoleLink>();
+            acc.MemoryPool = new MemoryPool();
+            acc.MemoryPool.BasicSpace = basicSpace;
+            acc.MemoryPool.AdditionalSpace = 0;
+            acc.MemoryPool.Owner = acc;
             acc.Addition.Contacts = new List<Contact>();
             acc.Addition.Notifications = new List<Notification>();
             acc.Addition.ContactEmail = contactEmail;
@@ -60,6 +65,15 @@ namespace CryptoPool.Code.ModelHelper
             }
 
             return acc;
+        }
+        public bool HasPoolRights(Account acc, Pool pool)
+        {
+            if (acc.Pools.Any(p => p.ID == pool.ID))
+                return true;
+            if (acc.ForeignPools.Any(p => p.ID == pool.ID))
+                return true;
+
+            return false;
         }
     }
 }

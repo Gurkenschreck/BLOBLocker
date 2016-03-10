@@ -129,6 +129,14 @@
     <value>{0} has added you to his contact list.</value>
     <comment>{0} is account alias which added this account</comment>
   </data>
+  <data name="ShareContactsReceived" xml:space="preserve">
+    <value>{0} hash shared all his contacts with you!</value>
+    <comment>{0} is trigger alias</comment>
+  </data>
+  <data name="ShareContactsShared" xml:space="preserve">
+    <value>You shared all your contacts with {0}.</value>
+    <comment>{0} is corresponding alias</comment>
+  </data>
   <data name="WelcomeMessage" xml:space="preserve">
     <value>Hello, {0}! Nice to see you here.</value>
     <comment>{0} is current alias</comment>

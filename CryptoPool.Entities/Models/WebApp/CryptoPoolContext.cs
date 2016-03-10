@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CryptoPool.Entities.Models.Models.WebApp;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
@@ -17,12 +18,15 @@ namespace CryptoPool.Entities.Models.WebApp
         public DbSet<Pool> Pools { get; set; }
         public DbSet<PoolShare> PoolShares { get; set; }
 
+        public DbSet<MemoryPool> MemoryPools { get; set; }
+        public DbSet<AssignedMemory> AssignedMemory { get; set; }
+
         public DbSet<SystemConfiguration> SystemConfigurations { get; set; }
         public DbSet<Contact> ContactLinks { get; set; }
 
         public CryptoPoolContext()
 #if DEBUG
-            :base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.CryptoPoolContext;Integrated Security=True")
+            :base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.WebApp.CryptoPoolContext;Integrated Security=True")
 #endif
 #if !DEBUG
             :base(ConfigurationManager.ConnectionStrings["CryptoPoolEntities"].ConnectionString)
@@ -41,7 +45,7 @@ namespace CryptoPool.Entities.Models.WebApp
 
             modelBuilder.Entity<PoolShare>()
                 .HasRequired(p => p.Pool)
-                .WithMany(t => t.Participents)
+                .WithMany(t => t.Participants)
                 .HasForeignKey(a => a.PoolID)
                 .WillCascadeOnDelete(false);
 
@@ -50,6 +54,19 @@ namespace CryptoPool.Entities.Models.WebApp
                 .WithMany(t => t.ForeignPools)
                 .HasForeignKey(a => a.SharedWithID)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<AssignedMemory>()
+                .HasRequired(p => p.MemoryPool)
+                .WithMany(t => t.AssignedMemory)
+                .HasForeignKey(q => q.MemoryPoolID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasRequired(p => p.MemoryPool)
+                .WithRequiredPrincipal(t => t.Owner)
+                .WillCascadeOnDelete(false);
+
+
         }
     }
 }

@@ -17,6 +17,7 @@ using CryptoPool.Code.Attributes;
 using CryptoPool.Code.Controllers;
 using CryptoPool.Code.ModelHelper;
 using CryptoPool.Entities.Models.WebApp;
+using Cipha.Security.Cryptography;
 
 namespace CryptoPool.WebApp.Controllers
 {
@@ -31,6 +32,65 @@ namespace CryptoPool.WebApp.Controllers
             var acc = accRepo.GetAccount(HttpContext.User.Identity.Name);
             return View(acc);
         }
+        [HttpGet]
+        public ActionResult JoinPool(string puid)
+        {
+            var tmodelstate = TempData["ModelState"] as ModelStateDictionary;
+            ModelState.Merge(tmodelstate);
+
+            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
+            return View(corPool);
+        }
+
+        [HttpGet]
+        public ActionResult Pool(string puid)
+        {
+            if (string.IsNullOrWhiteSpace(puid))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
+            if (corPool == null)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            if (ModelState.IsValid)
+            {
+                accRepo = new AccountRepository(context);
+                Account curAcc = accRepo.GetAccount(User.Identity.Name);
+                if (accRepo.HasPoolRights(curAcc, corPool))
+                {
+                    ViewBag.CurrentAccount = curAcc;
+                    ViewBag.Pool = corPool;
+                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory.Select(p => p.Space).Sum() : 0;
+                    return View();
+                }
+            }
+            return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
+        }
+
+        [HttpGet]
+        public ActionResult PoolConfig(string puid)
+        {
+            if (string.IsNullOrWhiteSpace(puid))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
+            if (corPool == null)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            if (ModelState.IsValid)
+            {
+                accRepo = new AccountRepository(context);
+                Account curAcc = accRepo.GetAccount(User.Identity.Name);
+                if (accRepo.HasPoolRights(curAcc, corPool))
+                {
+                    ViewBag.CurrentAccount = curAcc;
+                    ViewBag.Pool = corPool;
+                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory.Select(p => p.Space).Sum() : 0;
+                    ViewBag.IsOwner = corPool.OwnerID == curAcc.ID;
+                    return View();
+                }
+            }
+            return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
+        }
+
 
         [HttpGet]
         public ActionResult Build()
@@ -41,7 +101,7 @@ namespace CryptoPool.WebApp.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult Build(Pool newPool)
+        public ActionResult Build([Bind(Exclude="ID, IsActive, CreatedOn, AssignedMemory, Participants, Owner, OwnerID, Salt, Config, CryptoConfig")]Pool newPool)
         {
             if(newPool == null)
             {
@@ -58,6 +118,7 @@ namespace CryptoPool.WebApp.Controllers
                 accRepo = new AccountRepository(context);
                 Account curAcc = accRepo.GetAccount(User.Identity.Name);
                 Pool pool = new Pool();
+                pool.UniqueIdentifier = Convert.ToBase64String(Utilities.GenerateBytes(8));
                 pool.Description = newPool.Description;
                 pool.OwnerID = curAcc.ID;
                 CryptoConfiguration config = new CryptoConfiguration();
@@ -66,7 +127,6 @@ namespace CryptoPool.WebApp.Controllers
 
                 using (var symCipher = new SymmetricCipher<AesManaged>(symKeySize))
                 {
-
                     config.IV = symCipher.IV;
                     config.Key = symCipher.Key;
                     config.KeySize = symCipher.KeySize;
@@ -120,10 +180,8 @@ namespace CryptoPool.WebApp.Controllers
                             AccountID = correspondingAccount.ID
                         });
 
-                        curAcc.Addition.Notifications.Add(NotificationHelper.SendNotification(Resources.Notifications.AddAccount,
-                            correspondingAccount.Alias));
-                        correspondingAccount.Addition.Notifications.Add(NotificationHelper.SendNotification(Resources.Notifications.GetAdded,
-                            curAcc.Alias));
+                        NotificationHelper.SendNotification(curAcc, Resources.Notifications.AddAccount, correspondingAccount.Alias);
+                        NotificationHelper.SendNotification(correspondingAccount, Resources.Notifications.GetAdded, curAcc.Alias);
 
                         context.SaveChanges();
                     }
@@ -170,13 +228,8 @@ namespace CryptoPool.WebApp.Controllers
                             }
                         }
 
-                        var corNotification = new Notification();
-                        corNotification.Description = string.Format("{0} hash shared all his contacts with out.", curAcc.Alias);
-                        correspondingAccount.Addition.Notifications.Add(corNotification);
-                        
-                        var curNotification = new Notification();
-                        curNotification.Description = string.Format("You shared all your contacts with {0}.", correspondingAccount.Alias);
-                        curAcc.Addition.Notifications.Add(curNotification);
+                        NotificationHelper.SendNotification(correspondingAccount, CryptoPool.WebApp.Resources.Notifications.ShareContactsReceived, curAcc.Alias);
+                        NotificationHelper.SendNotification(curAcc, CryptoPool.WebApp.Resources.Notifications.ShareContactsShared, correspondingAccount.Alias);
 
                         context.SaveChanges();
                     }

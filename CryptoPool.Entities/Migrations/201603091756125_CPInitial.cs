@@ -1,4 +1,4 @@
-namespace CryptoPool.Entities.Models.Migrations
+namespace CryptoPool.Entities.Models.Migrations.CP
 {
     using System;
     using System.Data.Entity.Migrations;
@@ -27,6 +27,7 @@ namespace CryptoPool.Entities.Models.Migrations
                         ConfigID = c.Int(nullable: false),
                         AdditionID = c.Int(nullable: false),
                         IsEnabled = c.Boolean(nullable: false),
+                        MemoryPoolID = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.AccountAdditions", t => t.AdditionID, cascadeDelete: true)
@@ -127,6 +128,35 @@ namespace CryptoPool.Entities.Models.Migrations
                 .Index(t => t.OwnerID);
             
             CreateTable(
+                "dbo.AssignedMemories",
+                c => new
+                    {
+                        ID = c.Int(nullable: false, identity: true),
+                        MemoryPoolID = c.Int(nullable: false),
+                        DateAssigned = c.DateTime(),
+                        Space = c.Int(nullable: false),
+                        IsBasic = c.Boolean(nullable: false),
+                        Pool_ID = c.Int(),
+                    })
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.MemoryPools", t => t.MemoryPoolID)
+                .ForeignKey("dbo.Pools", t => t.Pool_ID)
+                .Index(t => t.MemoryPoolID)
+                .Index(t => t.Pool_ID);
+            
+            CreateTable(
+                "dbo.MemoryPools",
+                c => new
+                    {
+                        ID = c.Int(nullable: false),
+                        BasicSpace = c.Int(nullable: false),
+                        AdditionalSpace = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.Accounts", t => t.ID)
+                .Index(t => t.ID);
+            
+            CreateTable(
                 "dbo.AccountRoleLinks",
                 c => new
                     {
@@ -156,10 +186,13 @@ namespace CryptoPool.Entities.Models.Migrations
         {
             DropForeignKey("dbo.AccountRoleLinks", "Role_ID", "dbo.AccountRoles");
             DropForeignKey("dbo.AccountRoleLinks", "Account_ID", "dbo.Accounts");
+            DropForeignKey("dbo.MemoryPools", "ID", "dbo.Accounts");
             DropForeignKey("dbo.PoolShares", "SharedWithID", "dbo.Accounts");
             DropForeignKey("dbo.PoolShares", "PoolID", "dbo.Pools");
             DropForeignKey("dbo.Pools", "OwnerID", "dbo.Accounts");
             DropForeignKey("dbo.Pools", "ConfigID", "dbo.CryptoConfigurations");
+            DropForeignKey("dbo.AssignedMemories", "Pool_ID", "dbo.Pools");
+            DropForeignKey("dbo.AssignedMemories", "MemoryPoolID", "dbo.MemoryPools");
             DropForeignKey("dbo.Accounts", "ConfigID", "dbo.CryptoConfigurations");
             DropForeignKey("dbo.Accounts", "AdditionID", "dbo.AccountAdditions");
             DropForeignKey("dbo.Notifications", "AccountAddition_ID", "dbo.AccountAdditions");
@@ -167,6 +200,9 @@ namespace CryptoPool.Entities.Models.Migrations
             DropForeignKey("dbo.Contacts", "AccountID", "dbo.Accounts");
             DropIndex("dbo.AccountRoleLinks", new[] { "Role_ID" });
             DropIndex("dbo.AccountRoleLinks", new[] { "Account_ID" });
+            DropIndex("dbo.MemoryPools", new[] { "ID" });
+            DropIndex("dbo.AssignedMemories", new[] { "Pool_ID" });
+            DropIndex("dbo.AssignedMemories", new[] { "MemoryPoolID" });
             DropIndex("dbo.Pools", new[] { "OwnerID" });
             DropIndex("dbo.Pools", new[] { "ConfigID" });
             DropIndex("dbo.PoolShares", new[] { "SharedWithID" });
@@ -178,6 +214,8 @@ namespace CryptoPool.Entities.Models.Migrations
             DropIndex("dbo.Accounts", new[] { "ConfigID" });
             DropTable("dbo.SystemConfigurations");
             DropTable("dbo.AccountRoleLinks");
+            DropTable("dbo.MemoryPools");
+            DropTable("dbo.AssignedMemories");
             DropTable("dbo.Pools");
             DropTable("dbo.PoolShares");
             DropTable("dbo.CryptoConfigurations");

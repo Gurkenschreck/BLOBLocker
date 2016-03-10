@@ -25,7 +25,6 @@ namespace CryptoPool.WebApp.Controllers
 {
     public class AccountController : BaseController
     {
-        
         //
         // GET: /Account/
         [AllowAnonymous]
@@ -76,13 +75,12 @@ namespace CryptoPool.WebApp.Controllers
             if(ModelState.IsValid)
             {
                 AccountRepository accRepo = new AccountRepository(context);
-
                 Account newAcc = accRepo.GetAccount(acc.Alias);
 
                 if(newAcc == null)
                 {
-                    
-                    newAcc = accRepo.CreateNew(acc.Alias, acc.Password, acc.Addition.ContactEmail, new CryptoConfigRepository.Config
+                    int basicMemoryPoolSize = Convert.ToInt32(HttpContext.Application["account.InitialMemoryPoolSize"].ToString());
+                    newAcc = accRepo.CreateNew(acc.Alias, acc.Password, acc.Addition.ContactEmail, basicMemoryPoolSize, new CryptoConfigRepository.Config
                     {
                         Password = acc.Password,
                         SaltByteLength = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]),
@@ -90,15 +88,14 @@ namespace CryptoPool.WebApp.Controllers
                         RSAKeySize = Convert.ToInt32(HttpContext.Application["security.AccountRSAKeySize"]),
                         HashIterations = Convert.ToInt32(HttpContext.Application["security.HashIterationCount"])
                     });
-
                     bool createPersistentCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
                     int cookieKeySize = Convert.ToInt32(HttpContext.Application["security.CookieCryptoKeySize"]);
 
                     string basicRoleName = HttpContext.Application["account.DefaultRole"] as string;
-                    
                     accRepo.AddRole(newAcc, basicRoleName);
 
-                    NotificationHelper.SendNotification(newAcc, Resources.Notifications.WelcomeMessage,
+                    NotificationHelper.SendNotification(newAcc,
+                        Resources.Notifications.WelcomeMessage,
                         newAcc.Alias);
 
                     context.Accounts.Add(newAcc);
@@ -119,7 +116,6 @@ namespace CryptoPool.WebApp.Controllers
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
                     return RedirectToAction("Index", "Panel");
                 }
-                
                 ModelState.AddModelError("AliasAlreadyExists", Resources.Account.Strings.AliasAlreadyExists);
             }
             ViewBag.IsRegistrationRestricted = bool.Parse(HttpContext.Application["system.RestrictRegistration"] as string);
@@ -159,14 +155,10 @@ namespace CryptoPool.WebApp.Controllers
             if(ModelState.IsValid)
             {
                 AccountRepository accRepo = new AccountRepository(context);
-
-                // Find corresponsing existing account
                 Account correspondingAcc = accRepo.GetAccount(acc.Alias);
-
                 // validate password
                 if (correspondingAcc != null)
                 {
-                    
                     if (correspondingAcc.IsEnabled)
                     {
                         bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
@@ -187,7 +179,6 @@ namespace CryptoPool.WebApp.Controllers
                                     Session["CookieKey"] = cookieBaker.CookieKey;
                                     Session["CookieIV"] = cookieBaker.CookieIV;
                                 }
-                                
                                 FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                                 return RedirectToAction("Index", "Panel");
                             }
@@ -199,7 +190,6 @@ namespace CryptoPool.WebApp.Controllers
                                     DateTime.Now);
                                 context.SaveChanges();
                                 // Log wrong password try?
-
                                 ModelState.AddModelError("WrongAliasOrPassword", Resources.Account.Strings.WrongAliasOrPassword);
                             }
                         }
@@ -220,14 +210,12 @@ namespace CryptoPool.WebApp.Controllers
         [HttpGet]
         public ActionResult SignOut()
         {
+            Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
+            Response.Cookies["Secret"].Expires = DateTime.Now.AddDays(-1);
+
             var customCulture = Session["customCulture"] as CultureInfo;
-            FormsAuthentication.SignOut();
-            Session.Clear();
-            string[] myCookies = Request.Cookies.AllKeys;
-            foreach (string cookie in myCookies)
-            {
-                Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
-            }
+
+            Session.Abandon();
             if(customCulture != null)
                 Session["customCulture"] = customCulture;
             return RedirectToAction("Index", "Home");
@@ -236,7 +224,9 @@ namespace CryptoPool.WebApp.Controllers
         [HttpGet]
         public ActionResult Overview()
         {
-            return View();
+            var AccRepo = new AccountRepository(context);
+            var acc = AccRepo.GetAccount(User.Identity.Name);
+            return View(acc);
         }
     }
 }

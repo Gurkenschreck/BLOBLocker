@@ -74,7 +74,8 @@
                     <td>@p.Description</td>
                     <td>@p.IsActive</td>
                     <td>@p.CreatedOn</td>
-                    <td>@p.Participents.Count</td>
+                    <td>@p.Participants.Count</td>
+                    <td>@Html.ActionLink("Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
                 </tr>
             }
         </table>

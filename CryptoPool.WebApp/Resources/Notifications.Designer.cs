@@ -88,6 +88,24 @@ namespace CryptoPool.WebApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} hash shared all his contacts with you!.
+        /// </summary>
+        public static string ShareContactsReceived {
+            get {
+                return ResourceManager.GetString("ShareContactsReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You shared all your contacts with {0}..
+        /// </summary>
+        public static string ShareContactsShared {
+            get {
+                return ResourceManager.GetString("ShareContactsShared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hello, {0}! Nice to see you here..
         /// </summary>
         public static string WelcomeMessage {

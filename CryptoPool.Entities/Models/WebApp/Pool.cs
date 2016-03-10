@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CryptoPool.Entities.Models.Models.WebApp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,10 +14,15 @@ namespace CryptoPool.Entities.Models.WebApp
         {
             CreatedOn = DateTime.Now;
             IsActive = true;
-            Participents = new List<PoolShare>();
+            Participants = new List<PoolShare>();
+            AssignedMemory = new List<AssignedMemory>();
+            ChatEnabled = true;
+            FileStorageEnabled = true;
+            LinkRepositoryEnabled = true;
         }
         [Key]
         public int ID { get; set; }
+        public string UniqueIdentifier { get; set; }
         public string Description { get; set; }
         [ForeignKey("Config")]
         public int ConfigID { get; set; }
@@ -27,8 +33,13 @@ namespace CryptoPool.Entities.Models.WebApp
         [ForeignKey("Owner")]
         public int OwnerID { get; set; }
         public virtual Account Owner { get; set; }
-        public virtual ICollection<PoolShare> Participents { get; set; }
+        public virtual ICollection<AssignedMemory> AssignedMemory { get; set; }
+        public virtual ICollection<PoolShare> Participants { get; set; }
         public Nullable<DateTime> CreatedOn { get; set; }
         public bool IsActive { get; set; }
+
+        public bool ChatEnabled { get; set; }
+        public bool FileStorageEnabled { get; set; }
+        public bool LinkRepositoryEnabled { get; set; }
     }
 }
