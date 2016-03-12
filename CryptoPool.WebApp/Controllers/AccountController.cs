@@ -71,6 +71,12 @@ namespace CryptoPool.WebApp.Controllers
                     ModelState.AddModelError("RegistrationRestricted", Resources.Account.Strings.RestrictedRegistrationMessage);
                 }
             }
+            int accLimit = Convert.ToInt32(HttpContext.Application["system.AccountLimit"]);
+            int actual = context.Accounts.Count();
+            if(actual >= accLimit)
+            {
+                ModelState.AddModelError("AccountLimitReached", Resources.Account.Strings.AccountLimitReached);
+            }
             // Check if info is correct
             if(ModelState.IsValid)
             {

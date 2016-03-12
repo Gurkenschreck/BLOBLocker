@@ -1,11 +1,13 @@
 ﻿using CryptoPool.Entities.Models;
 using CryptoPool.Entities.Models.WebApp;
+using CryptoPool.WebApp.App_Start;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -19,6 +21,9 @@ namespace CryptoPool.WebApp
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        CancellationTokenSource cancellationTokenSource;
+        CancellationToken cancellationToken;
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -27,14 +32,17 @@ namespace CryptoPool.WebApp
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-           
-            using (CryptoPoolContext context = new CryptoPoolContext())
-            {
-                foreach(SystemConfiguration conf in context.SystemConfigurations)
-                {
-                    Application[conf.Key] = conf.Value;
-                }
-            }
+
+
+            cancellationTokenSource = new CancellationTokenSource();
+            cancellationToken = cancellationTokenSource.Token;
+
+            TaskConfig.StartBackgroundService(Application, cancellationToken);
+        }
+
+        protected void Application_End(object sender, EventArgs args)
+        {
+            cancellationTokenSource.Cancel();
         }
 
         protected void Application_AcquireRequestState(object sender, EventArgs args)

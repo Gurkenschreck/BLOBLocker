@@ -1,4 +1,4 @@
-﻿@model CryptoPool.Entities.Models.WebApp.Pool
+﻿@model CryptoPool.WebApp.Models.BuildPoolViewModel
 @{
     ViewBag.Title = "Build pool";
 }
@@ -15,6 +15,13 @@
         <tr>
             <td>@Html.LabelFor(p => p.Description)</td>
             <td>@Html.TextBoxFor(p => p.Description)</td>
+        </tr>
+        <tr>
+            <td>@Html.EditorFor(p => p.IsChatEnabled) @Html.LabelFor(p => p.IsChatEnabled)</td>
+            <td>@Html.EditorFor(p => p.IsFileStorageEnabled) @Html.LabelFor(p => p.IsFileStorageEnabled) </td>
+        </tr>
+        <tr>
+            <td>@Html.EditorFor(p => p.IsLinkRepositoryEnabled) @Html.LabelFor(p => p.IsLinkRepositoryEnabled)</td>
         </tr>
         <tr>
             <td>@Html.AntiForgeryToken()</td>

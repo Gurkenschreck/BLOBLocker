@@ -70,6 +70,15 @@ namespace CryptoPool.WebApp.Resources.Account {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The maximum amount of valid accounts has been reached. The registration is closed..
+        /// </summary>
+        public static string AccountLimitReached {
+            get {
+                return ResourceManager.GetString("AccountLimitReached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is already an account under this alias..
         /// </summary>
         public static string AliasAlreadyExists {

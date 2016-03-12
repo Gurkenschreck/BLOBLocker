@@ -185,4 +185,8 @@
     <value>The provided registration code is not valid.</value>
     <comment>Is displayed when the entered registration code is not valid.</comment>
   </data>
+  <data name="AccountLimitReached" xml:space="preserve">
+    <value>The maximum amount of valid accounts has been reached. The registration is closed.</value>
+    <comment>If the total account count is equal or higher than the accepted.</comment>
+  </data>
 </root>

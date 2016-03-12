@@ -1,5 +1,4 @@
 ﻿@model CryptoPool.Entities.Models.WebApp.Account
-
 @{
     ViewBag.Title = CryptoPool.WebApp.Resources.Panel.Strings.PageTitle;
 }
@@ -66,7 +65,7 @@
                 <th>@Html.Label("Name")</th>
                 <th>@Html.Label("Is active")</th>
                 <th>@Html.Label("Creation date")</th>
-                <th>@Html.Label("Participent count")</th>
+                <th>@Html.Label("Participents")</th>
             </tr>
             @foreach (CryptoPool.Entities.Models.WebApp.Pool p in Model.Pools) 
             { 
@@ -74,7 +73,7 @@
                     <td>@p.Description</td>
                     <td>@p.IsActive</td>
                     <td>@p.CreatedOn</td>
-                    <td>@p.Participants.Count</td>
+                    <td>@(p.Participants.Count + 1)</td>
                     <td>@Html.ActionLink("Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
                 </tr>
             }

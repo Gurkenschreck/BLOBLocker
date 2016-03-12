@@ -18,6 +18,8 @@ using CryptoPool.Code.Controllers;
 using CryptoPool.Code.ModelHelper;
 using CryptoPool.Entities.Models.WebApp;
 using Cipha.Security.Cryptography;
+using CryptoPool.WebApp.Models;
+using CryptoPool.Entities.Models.Models.WebApp;
 
 namespace CryptoPool.WebApp.Controllers
 {
@@ -32,6 +34,89 @@ namespace CryptoPool.WebApp.Controllers
             var acc = accRepo.GetAccount(HttpContext.User.Identity.Name);
             return View(acc);
         }
+
+        [ChildActionOnly]
+        [HttpGet]
+        public ActionResult AssignMemory(string puid)
+        {
+            if(string.IsNullOrWhiteSpace(puid))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Pool curPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
+            Account curAcc = curPool.Owner;
+            MemoryViewModel mvm = new MemoryViewModel();
+            mvm.TotalPoolMemory = curPool.AssignedMemory.Select(p => p.Space).Sum();
+            mvm.AssignedMemory = curPool.AssignedMemory;
+            mvm.FreeBasicMemory = curAcc.MemoryPool.BasicSpace - curAcc
+                .MemoryPool.AssignedMemory
+                .Where(p => p.IsBasic)
+                .Select(p => p.Space).Sum();
+            mvm.FreeAdditionalMemory = curAcc.MemoryPool.AdditionalSpace - curAcc
+                .MemoryPool.AssignedMemory
+                .Where(p => !p.IsBasic)
+                .Select(p => p.Space).Sum();
+            mvm.PoolUniqueIdentifier = curPool.UniqueIdentifier;
+            return View(mvm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AssignMemory(MemoryViewModel mvm)
+        {
+            if (mvm == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetAccount(User.Identity.Name);
+
+            if(ModelState.IsValid)
+            {
+                Pool pool = curAcc.Pools.FirstOrDefault(p => p.UniqueIdentifier == mvm.PoolUniqueIdentifier);
+                if (pool == null)
+                    pool = curAcc.ForeignPools.Select(p => p.Pool).FirstOrDefault(p => p.UniqueIdentifier == mvm.PoolUniqueIdentifier);
+                AssignedMemory assignBasicMemory = null;
+                AssignedMemory assignAdditionalMemory = null;
+                int basicMemLeft, additionalMemLeft;
+                accRepo.MemoryLeft(curAcc, out basicMemLeft, out additionalMemLeft);
+
+                if(mvm.BasicMemoryToAdd > 0)
+                {
+                    if (basicMemLeft >= mvm.BasicMemoryToAdd)
+                    {
+                        assignBasicMemory = new AssignedMemory();
+                        assignBasicMemory.MemoryPool = curAcc.MemoryPool;
+                        assignBasicMemory.Space = mvm.BasicMemoryToAdd;
+                        pool.AssignedMemory.Add(assignBasicMemory);
+                        curAcc.MemoryPool.AssignedMemory.Add(assignBasicMemory);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("BasicMemoryToAdd", "Not enough free basic space");
+                    }
+                }
+                if (mvm.AdditionalMemoryToAdd > 0)
+                {
+                    if (additionalMemLeft >= mvm.AdditionalMemoryToAdd)
+                    {
+                        assignAdditionalMemory = new AssignedMemory();
+                        assignAdditionalMemory.MemoryPool = curAcc.MemoryPool;
+                        assignAdditionalMemory.Space = mvm.BasicMemoryToAdd;
+                        pool.AssignedMemory.Add(assignAdditionalMemory);
+                        curAcc.MemoryPool.AssignedMemory.Add(assignAdditionalMemory);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("AdditionalMemoryToAdd", "Not enough free basic space");
+                    }
+                }
+                if (assignBasicMemory != null || assignAdditionalMemory != null)
+                    context.SaveChanges();
+            }
+            return RedirectToAction("PoolConfig", new { puid = mvm.PoolUniqueIdentifier });
+        }
+
         [HttpGet]
         public ActionResult JoinPool(string puid)
         {
@@ -81,29 +166,47 @@ namespace CryptoPool.WebApp.Controllers
                 Account curAcc = accRepo.GetAccount(User.Identity.Name);
                 if (accRepo.HasPoolRights(curAcc, corPool))
                 {
-                    ViewBag.CurrentAccount = curAcc;
-                    ViewBag.Pool = corPool;
+                    PoolConfigModel configModel = new PoolConfigModel();
+                    configModel.Pool = corPool;
+                    configModel.Account = curAcc;
+                    configModel.IsOwner = corPool.OwnerID == curAcc.ID;
+
                     ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory.Select(p => p.Space).Sum() : 0;
-                    ViewBag.IsOwner = corPool.OwnerID == curAcc.ID;
+
                     return View();
                 }
             }
             return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
         }
 
+        [HttpPost]
+        public ActionResult PoolConfig(PoolConfigModel configModel)
+        {
+            if (configModel == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if(ModelState.IsValid)
+            {
+                PoolRepository poolRepo = new PoolRepository(context);
+                Pool adw = context.Pools.FirstOrDefault(p => p.ID == configModel.Pool.ID); 
+            }
+
+
+            return View();
+        }
 
         [HttpGet]
         public ActionResult Build()
         {
-            Pool p = new Pool();
+            BuildPoolViewModel p = new BuildPoolViewModel();
             return View(p);
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult Build([Bind(Exclude="ID, IsActive, CreatedOn, AssignedMemory, Participants, Owner, OwnerID, Salt, Config, CryptoConfig")]Pool newPool)
+        public ActionResult Build(BuildPoolViewModel poolViewModel)
         {
-            if(newPool == null)
+            if(poolViewModel == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -117,9 +220,8 @@ namespace CryptoPool.WebApp.Controllers
                 PoolRepository repo = new PoolRepository(context);
                 accRepo = new AccountRepository(context);
                 Account curAcc = accRepo.GetAccount(User.Identity.Name);
-                Pool pool = new Pool();
-                pool.UniqueIdentifier = Convert.ToBase64String(Utilities.GenerateBytes(8));
-                pool.Description = newPool.Description;
+                Pool pool = poolViewModel.Generate();
+                pool.UniqueIdentifier = Convert.ToBase64String(Utilities.GenerateBytes(9));
                 pool.OwnerID = curAcc.ID;
                 CryptoConfiguration config = new CryptoConfiguration();
                 
@@ -144,7 +246,7 @@ namespace CryptoPool.WebApp.Controllers
                 context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(newPool);
+            return View(poolViewModel);
         }
 
         [HttpGet]

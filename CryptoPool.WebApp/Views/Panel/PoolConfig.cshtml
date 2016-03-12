@@ -1,14 +1,13 @@
-﻿@{
+﻿@model CryptoPool.WebApp.Models.PoolConfigModel
+@{
     ViewBag.Title = "PoolConfig";
-    
-    bool isOwner = ViewBag.IsOwner;
 }
 
 <h2>PoolConfig</h2>
 
-@if (isOwner)
-{
-    <p>@Html.Partial("OwnerConfiguration")</p>
-}
 
-<p>@Html.Partial("GeneralConfiguration")</p>
+<p>
+    @Html.Action("AssignMemory")
+</p>
+
+<p>@Html.ActionLink("Back", "Pool", new { puid = Request.QueryString["puid"] })</p>
