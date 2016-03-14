@@ -6,32 +6,40 @@
 <h2>AssignMemory</h2>
 
 Statistics
-<table>
-    @foreach (var assignedMemory in Model.AssignedMemory)
-    {
+@using (Html.BeginForm("RemoveAssigned", "Panel", FormMethod.Post))
+{
+    <table>
+        @foreach (var assignedMemory in Model.AssignedMemory)
+        {
+            <tr>
+                <td>User </td>
+                <td>_@assignedMemory.MemoryPool.Owner.Alias _</td>
+                <td> assigned </td>
+                <td>_@assignedMemory.Space MB_</td>
+                <td> of type </td>
+                <td>
+                    @if (assignedMemory.IsBasic)
+                    {
+                        @:_Basic_
+                    }
+                    else
+                    {
+                        @:_Additional_
+                    }
+                </td>
+                @if(assignedMemory.MemoryPool.Owner.Alias == User.Identity.Name)
+                {
+                    <td><button type="submit" name="assid" value="@assignedMemory.ID">X</button></td>
+                }
+            </tr>
+        }
         <tr>
-            <td>User </td>
-            <td>_@assignedMemory.MemoryPool.Owner.Alias _</td>
-            <td> assigned </td>
-            <td>_@assignedMemory.Space MB_</td>
-            <td> of type </td>
-            <td>
-                @if (assignedMemory.IsBasic)
-                {
-                    @:_Basic_
-                }
-                else
-                {
-                    @:_Additional_
-                }
-            </td>
+            <td colspan="5">Total:</td>
+            <td>@Model.TotalPoolMemory MB</td>
+            <td>@Html.AntiForgeryToken() @Html.Hidden("puid", Model.PoolUniqueIdentifier)</td>
         </tr>
-    }
-    <tr>
-        <td colspan="5">Total:</td>
-        <td>@Model.TotalPoolMemory MB</td>
-    </tr>
-</table>
+    </table>
+}
 
 <hr />
 Assign some

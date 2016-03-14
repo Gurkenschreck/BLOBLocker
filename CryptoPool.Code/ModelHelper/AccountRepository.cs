@@ -78,12 +78,12 @@ namespace CryptoPool.Code.ModelHelper
         public void MemoryLeft(Account acc, out int basic, out int additional)
         {
             basic =  acc.MemoryPool.BasicSpace - acc.MemoryPool.AssignedMemory
-                                                           .Where(p => p.IsBasic)
+                                                           .Where(p => p.IsBasic && p.IsEnabled )
                                                            .Select(p => p.Space)
                                                            .Sum();
 
             additional = acc.MemoryPool.AdditionalSpace - acc.MemoryPool.AssignedMemory
-                                                               .Where(p => !p.IsBasic)
+                                                               .Where(p => !p.IsBasic && p.IsEnabled)
                                                                .Select(p => p.Space)
                                                                .Sum();
         }

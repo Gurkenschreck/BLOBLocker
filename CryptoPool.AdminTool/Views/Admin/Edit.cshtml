@@ -1,10 +1,10 @@
-﻿@model CryptoPool.Entities.Models.SystemConfiguration
+﻿@model CryptoPool.Entities.Models.WebApp.SystemConfiguration
 
 @{
     Layout = null;
 }
 
-@using (Html.BeginForm("Edit", "Manage"))
+@using (Html.BeginForm("Edit", "Admin"))
 {
     @:Edit Database value<br />
     @Html.LabelFor(p => p.Key)

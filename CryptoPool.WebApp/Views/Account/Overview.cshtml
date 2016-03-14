@@ -39,7 +39,7 @@ Account Information
     <tr>
         <td>@Html.LabelFor(p => p.Roles)</td>
         <td>
-            @foreach(var role in Model.Roles) { <text>@role.Role,</text> }
+            @foreach(var role in Model.Roles) { <text>@role.Role.Definition,</text> }
         </td>
     </tr>
 </table>

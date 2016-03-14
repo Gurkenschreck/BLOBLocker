@@ -32,13 +32,9 @@ namespace CryptoPool.WebApp.Controllers
         [HttpGet]
         public ActionResult Overview()
         {
-            var settings = new Dictionary<string, string>();
-            var dbValues = context.SystemConfigurations.ToList();
-            foreach (SystemConfiguration conf in dbValues)
-            {
-                settings[conf.Key] = conf.Value;
-            }
-            return View(settings);
+            var dbValues = context.SystemConfigurations.ToDictionary(p => p.Key, q => q.Value);
+            
+            return View(dbValues);
         }
 
         [HttpPost]
@@ -58,7 +54,7 @@ namespace CryptoPool.WebApp.Controllers
             }
             if (ModelState.IsValid)
             {
-                var dbValues = context.SystemConfigurations.Where(p => p.Key == config.Key).FirstOrDefault();
+                var dbValues = context.SystemConfigurations.FirstOrDefault(p => p.Key == config.Key);
                 if(dbValues == null)
                 {
                     ModelState.AddModelError("unknownKey", "Cannot change not present key");

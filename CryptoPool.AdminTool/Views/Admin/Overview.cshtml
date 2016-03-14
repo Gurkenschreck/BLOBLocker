@@ -1,11 +1,11 @@
-﻿@model Dictionary<string, string>
+﻿@model CryptoPool.AdminTool.Models.AdminOverviewViewModel
 @{
     ViewBag.Title = "Edit";
 }
 
 <h2>Edit</h2>
 
-<p>There are @Model.Count option(s) present.</p>
+<p>There are @Model.ConfigValues.Count option(s) present.</p>
 
 View:
 @if (Model != null)
@@ -14,14 +14,12 @@ View:
         <tr>
             <th>DBKey</th>
             <th>DBValue</th>
-            <th>ApplicationValue</th>
         </tr>
-        @foreach (KeyValuePair<string, string> pair in Model)
+        @foreach (KeyValuePair<string, string> pair in Model.ConfigValues)
         {
             <tr>
                 <td>@pair.Key</td>
                 <td>@pair.Value</td>
-                <td>@HttpContext.Current.ApplicationInstance.Application[pair.Key]</td>
                 <td><button id="@pair.Key @pair.Value" onclick="transferValues(this)">Edit</button></td>
             </tr>
         }
@@ -33,11 +31,11 @@ View:
 }
 <hr />
 <p>
-    @Html.Partial("~/Views/Manage/Edit.cshtml", new CryptoPool.Entities.Models.SystemConfiguration())
+    @Html.Partial("~/Views/Admin/Edit.cshtml", new CryptoPool.Entities.Models.WebApp.SystemConfiguration())
 </p>
 <hr />
 <p>
-    @Html.Partial("~/Views/Manage/Create.cshtml", new CryptoPool.Entities.Models.SystemConfiguration())
+    @Html.Partial("~/Views/Admin/Create.cshtml", new CryptoPool.Entities.Models.WebApp.SystemConfiguration())
 </p>
 
 <p id="rData" onclick="ajaxGoSetShit()">T</p>
@@ -64,7 +62,7 @@ View:
 
     function ajaxGoSetShit() {
         console.log("d");
-        var url = "/Manage/TellDate";
+        var url = "/Admin/TellDate";
         $.get(url, null, function (data) {
             $("#rData").html(data);
         });

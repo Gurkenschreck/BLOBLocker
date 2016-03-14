@@ -36,6 +36,8 @@ namespace CryptoPool.WebApp.App_Start
                                     application[conf.Key] = conf.Value;
                                 }
                             }
+                            configChangedItem.Value = "false";
+                            context.SaveChangesAsync();
                         }
                         firstRun = false;
                         Thread.Sleep(30000);

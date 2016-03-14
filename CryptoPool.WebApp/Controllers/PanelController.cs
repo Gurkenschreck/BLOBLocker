@@ -35,6 +35,22 @@ namespace CryptoPool.WebApp.Controllers
             return View(acc);
         }
 
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult RemoveAssigned(int assid, string puid)
+        {
+            if (assid < 0)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var not = context.AssignedMemory.FirstOrDefault(p => p.ID == assid);
+            if(not !=  null)
+            {
+                not.IsEnabled = false;
+                context.SaveChanges();
+            }
+            return RedirectToAction("PoolConfig", new { puid=puid });
+        }
+
         [ChildActionOnly]
         [HttpGet]
         public ActionResult AssignMemory(string puid)
@@ -46,15 +62,15 @@ namespace CryptoPool.WebApp.Controllers
             Pool curPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
             Account curAcc = curPool.Owner;
             MemoryViewModel mvm = new MemoryViewModel();
-            mvm.TotalPoolMemory = curPool.AssignedMemory.Select(p => p.Space).Sum();
-            mvm.AssignedMemory = curPool.AssignedMemory;
+            mvm.TotalPoolMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum();
+            mvm.AssignedMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).ToList();
             mvm.FreeBasicMemory = curAcc.MemoryPool.BasicSpace - curAcc
                 .MemoryPool.AssignedMemory
-                .Where(p => p.IsBasic)
+                .Where(p => p.IsBasic && p.IsEnabled)
                 .Select(p => p.Space).Sum();
             mvm.FreeAdditionalMemory = curAcc.MemoryPool.AdditionalSpace - curAcc
                 .MemoryPool.AssignedMemory
-                .Where(p => !p.IsBasic)
+                .Where(p => !p.IsBasic && p.IsEnabled)
                 .Select(p => p.Space).Sum();
             mvm.PoolUniqueIdentifier = curPool.UniqueIdentifier;
             return View(mvm);
@@ -144,7 +160,10 @@ namespace CryptoPool.WebApp.Controllers
                 {
                     ViewBag.CurrentAccount = curAcc;
                     ViewBag.Pool = corPool;
-                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory.Select(p => p.Space).Sum() : 0;
+                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory
+                                                                                            .Where(p => p.IsEnabled)
+                                                                                            .Select(p => p.Space)
+                                                                                            .Sum() : 0;
                     return View();
                 }
             }
@@ -171,7 +190,10 @@ namespace CryptoPool.WebApp.Controllers
                     configModel.Account = curAcc;
                     configModel.IsOwner = corPool.OwnerID == curAcc.ID;
 
-                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory.Select(p => p.Space).Sum() : 0;
+                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory
+                                                                                            .Where(p => p.IsEnabled)
+                                                                                            .Select(p => p.Space)
+                                                                                            .Sum() : 0;
 
                     return View();
                 }

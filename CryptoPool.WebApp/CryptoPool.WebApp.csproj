@@ -131,6 +131,7 @@
   <ItemGroup>
     <Compile Include="App_Start\TaskConfig.cs" />
     <Compile Include="Controllers\GlobalizationController.cs" />
+    <Compile Include="Models\AccountViewModel.cs" />
     <Compile Include="Models\BuildPoolViewModel.cs" />
     <Compile Include="Models\MemoryViewModel.cs" />
     <Compile Include="Models\PoolConfigModel.cs" />
@@ -293,10 +294,6 @@
     <Content Include="Views\Account\Overview.cshtml" />
     <Content Include="Views\Panel\Index.cshtml" />
     <Content Include="Views\Panel\AddContact.cshtml" />
-    <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Manage\Overview.cshtml" />
-    <Content Include="Views\Manage\Create.cshtml" />
-    <Content Include="Views\Manage\Edit.cshtml" />
     <Content Include="Views\Support\Index.cshtml" />
     <Content Include="Views\Support\Faq.cshtml" />
     <Content Include="Views\Support\ShowUser.cshtml" />
@@ -309,6 +306,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Manage\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

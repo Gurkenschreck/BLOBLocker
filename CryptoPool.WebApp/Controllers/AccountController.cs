@@ -20,6 +20,7 @@ using CryptoPool.Code.Membership;
 using CryptoPool.Code.ModelHelper;
 using CryptoPool.Code.Attributes;
 using CryptoPool.Entities.Models.WebApp;
+using CryptoPool.WebApp.Models;
 
 namespace CryptoPool.WebApp.Controllers
 {
@@ -38,7 +39,7 @@ namespace CryptoPool.WebApp.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult SignUp([Bind(Exclude="ID, Salt, ConfigID, Roles, Pools, ForeignPools, IsEnabled")]Account acc, string registrationCode)
+        public ActionResult SignUp(AccountViewModel acc)
         {
             if(acc == null)
             {
@@ -60,13 +61,13 @@ namespace CryptoPool.WebApp.Controllers
             bool isRegistrationRestricted = bool.Parse(HttpContext.Application["system.RestrictRegistration"] as string);
             if (isRegistrationRestricted)
             {
-                if(string.IsNullOrEmpty(registrationCode))
+                if(string.IsNullOrEmpty(acc.RegistrationCode))
                 {
                     ModelState.AddModelError("InvalidRegistrationCode", Resources.Account.Strings.InvalidRegistrationCode);
 
                 }
                 string expectedRegistrationCode = HttpContext.Application["system.RestrictedRegistrationCode"] as string;
-                if (registrationCode != expectedRegistrationCode)
+                if (acc.RegistrationCode != expectedRegistrationCode)
                 {
                     ModelState.AddModelError("RegistrationRestricted", Resources.Account.Strings.RestrictedRegistrationMessage);
                 }
@@ -86,7 +87,7 @@ namespace CryptoPool.WebApp.Controllers
                 if(newAcc == null)
                 {
                     int basicMemoryPoolSize = Convert.ToInt32(HttpContext.Application["account.InitialMemoryPoolSize"].ToString());
-                    newAcc = accRepo.CreateNew(acc.Alias, acc.Password, acc.Addition.ContactEmail, basicMemoryPoolSize, new CryptoConfigRepository.Config
+                    newAcc = accRepo.CreateNew(acc.Alias, acc.Password, acc.ContactEmail, basicMemoryPoolSize, new CryptoConfigRepository.Config
                     {
                         Password = acc.Password,
                         SaltByteLength = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]),
@@ -139,7 +140,7 @@ namespace CryptoPool.WebApp.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult Login([Bind(Exclude = "ID, Salt, ConfigID, Roles, Pools, ForeignPools, IsEnabled")]Account acc)
+        public ActionResult Login(AccountViewModel acc)
         {
             if (acc == null)
             {

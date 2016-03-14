@@ -1,4 +1,4 @@
-﻿@model CryptoPool.Entities.Models.WebApp.Account
+﻿@model CryptoPool.WebApp.Models.AccountViewModel
 @{
     ViewBag.Title = CryptoPool.WebApp.Resources.Account.Strings.PageRegisterTitle;
 }
@@ -19,8 +19,8 @@
         @Html.PasswordFor(model => model.Password)
     </p>
     <p>
-        @Html.LabelFor(model => model.Addition.ContactEmail)
-        @Html.EditorFor(model => model.Addition.ContactEmail)
+        @Html.LabelFor(model => model.ContactEmail)
+        @Html.EditorFor(model => model.ContactEmail)
     </p>
     if (ViewBag.IsRegistrationRestricted)
     {

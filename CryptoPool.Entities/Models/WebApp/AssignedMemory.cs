@@ -14,6 +14,7 @@ namespace CryptoPool.Entities.Models.Models.WebApp
         {
             DateAssigned = DateTime.Now;
             IsBasic = true;
+            IsEnabled = true;
         }
         [Key]
         public int ID { get; set; }
@@ -23,5 +24,6 @@ namespace CryptoPool.Entities.Models.Models.WebApp
         public Nullable<DateTime> DateAssigned { get; set; }
         public int Space { get; set; }
         public bool IsBasic { get; set; }
+        public bool IsEnabled { get; set; }
     }
 }
