@@ -26,7 +26,6 @@ namespace CryptoPool.AdminTool
             using (AdminToolContext atcont = new AdminToolContext())
             {
                 var sysadm = atcont.Accounts.FirstOrDefault(p => p.Alias == "Sysadm");
-
                 if (sysadm == null)
                 {
                     sysadm = new Entities.Models.AdminTool.Account();
