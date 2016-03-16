@@ -56,7 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AjaxOnlyAttribute.cs" />
-    <Compile Include="Attributes\LocalOnly.cs" />
+    <Compile Include="Attributes\LocalOnlyAttribute.cs" />
+    <Compile Include="Attributes\PreserveModelStateAttribute.cs" />
+    <Compile Include="Attributes\RestoreModelStateAttibute.cs" />
     <Compile Include="Membership\AdminToolRoleProvider.cs" />
     <Compile Include="Membership\CPRoleProvider.cs" />
     <Compile Include="Controllers\BaseController.cs" />

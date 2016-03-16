@@ -51,6 +51,7 @@ namespace CryptoPool.WebApp.Controllers
             return RedirectToAction("PoolConfig", new { puid=puid });
         }
 
+        [RestoreModelState]
         [ChildActionOnly]
         [HttpGet]
         public ActionResult AssignMemory(string puid)
@@ -59,6 +60,7 @@ namespace CryptoPool.WebApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            bool isvalid = ModelState.IsValid;
             Pool curPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
             Account curAcc = curPool.Owner;
             MemoryViewModel mvm = new MemoryViewModel();
@@ -75,6 +77,7 @@ namespace CryptoPool.WebApp.Controllers
             mvm.PoolUniqueIdentifier = curPool.UniqueIdentifier;
             return View(mvm);
         }
+        [PreserveModelState]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AssignMemory(MemoryViewModel mvm)
@@ -124,7 +127,7 @@ namespace CryptoPool.WebApp.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("AdditionalMemoryToAdd", "Not enough free basic space");
+                        ModelState.AddModelError("AdditionalMemoryToAdd", "Not enough additional space");
                     }
                 }
                 if (assignBasicMemory != null || assignAdditionalMemory != null)
@@ -170,6 +173,7 @@ namespace CryptoPool.WebApp.Controllers
             return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
         }
 
+        [RestoreModelState]
         [HttpGet]
         public ActionResult PoolConfig(string puid)
         {
@@ -179,44 +183,28 @@ namespace CryptoPool.WebApp.Controllers
             if (corPool == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
-            if (ModelState.IsValid)
+            
+            accRepo = new AccountRepository(context);
+            Account curAcc = accRepo.GetAccount(User.Identity.Name);
+            if (accRepo.HasPoolRights(curAcc, corPool))
             {
-                accRepo = new AccountRepository(context);
-                Account curAcc = accRepo.GetAccount(User.Identity.Name);
-                if (accRepo.HasPoolRights(curAcc, corPool))
-                {
-                    PoolConfigModel configModel = new PoolConfigModel();
-                    configModel.Pool = corPool;
-                    configModel.Account = curAcc;
-                    configModel.IsOwner = corPool.OwnerID == curAcc.ID;
+                PoolConfigModel configModel = new PoolConfigModel();
+                configModel.Pool = corPool;
+                configModel.Account = curAcc;
+                configModel.IsOwner = corPool.OwnerID == curAcc.ID;
 
-                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory
-                                                                                            .Where(p => p.IsEnabled)
-                                                                                            .Select(p => p.Space)
-                                                                                            .Sum() : 0;
+                ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory
+                                                                                        .Where(p => p.IsEnabled)
+                                                                                        .Select(p => p.Space)
+                                                                                        .Sum() : 0;
 
-                    return View();
-                }
+                return View();
             }
-            return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
-        }
-
-        [HttpPost]
-        public ActionResult PoolConfig(PoolConfigModel configModel)
-        {
-            if (configModel == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            if(ModelState.IsValid)
+            else
             {
-                PoolRepository poolRepo = new PoolRepository(context);
-                Pool adw = context.Pools.FirstOrDefault(p => p.ID == configModel.Pool.ID); 
+                return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
             }
-
-
-            return View();
         }
-
         [HttpGet]
         public ActionResult Build()
         {
