@@ -51,7 +51,7 @@ namespace CryptoPool.Entities.Models.WebApp
 
             modelBuilder.Entity<PoolShare>()
                 .HasRequired(p => p.SharedWith)
-                .WithMany(t => t.ForeignPools)
+                .WithMany(t => t.PoolShares)
                 .HasForeignKey(a => a.SharedWithID)
                 .WillCascadeOnDelete(false);
 

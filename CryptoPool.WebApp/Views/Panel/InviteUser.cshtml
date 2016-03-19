@@ -1,0 +1,25 @@
+﻿@model CryptoPool.WebApp.Models.InvitationViewModel
+@{
+    Layout = null;
+}
+@using(Html.BeginForm("InviteUser"))
+{
+    <table>
+        <tr>
+            <th>@Html.LabelFor(p => p.InviteAlias)</th>
+            <td>@Html.EditorFor(p => p.InviteAlias)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.ShowAll)</th>
+            <td>@Html.EditorFor(p => p.ShowAll)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.ShowSince)</th>
+            <td>@Html.EditorFor(p => p.ShowSince)</td>
+        </tr>
+        <tr>
+            <td>@Html.AntiForgeryToken() @Html.HiddenFor(p => p.PoolUID)</td>
+            <td><button type="submit" >Add</button></td>
+        </tr>
+    </table>
+}

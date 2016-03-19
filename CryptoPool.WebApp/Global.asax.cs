@@ -13,6 +13,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Security;
 
 namespace CryptoPool.WebApp
 {
@@ -38,6 +39,14 @@ namespace CryptoPool.WebApp
             cancellationToken = cancellationTokenSource.Token;
 
             TaskConfig.StartBackgroundService(Application, cancellationToken);
+        }
+        protected void Session_Start(object sender, EventArgs args)
+        {
+            if(User.Identity.IsAuthenticated)
+            {
+                Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
+                Response.Redirect("/Account/Login");
+            }
         }
 
         protected void Application_End(object sender, EventArgs args)

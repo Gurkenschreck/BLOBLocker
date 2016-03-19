@@ -4,6 +4,8 @@ using CryptoPool.Code.Membership;
 using System.Web;
 using System.Security.Cryptography;
 using Cipha.Security.Cryptography.Asymmetric;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace CryptoPool.Code.Tests.MemberShip
 {
@@ -58,6 +60,19 @@ namespace CryptoPool.Code.Tests.MemberShip
             }
 
             Assert.AreEqual(expected, got);
+        }
+        [TestMethod]
+        public void CreateCookies_SplitLongValueIntoSeveralCookies_Pass()
+        {
+            IEnumerable<HttpCookie> cookies;
+
+            using(var rsaCipher = new RSACipher<RSACryptoServiceProvider>(4096))
+            {
+                using(var bakery = new CryptoCookieBakery())
+                {
+                    cookies = bakery.CreateCookies("Secret", rsaCipher.ToXmlString(true), 256);
+                }
+            }
         }
     }
 }

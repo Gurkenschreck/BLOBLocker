@@ -42,7 +42,7 @@ namespace CryptoPool.Entities.Models.WebApp
         public virtual ICollection<Pool> Pools { get; set; }
         [Display(Name = "Account_ForeignPools",
             ResourceType = typeof(Resources.Models))]
-        public virtual ICollection<PoolShare> ForeignPools { get; set; }
+        public virtual ICollection<PoolShare> PoolShares { get; set; }
         [Display(Name = "Account_IsEnabled",
             ResourceType = typeof(Resources.Models))]
         public bool IsEnabled { get; set; }

@@ -35,45 +35,26 @@
 <hr />
 @CryptoPool.WebApp.Resources.Panel.Strings.Notifications
 <p>
-
-        @using (Html.BeginForm("DisableNotification", "Panel", FormMethod.Post))
-        {
-            <table>
-
-                @foreach (CryptoPool.Entities.Models.WebApp.Notification not in Model.Addition.Notifications)
-                {
-                    if (not.IsVisible)
-                    {
-                    <tr>
-                        <td>@not.Description</td>
-                        <td>@not.CreatedOn</td>
-                        <td><button type="submit" name="id" value="@not.ID">X</button></td>
-                    </tr>
-                    }
-                }
-            </table>
-
-            <span id="notificationAntiForgeryToken">@Html.AntiForgeryToken()</span>
-        }
+    @Html.Partial("ShowNotifications", Model.Addition.Notifications)
 </p>
 <hr />
 <p>
-    @if (Model.Pools.Count > 0)
+    @if (Model.Pools.Where(p => p.IsActive).Count() > 0)
     {
         <table>
             <tr>
                 <th>@Html.Label("Name")</th>
                 <th>@Html.Label("Is active")</th>
                 <th>@Html.Label("Creation date")</th>
-                <th>@Html.Label("Participents")</th>
+                <th>@Html.Label("Participants")</th>
             </tr>
-            @foreach (CryptoPool.Entities.Models.WebApp.Pool p in Model.Pools) 
+            @foreach (CryptoPool.Entities.Models.WebApp.Pool p in Model.Pools.Where(p => p.IsActive)) 
             { 
                 <tr>
                     <td>@p.Description</td>
                     <td>@p.IsActive</td>
                     <td>@p.CreatedOn</td>
-                    <td>@(p.Participants.Count + 1)</td>
+                    <td>@p.Participants.Count</td>
                     <td>@Html.ActionLink("Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
                 </tr>
             }
@@ -85,7 +66,37 @@
         <text>It seems like you cannot call yourself the owner of a pool. @Html.ActionLink("Build your own here!", "Build")</text>
     }
 </p>
+<p>
+    @if (Model.PoolShares.Count > 0)
+    {
+        <table>
+            <tr>
+                <th>@Html.Label("Name")</th>
+                <th>@Html.Label("Is active")</th>
+                <th>@Html.Label("Creation date")</th>
+                <th>@Html.Label("Assigned memory (MB)")</th>
+                <th>@Html.Label("Participants")</th>
+            </tr>
+            @foreach (var fp in Model.PoolShares)
+            {
+                <tr style="text-align:center;">
+                    <td>@fp.Pool.Description</td>
+                    <td>@fp.Pool.IsActive</td>
+                    <td>@fp.Pool.CreatedOn</td>
+                    <td>@fp.Pool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum()</td>
 
+                    <td>@fp.Pool.Participants.Count</td>
+                    <td>@Html.ActionLink("Browse", "Pool", new { puid = fp.Pool.UniqueIdentifier })</td>
+                </tr>
+            }
+        </table>
+        @Html.ActionLink("Build some more!", "Build")
+    }
+    else
+    {
+        <text>You don't have access to any pools.</text>
+    }
+</p>
 
 <script>
 

@@ -21,6 +21,7 @@ using CryptoPool.Code.ModelHelper;
 using CryptoPool.Code.Attributes;
 using CryptoPool.Entities.Models.WebApp;
 using CryptoPool.WebApp.Models;
+using System.Text;
 
 namespace CryptoPool.WebApp.Controllers
 {
@@ -45,14 +46,7 @@ namespace CryptoPool.WebApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if(string.IsNullOrWhiteSpace(acc.Alias))
-            {
-                ModelState.AddModelError("InvalidAlias", Resources.Account.Strings.InavlidAlias);
-            }
-            if (string.IsNullOrWhiteSpace(acc.Password))
-            {
-                ModelState.AddModelError("InvalidPassword", Resources.Account.Strings.InvalidPassword);
-            }
+            
             bool enableRegistration = bool.Parse(HttpContext.Application["system.EnableRegistration"] as string);
             if(!enableRegistration)
             {
@@ -109,15 +103,15 @@ namespace CryptoPool.WebApp.Controllers
                     context.Additions.Add(newAcc.Addition);
                     context.SaveChanges();
 
+                    
                     using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV))
                     {
-                        using(var cookieBaker = new CryptoCookieBakery())
+                        HttpCookie keyPartCookie = null;
+
+                        using(var credHandler = new CredentialHandler(cookieKeySize))
                         {
-                            HttpCookie cryptoCookie = cookieBaker.CreateCookie("Secret",
-                                symC.Decrypt(newAcc.Config.PrivateKey), cookieKeySize);
-                            Response.Cookies.Add(cryptoCookie);
-                            Session["CookieKey"] = cookieBaker.CookieKey;
-                            Session["CookieIV"] = cookieBaker.CookieIV;
+                            credHandler.Inject(symC.Decrypt(newAcc.Config.PrivateKey), Session, out keyPartCookie);
+                            Response.Cookies.Add(keyPartCookie);
                         }
                     }
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
@@ -146,14 +140,7 @@ namespace CryptoPool.WebApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if(string.IsNullOrWhiteSpace(acc.Alias))
-            {
-                ModelState.AddModelError("InvalidAlias", Resources.Account.Strings.InavlidAlias);
-            }
-            if(string.IsNullOrWhiteSpace(acc.Password))
-            {
-                ModelState.AddModelError("InvalidPassword", Resources.Account.Strings.InvalidPassword);
-            }
+            
             bool loginEnabled = bool.Parse(HttpContext.Application["system.EnableLogin"] as string);
             if (!loginEnabled)
             {
@@ -171,21 +158,25 @@ namespace CryptoPool.WebApp.Controllers
                         bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
                         int cookieKeySize = Convert.ToInt32(HttpContext.Application["security.CookieCryptoKeySize"]);
 
-                        using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV))
+                        using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV, iterations:correspondingAcc.Config.IterationCount))
                         {
                             try
                             {
                                 correspondingAcc.Addition.LastLogin = DateTime.Now;
                                 context.SaveChanges();
 
-                                using (var cookieBaker = new CryptoCookieBakery())
+                                byte[] plainPrivKey = symC.Decrypt(correspondingAcc.Config.PrivateKey);
+                                string pPriKey = symC.DecryptToString(correspondingAcc.Config.PrivateKey);
+                                HttpCookie cryptoCookie = null;
+                                
+                                using(var credHandler = new CredentialHandler(cookieKeySize))
                                 {
-                                    HttpCookie cryptoCookie = cookieBaker.CreateCookie("Secret",
-                                        symC.Decrypt(correspondingAcc.Config.PrivateKey), cookieKeySize);
-                                    Response.Cookies.Add(cryptoCookie);
-                                    Session["CookieKey"] = cookieBaker.CookieKey;
-                                    Session["CookieIV"] = cookieBaker.CookieIV;
+                                    HttpCookie keypartCookie;
+                                    credHandler.Inject(plainPrivKey, Session, out keypartCookie);
+                                    cryptoCookie = keypartCookie;
+                                    Response.Cookies.Add(keypartCookie);
                                 }
+                                
                                 FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                                 return RedirectToAction("Index", "Panel");
                             }

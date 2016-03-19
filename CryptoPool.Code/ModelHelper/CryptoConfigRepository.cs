@@ -51,7 +51,7 @@ namespace CryptoPool.Code.ModelHelper
                 using (var rsaC = new RSACipher<RSACryptoServiceProvider>(rsaKeySize))
                 {
                     cryptoConfig.PublicKey = rsaC.ToXmlString(false);
-                    cryptoConfig.PrivateKey = Convert.FromBase64String(rsaC.ToEncryptedXmlString<AesManaged>(true, password, salt, iv));
+                    cryptoConfig.PrivateKey = Convert.FromBase64String(rsaC.ToEncryptedXmlString<AesManaged>(true, symC.Key, symC.IV));
                     cryptoConfig.PublicKeySignature = rsaC.SignStringToString<SHA256Cng>(cryptoConfig.PublicKey);
                 }
             }

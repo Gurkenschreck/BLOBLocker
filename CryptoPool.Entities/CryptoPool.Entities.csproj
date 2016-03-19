@@ -69,6 +69,14 @@
     <Compile Include="Migrations\201603131504310_AddAssignedIsEnabled.Designer.cs">
       <DependentUpon>201603131504310_AddAssignedIsEnabled.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603181805353_CPAddPoolShareCryptoConfig.cs" />
+    <Compile Include="Migrations\201603181805353_CPAddPoolShareCryptoConfig.Designer.cs">
+      <DependentUpon>201603181805353_CPAddPoolShareCryptoConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603190032036_CPAddPoolKeyToShare.cs" />
+    <Compile Include="Migrations\201603190032036_CPAddPoolKeyToShare.Designer.cs">
+      <DependentUpon>201603190032036_CPAddPoolKeyToShare.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\AdminToolConfiguration.cs" />
     <Compile Include="Migrations\CryptoPoolConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -109,6 +117,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603131504310_AddAssignedIsEnabled.resx">
       <DependentUpon>201603131504310_AddAssignedIsEnabled.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603181805353_CPAddPoolShareCryptoConfig.resx">
+      <DependentUpon>201603181805353_CPAddPoolShareCryptoConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603190032036_CPAddPoolKeyToShare.resx">
+      <DependentUpon>201603190032036_CPAddPoolKeyToShare.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

@@ -141,6 +141,7 @@
     <Compile Include="Controllers\GlobalizationController.cs" />
     <Compile Include="Models\AccountViewModel.cs" />
     <Compile Include="Models\BuildPoolViewModel.cs" />
+    <Compile Include="Models\InvitationViewModel.cs" />
     <Compile Include="Models\MemoryViewModel.cs" />
     <Compile Include="Models\PoolConfigModel.cs" />
     <Compile Include="Resources\Account\Strings.Designer.cs">
@@ -311,6 +312,8 @@
     <Content Include="Views\Panel\Pool.cshtml" />
     <Content Include="Views\Panel\PoolConfig.cshtml" />
     <Content Include="Views\Panel\AssignMemory.cshtml" />
+    <Content Include="Views\Panel\ShowNotifications.cshtml" />
+    <Content Include="Views\Panel\InviteUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

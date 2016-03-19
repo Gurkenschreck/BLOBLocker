@@ -26,7 +26,6 @@
     @Html.ActionLink("Settings", "PoolConfig", new { puid = pool.UniqueIdentifier})
 </p>
 <ul>
-    <li>@pool.Owner.Alias</li>
     @foreach(var usr in pool.Participants)
     {
         <li>@usr.SharedWith.Alias</li>

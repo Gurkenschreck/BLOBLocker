@@ -70,7 +70,7 @@ namespace CryptoPool.Code.ModelHelper
         {
             if (acc.Pools.Any(p => p.ID == pool.ID))
                 return true;
-            if (acc.ForeignPools.Any(p => p.ID == pool.ID))
+            if (acc.PoolShares.Any(p => p.ID == pool.ID))
                 return true;
 
             return false;

@@ -6,7 +6,7 @@ using System.Web;
 
 namespace CryptoPool.WebApp.Models
 {
-    public class AccountViewModel
+    public class AccountViewModel : IValidatableObject
     {
         [Required]
         [Display(Name="Account_Alias",
@@ -22,5 +22,16 @@ namespace CryptoPool.WebApp.Models
         public string ContactEmail { get; set; }
 
         public string RegistrationCode { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(Alias))
+                yield return new ValidationResult("Alias cannot be empty or white string", new[] { "Alias" });
+
+
+            if(string.IsNullOrEmpty(Password))
+                yield return new ValidationResult("Password cannot be empty", new[] { "Password" });
+
+        }
     }
 }

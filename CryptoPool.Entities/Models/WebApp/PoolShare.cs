@@ -13,7 +13,7 @@ namespace CryptoPool.Entities.Models.WebApp
         {
             IsActive = true;
             SharedOn = DateTime.Now;
-            VisibleFrom = DateTime.Now;
+            ShowSince = DateTime.Now;
         }
 
         [Key]
@@ -24,9 +24,10 @@ namespace CryptoPool.Entities.Models.WebApp
         [ForeignKey("SharedWith")]
         public int SharedWithID { get; set; }
         public virtual Account SharedWith { get; set; }
-        public byte[] SharedKey { get; set; }
+        public byte[] PoolKey { get; set; }
+        public virtual CryptoConfiguration Config { get; set; }
         public Nullable<DateTime> SharedOn { get; set; }
-        public Nullable<DateTime> VisibleFrom { get; set; }
+        public Nullable<DateTime> ShowSince { get; set; }
         public bool IsActive { get; set; }
     }
 }

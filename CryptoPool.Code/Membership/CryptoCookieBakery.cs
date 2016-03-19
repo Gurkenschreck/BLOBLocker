@@ -61,6 +61,7 @@ namespace CryptoPool.Code.Membership
             }
         }
 
+
         public HttpCookie CreateCookie(string name, byte[] privateKey, int cookieKeySize)
         {
             return CreateCookie(name, Convert.ToBase64String(privateKey), cookieKeySize);
@@ -75,7 +76,38 @@ namespace CryptoPool.Code.Membership
                 CookieIV = cookieCipher.IV;
             }
             cookie.Secure = true;
+            cookie.HttpOnly = true;
             return cookie;
+        }
+        public ICollection<HttpCookie> CreateCookies(string name, string value, int cookieKeySize)
+        {
+            byte[] encryptedVal;
+            using (var cookieCipher = new SymmetricCipher<AesManaged>(cookieKeySize))
+            {
+                encryptedVal = cookieCipher.Encrypt(value);
+                CookieKey = cookieCipher.Key;
+                CookieIV = cookieCipher.IV;
+            }
+            ICollection<HttpCookie> cookies = new List<HttpCookie>();
+            int mod = encryptedVal.Length / 4096;
+            int ptr = 0;
+            for(int i = 0; i <= mod; i++)
+            {
+                HttpCookie cookie = new HttpCookie(name + i);
+                if (i < mod)
+                {
+                    var temp = encryptedVal.Skip(ptr).Take(4096).ToArray();
+                    ptr += 4096;
+                    cookie.Value = Convert.ToBase64String(temp);
+                }
+                else
+                {
+                    var temp = encryptedVal.Skip(ptr).Take(encryptedVal.Length - ptr).ToArray();
+                    cookie.Value = Convert.ToBase64String(temp);
+                }
+                cookies.Add(cookie);
+            }
+            return cookies;
         }
 
         // IDisposable
