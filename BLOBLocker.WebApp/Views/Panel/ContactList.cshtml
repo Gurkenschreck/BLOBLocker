@@ -1,0 +1,12 @@
+﻿@model BLOBLocker.Entities.Models.WebApp.AccountAddition
+
+@{
+    Layout = null;
+}
+
+<ul>
+    @foreach (BLOBLocker.Entities.Models.WebApp.Contact acc in Model.Contacts)
+    {
+        <li>@acc.Account.Alias</li>
+    }
+</ul>

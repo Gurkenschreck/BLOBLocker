@@ -1,0 +1,72 @@
+﻿@model BLOBLocker.WebApp.Models.MemoryViewModel
+@{
+    Layout = null;
+}
+
+<h2>AssignMemory</h2>
+
+Statistics
+@using (Html.BeginForm("RemoveAssigned", "Panel", FormMethod.Post))
+{
+    <table border="1">
+        @foreach (var assignedMemory in Model.AssignedMemory)
+        {
+            <tr>
+                <td>User </td>
+                <td>_@assignedMemory.MemoryPool.Owner.Alias _</td>
+                <td> assigned </td>
+                <td>_@assignedMemory.Space MB_</td>
+                <td> of type </td>
+                <td>
+                    @if (assignedMemory.IsBasic)
+                    {
+                        @:_Basic_
+                    }
+                    else
+                    {
+                        @:_Additional_
+                    }
+                </td>
+                @if(assignedMemory.MemoryPool.Owner.Alias == User.Identity.Name)
+                {
+                    <td><button type="submit" name="assid" value="@assignedMemory.ID">X</button></td>
+                }
+            </tr>
+        }
+        <tr>
+            <td colspan="5">Total:</td>
+            <td>@Model.TotalPoolMemory MB</td>
+            <td>@Html.AntiForgeryToken() @Html.Hidden("puid", Model.PoolUniqueIdentifier)</td>
+        </tr>
+    </table>
+}
+
+<hr />
+Assign some
+@using (Html.BeginForm("AssignMemory", "Panel", FormMethod.Post))
+{
+    <table border="1">
+        <tr>
+            <td colspan="2">@Html.ValidationSummary()</td>
+        </tr>
+        <tr>
+            <td>What you have left:</td>
+            <td>@Model.FreeBasicMemory MB basic</td>
+            <td>@Model.FreeAdditionalMemory MB additional</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(p => p.BasicMemoryToAdd)</td>
+            <td>@Html.EditorFor(p => p.BasicMemoryToAdd) MB</td>
+            <td>@Html.ValidationMessageFor(p => p.BasicMemoryToAdd)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(p => p.AdditionalMemoryToAdd)</td>
+            <td>@Html.EditorFor(p => p.AdditionalMemoryToAdd) MB</td>
+            <td>@Html.ValidationMessageFor(p => p.AdditionalMemoryToAdd)</td>
+        </tr>
+        <tr>
+            <td colspan="2">@Html.AntiForgeryToken()<button type="submit">Assign</button></td>
+            <td>@Html.HiddenFor(p => p.PoolUniqueIdentifier)</td>
+        </tr>
+    </table>
+}

@@ -1,0 +1,32 @@
+﻿@model BLOBLocker.WebApp.Models.AccountViewModel
+@{
+    ViewBag.Title = BLOBLocker.WebApp.Resources.Account.Strings.PageRegisterTitle;
+}
+
+<h2>SignUp</h2>
+
+@using (Html.BeginForm())
+{
+    <p>
+        @Html.ValidationSummary()
+    </p>
+    <p>
+        @Html.LabelFor(model => model.Alias) *:
+        @Html.EditorFor(model => model.Alias)
+    </p>
+    <p>
+        @Html.LabelFor(model => model.Password) *:
+        @Html.PasswordFor(model => model.Password)
+    </p>
+    <p>
+        @Html.LabelFor(model => model.ContactEmail)
+        @Html.EditorFor(model => model.ContactEmail)
+    </p>
+    if (ViewBag.IsRegistrationRestricted)
+    {
+        <p>@BLOBLocker.WebApp.Resources.Account.Strings.RegistrationCodeLabel *:
+        @Html.TextBox("registrationCode", "")</p>
+    }
+    @Html.AntiForgeryToken();
+    <input type="submit" value="@BLOBLocker.WebApp.Resources.Account.Strings.btn_SignUp" />
+}

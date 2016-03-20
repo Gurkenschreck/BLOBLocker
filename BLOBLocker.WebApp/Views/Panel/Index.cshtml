@@ -1,0 +1,100 @@
+﻿@model BLOBLocker.Entities.Models.WebApp.Account
+@{
+    ViewBag.Title = BLOBLocker.WebApp.Resources.Panel.Strings.PageTitle;
+}
+
+<h2>Control Panel</h2>
+
+
+@BLOBLocker.WebApp.Resources.Panel.Strings.AddAccount
+<p>
+    @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
+    {
+        Html.ValidationSummary();
+
+        <text>@BLOBLocker.WebApp.Resources.Panel.Strings.lbl_AddAccount @Html.TextBox("addAlias")</text>
+        @Html.AntiForgeryToken()
+        <input type="submit" value="@BLOBLocker.WebApp.Resources.Panel.Strings.btn_AddAccount" />
+    }
+</p>
+@BLOBLocker.WebApp.Resources.Panel.Strings.ShareWith
+<p>
+    @using (Html.BeginForm("ShareContacts", "Panel", FormMethod.Post))
+    {
+        Html.ValidationSummary();
+        <text>@BLOBLocker.WebApp.Resources.Panel.Strings.lbl_ShareWith @Html.TextBox("shareWithAlias")</text>
+        @Html.AntiForgeryToken()
+        <input type="submit" value="@BLOBLocker.WebApp.Resources.Panel.Strings.btn_ShareWith" />
+    }
+</p>
+
+@BLOBLocker.WebApp.Resources.Panel.Strings.ContactList
+<p>
+    @Html.Partial("~/Views/Panel/ContactList.cshtml", Model.Addition)
+</p>
+<hr />
+@BLOBLocker.WebApp.Resources.Panel.Strings.Notifications
+<p>
+    @Html.Partial("ShowNotifications", Model.Addition.Notifications)
+</p>
+<hr />
+<p>
+    @if (Model.Pools.Where(p => p.IsActive).Count() > 0)
+    {
+        <table border="1">
+            <tr>
+                <th>@Html.Label("Name")</th>
+                <th>@Html.Label("Is active")</th>
+                <th>@Html.Label("Creation date")</th>
+                <th>@Html.Label("Participants")</th>
+            </tr>
+            @foreach (BLOBLocker.Entities.Models.WebApp.Pool p in Model.Pools.Where(p => p.IsActive)) 
+            { 
+                <tr>
+                    <td>@p.Description</td>
+                    <td>@p.IsActive</td>
+                    <td>@p.CreatedOn</td>
+                    <td>@p.Participants.Count</td>
+                    <td>@Html.ActionLink("Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
+                </tr>
+            }
+        </table>
+        @Html.ActionLink("Build some more!", "Build")
+    }
+    else
+    {
+        <text>It seems like you cannot call yourself the owner of a pool. @Html.ActionLink("Build your own here!", "Build")</text>
+    }
+</p>
+<p>
+    @if (Model.PoolShares.Count > 0)
+    {
+        <table border="1">
+            <tr>
+                <th>@Html.Label("Name")</th>
+                <th>@Html.Label("Is active")</th>
+                <th>@Html.Label("Creation date")</th>
+                <th>@Html.Label("Assigned memory (MB)")</th>
+                <th>@Html.Label("Participants")</th>
+            </tr>
+            @foreach (var fp in Model.PoolShares.Where(p => p.IsActive))
+            {
+                <tr style="text-align:center;">
+                    <td>@fp.Pool.Description</td>
+                    <td>@fp.Pool.IsActive</td>
+                    <td>@fp.Pool.CreatedOn</td>
+                    <td>@fp.Pool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum()</td>
+
+                    <td>@fp.Pool.Participants.Where(p => p.IsActive).Count()</td>
+                    <td>@Html.ActionLink("Browse", "Pool", new { puid = fp.Pool.UniqueIdentifier })</td>
+                </tr>
+            }
+        </table>
+        @Html.ActionLink("Build some more!", "Build")
+    }
+    else
+    {
+        <text>You don't have access to any pools.</text>
+    }
+</p>
+

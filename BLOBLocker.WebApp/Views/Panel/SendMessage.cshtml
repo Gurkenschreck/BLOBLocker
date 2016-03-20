@@ -1,0 +1,18 @@
+﻿@model BLOBLocker.WebApp.Models.MessageViewModel
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("SendMessage", "Panel", FormMethod.Post))
+{
+    <table>
+        <tr>
+            <td>@Html.AntiForgeryToken()</td>
+            <td>@Html.HiddenFor(p => p.PUID)</td>
+        </tr>
+        <tr>
+            <td>@Html.TextAreaFor(p => p.MessageText)</td>
+            <td><button type="submit">Send</button></td>
+        </tr>
+    </table>
+}

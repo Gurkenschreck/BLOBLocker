@@ -1,0 +1,17 @@
+﻿@model BLOBLocker.Entities.Models.WebApp.SystemConfiguration
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("Edit", "Admin"))
+{
+    @:Edit Database value<br />
+    @Html.LabelFor(p => p.Key)
+    @Html.TextBoxFor(p => p.Key, new { id = "editKey"})
+    @Html.LabelFor(p => p.Value)
+    @Html.TextBoxFor(p => p.Value, new { id = "editValue" })
+    @Html.AntiForgeryToken()
+
+    <input type="submit" value="Submit" />
+}

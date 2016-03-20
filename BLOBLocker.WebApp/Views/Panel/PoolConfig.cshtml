@@ -1,0 +1,18 @@
+﻿@model BLOBLocker.WebApp.Models.PoolConfigModel
+@{
+    ViewBag.Title = "PoolConfig";
+}
+
+<h2>PoolConfig</h2>
+
+
+<p>
+    @Html.Action("AssignMemory")
+</p>
+
+<p>
+    @Html.Action("InviteUser")
+</p>
+
+<hr />
+<p>@Html.ActionLink("Back", "Pool", new { puid = Request.QueryString["puid"] })</p>

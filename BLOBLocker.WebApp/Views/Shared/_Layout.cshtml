@@ -1,0 +1,116 @@
+﻿@{
+    List<SelectListItem> cultures = new List<SelectListItem>();
+    cultures.Add(new SelectListItem{ Text = "English", Value = "en" });
+    cultures.Add(new SelectListItem{ Text = "Deutsch", Value = "de" });
+    cultures.Add(new SelectListItem{ Text = "Español", Value = "es" });
+    cultures.Add(new SelectListItem{ Text = "Polski", Value = "pl" });
+    
+    SelectListItem selectedItem = cultures.Where(p => UICulture.Contains(p.Value)).FirstOrDefault();
+    if(selectedItem != null)
+    {
+        selectedItem.Selected = true;
+    }
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewBag.Title - BLOBLocker</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery")
+        <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+        <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    </head>
+
+    <body>
+        <div class="navbar navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @Html.ActionLink("BLOBLocker", "Index", "Panel", new { area = "" }, new { @class = "navbar-brand" })
+
+                    }
+                    else 
+                    { 
+                        @Html.ActionLink("BLOBLocker", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                    }
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav"></ul>
+                </div>
+            </div>
+        </div>
+        <noscript>
+            @BLOBLocker.WebApp.Resources.Global.NoScriptDisclaimer
+            <hr />
+        </noscript>
+        <p>
+        @if(HttpContext.Current.User.Identity.IsAuthenticated)
+        {
+            <span>@Html.ActionLink("Panel Overview", "Index", "Panel") - @HttpContext.Current.User.Identity.Name - @Html.ActionLink("Settings", "Overview", "Account") - @Html.ActionLink("logout", "SignOut", "Account")</span>
+        }
+        else{
+            <span>@BLOBLocker.WebApp.Resources.Global.NotLoggedIn @Html.ActionLink(BLOBLocker.WebApp.Resources.Global.LoginText, "Login", "Account") 
+            - @Html.ActionLink(BLOBLocker.WebApp.Resources.Global.SignUpText, "SignUp", "Account")</span>
+        }
+        </p>
+        <p><span style="float:right;" id="counter">
+            @using (Html.BeginForm("SetSessionCulture", "Globalization", FormMethod.Get))
+            {
+                @Html.DropDownList("culture", cultures)
+                <input type="submit" value="Ok" />
+            }
+            </span>
+        </p>
+
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - BLOBLocker</p>
+            </footer>
+        </div>
+        <div id="FeedbackBox" style="display:none; position:fixed; bottom:0; right:0; height:50px; width:50px; background-color:#DDDDDD;border-left:1px groove black;border-top:1px groove black;">
+            <div style="display:none; width:inherit; background-color:yellow; text-align:center;">
+                Hello my friends. Feedback is real
+            </div>
+        </div>
+        <script>
+            $(function () {
+                var minimized = true;
+
+                $("#FeedbackBox").show();
+                $("#FeedbackBox").click(function () {
+                    var fb = $(this);
+                    if (minimized) {
+                        fb.animate({
+                            height: '250px',
+                            width: '300px'
+                        });
+                        fb.children("div").show(300);
+                        minimized = false;
+                    }
+                    else {
+                        fb.animate({
+                            height: '50px',
+                            width: '50px'
+                        });
+                        fb.children("div").hide(300);
+                        minimized = true;
+                    }
+                });
+            });
+        </script>
+
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

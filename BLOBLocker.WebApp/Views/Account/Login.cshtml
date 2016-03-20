@@ -1,0 +1,23 @@
+﻿@model BLOBLocker.WebApp.Models.AccountViewModel
+@{
+    ViewBag.Title = BLOBLocker.WebApp.Resources.Account.Strings.PageLoginTitle;
+}
+
+<h2>SignIn</h2>
+
+@using(Html.BeginForm())
+{
+    <p>
+        @Html.ValidationSummary()
+    </p>
+    <p>
+        @Html.LabelFor(model => model.Alias) *:
+        @Html.TextBoxFor(model => model.Alias)
+    </p>
+    <p>
+        @Html.LabelFor(model => model.Password) *:
+        @Html.PasswordFor(model => model.Password)
+    </p>
+    @Html.AntiForgeryToken()
+    <input type="submit" value="@BLOBLocker.WebApp.Resources.Account.Strings.btn_SignIn" />
+}

@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Pool";
+
+    BLOBLocker.Entities.Models.WebApp.Account acc = ViewBag.CurrentAccount;
+    BLOBLocker.Entities.Models.WebApp.Pool pool = ViewBag.Pool;
+    int assignedSpace = ViewBag.AssignedPoolSpace;
+    
+}
+
+<h2>Pool - @pool.Description - @assignedSpace MB</h2>
+
+@if(pool.ChatEnabled)
+{
+    <p>@Html.Action("Chat", new { puid = Request.QueryString["puid"] })</p>
+}
+@if(pool.FileStorageEnabled)
+{
+    <p>Filestorage goes here</p>
+}
+@if(pool.LinkRepositoryEnabled)
+{
+    <p>Link repository goes here</p>
+}
+
+<p>
+    @Html.ActionLink("Settings", "PoolConfig", new { puid = pool.UniqueIdentifier})
+</p>
+<ul>
+    @foreach(var usr in pool.Participants.Where(p => p.IsActive))
+    {
+        <li>@usr.SharedWith.Alias</li>
+    }
+</ul>

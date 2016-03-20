@@ -1,0 +1,33 @@
+﻿@model BLOBLocker.Entities.Models.WebApp.SystemConfiguration
+
+@{
+    Layout = null;
+}
+Add new
+
+<table>
+    @using (Html.BeginForm("Create", "Manage"))
+    {
+        <tr>
+            <td>
+                @Html.LabelFor(p => p.Key)
+            </td>
+            <td>
+                @Html.TextBoxFor(p => p.Key)
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.LabelFor(p => p.Value)
+            </td>
+            <td>
+                @Html.TextBoxFor(p => p.Value)
+            </td>
+        </tr>
+        <tr>
+            <td>@Html.AntiForgeryToken()</td>
+            <td><input type="submit" value="Create new" /></td>
+        </tr>
+    }
+</table>
