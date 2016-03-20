@@ -19,6 +19,7 @@ namespace CryptoPool.Entities.Models.Models.WebApp
         [Key]
         public int ID { get; set; }
         public string Text { get; set; }
+        public string TextSignature { get; set; }
         public virtual Account Sender { get; set; }
         [ForeignKey("Pool")]
         public int PoolID { get; set; }

@@ -132,6 +132,10 @@ namespace CryptoPool.WebApp.Controllers
                     {
                         msg.Text = poolCipher.EncryptToString(cvm.MessageText);
                     }
+                    using(var curAccRSACipher = new RSACipher<RSACryptoServiceProvider>(Encoding.UTF8.GetString(privKey)))
+                    {
+                        msg.TextSignature = curAccRSACipher.SignStringToString<SHA256Cng>(msg.Text);
+                    }
                     curPool.Messages.Add(msg);
                     context.SaveChanges();
                     Utilities.SetArrayValuesZero(privKey);
