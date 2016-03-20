@@ -141,8 +141,10 @@
     <Compile Include="Controllers\GlobalizationController.cs" />
     <Compile Include="Models\AccountViewModel.cs" />
     <Compile Include="Models\BuildPoolViewModel.cs" />
+    <Compile Include="Models\ChatViewModel.cs" />
     <Compile Include="Models\InvitationViewModel.cs" />
     <Compile Include="Models\MemoryViewModel.cs" />
+    <Compile Include="Models\MessageViewModel.cs" />
     <Compile Include="Models\PoolConfigModel.cs" />
     <Compile Include="Resources\Account\Strings.Designer.cs">
       <DependentUpon>Strings.resx</DependentUpon>
@@ -314,6 +316,8 @@
     <Content Include="Views\Panel\AssignMemory.cshtml" />
     <Content Include="Views\Panel\ShowNotifications.cshtml" />
     <Content Include="Views\Panel\InviteUser.cshtml" />
+    <Content Include="Views\Panel\Chat.cshtml" />
+    <Content Include="Views\Panel\SendMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

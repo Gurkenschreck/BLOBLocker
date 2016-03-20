@@ -77,6 +77,14 @@
     <Compile Include="Migrations\201603190032036_CPAddPoolKeyToShare.Designer.cs">
       <DependentUpon>201603190032036_CPAddPoolKeyToShare.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603191915494_CPRemoveForeignKeyFromAccount.cs" />
+    <Compile Include="Migrations\201603191915494_CPRemoveForeignKeyFromAccount.Designer.cs">
+      <DependentUpon>201603191915494_CPRemoveForeignKeyFromAccount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603192336491_CPAddMessages.cs" />
+    <Compile Include="Migrations\201603192336491_CPAddMessages.Designer.cs">
+      <DependentUpon>201603192336491_CPAddMessages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\AdminToolConfiguration.cs" />
     <Compile Include="Migrations\CryptoPoolConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -90,6 +98,7 @@
     <Compile Include="Models\WebApp\Contact.cs" />
     <Compile Include="Models\WebApp\CryptoConfiguration.cs" />
     <Compile Include="Models\WebApp\MemoryPool.cs" />
+    <Compile Include="Models\WebApp\Message.cs" />
     <Compile Include="Models\WebApp\Notification.cs" />
     <Compile Include="Models\WebApp\Pool.cs" />
     <Compile Include="Models\WebApp\PoolShare.cs" />
@@ -123,6 +132,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603190032036_CPAddPoolKeyToShare.resx">
       <DependentUpon>201603190032036_CPAddPoolKeyToShare.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603191915494_CPRemoveForeignKeyFromAccount.resx">
+      <DependentUpon>201603191915494_CPRemoveForeignKeyFromAccount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603192336491_CPAddMessages.resx">
+      <DependentUpon>201603192336491_CPAddMessages.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

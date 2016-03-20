@@ -68,6 +68,7 @@
     <Compile Include="ModelHelper\AccountRepository.cs" />
     <Compile Include="ModelHelper\CryptoConfigRepository.cs" />
     <Compile Include="ModelHelper\NotificationHelper.cs" />
+    <Compile Include="ModelHelper\PoolShareHandler.cs" />
     <Compile Include="ModelHelper\PoolRepository.cs" />
     <Compile Include="ModelHelper\Repository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -22,3 +22,25 @@
 
     <span id="notificationAntiForgeryToken">@Html.AntiForgeryToken()</span>
 }
+
+<script>
+
+    $(function () {
+        $("button[type=submit]").click(function () {
+            var clickedBtn = $(this);
+            var rvt = $("input[name=__RequestVerificationToken]");
+            $.ajax({
+                type: "POST",
+                url: "/Panel/DisableNotificationAsync",
+                data: { "id": clickedBtn.val(), "__RequestVerificationToken": rvt.val() },
+                cache: false
+            }).done(function (data, status, req) {
+                clickedBtn.parent().parent().toggle(250);
+            }).error(function (req, textStatus, errorThrown) {
+                alert("Error:" + req.status);
+            });
+            return false;
+
+        });
+    });
+</script>

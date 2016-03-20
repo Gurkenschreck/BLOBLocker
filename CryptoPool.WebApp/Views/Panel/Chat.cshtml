@@ -1,0 +1,20 @@
+﻿@model CryptoPool.WebApp.Models.ChatViewModel
+@{
+    Layout = null;   
+}
+
+
+<table>
+    @foreach (var message in Model.Messages) 
+    { 
+        <tr>
+            <td colspan="3">@message.Sender.Alias</td>
+            <td>@message.Sent</td>
+        </tr>
+        <tr>
+            <td colspan="4">@message.Text</td>
+        </tr>
+    }
+</table>
+
+@Html.Partial("SendMessage", Model.NewMessage)

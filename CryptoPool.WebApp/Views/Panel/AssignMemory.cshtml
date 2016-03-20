@@ -8,7 +8,7 @@
 Statistics
 @using (Html.BeginForm("RemoveAssigned", "Panel", FormMethod.Post))
 {
-    <table>
+    <table border="1">
         @foreach (var assignedMemory in Model.AssignedMemory)
         {
             <tr>
@@ -43,9 +43,9 @@ Statistics
 
 <hr />
 Assign some
-@using (Html.BeginForm("AssignMemory"))
+@using (Html.BeginForm("AssignMemory", "Panel", FormMethod.Post))
 {
-    <table>
+    <table border="1">
         <tr>
             <td colspan="2">@Html.ValidationSummary()</td>
         </tr>

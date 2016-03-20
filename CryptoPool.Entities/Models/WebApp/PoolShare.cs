@@ -13,7 +13,6 @@ namespace CryptoPool.Entities.Models.WebApp
         {
             IsActive = true;
             SharedOn = DateTime.Now;
-            ShowSince = DateTime.Now;
         }
 
         [Key]

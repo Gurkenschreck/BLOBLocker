@@ -45,6 +45,7 @@ namespace CryptoPool.WebApp
             if(User.Identity.IsAuthenticated)
             {
                 Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies["Secret"].Expires = DateTime.Now.AddDays(-1);
                 Response.Redirect("/Account/Login");
             }
         }

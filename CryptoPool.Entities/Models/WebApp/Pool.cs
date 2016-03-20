@@ -16,6 +16,7 @@ namespace CryptoPool.Entities.Models.WebApp
             IsActive = true;
             Participants = new List<PoolShare>();
             AssignedMemory = new List<AssignedMemory>();
+            Messages = new List<Message>();
             ChatEnabled = true;
             FileStorageEnabled = true;
             LinkRepositoryEnabled = true;
@@ -37,6 +38,7 @@ namespace CryptoPool.Entities.Models.WebApp
         public virtual ICollection<PoolShare> Participants { get; set; }
         public Nullable<DateTime> CreatedOn { get; set; }
         public bool IsActive { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
 
         public bool ChatEnabled { get; set; }
         public bool FileStorageEnabled { get; set; }

@@ -23,6 +23,7 @@ namespace CryptoPool.Entities.Models.WebApp
 
         public DbSet<SystemConfiguration> SystemConfigurations { get; set; }
         public DbSet<Contact> ContactLinks { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public CryptoPoolContext()
 #if DEBUG

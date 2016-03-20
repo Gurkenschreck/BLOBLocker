@@ -47,8 +47,6 @@ namespace CryptoPool.Entities.Models.WebApp
             ResourceType = typeof(Resources.Models))]
         public bool IsEnabled { get; set; }
 
-        [ForeignKey("MemoryPool")]
-        public int MemoryPoolID { get; set; }
         public virtual MemoryPool MemoryPool { get; set; }
     }
 }

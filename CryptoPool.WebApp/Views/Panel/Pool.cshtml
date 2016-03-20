@@ -11,7 +11,7 @@
 
 @if(pool.ChatEnabled)
 {
-    <p>Chat goes here</p>
+    <p>@Html.Action("Chat", new { puid = Request.QueryString["puid"] })</p>
 }
 @if(pool.FileStorageEnabled)
 {
@@ -19,14 +19,14 @@
 }
 @if(pool.LinkRepositoryEnabled)
 {
-    <p>Link repository hoes here</p>
+    <p>Link repository goes here</p>
 }
 
 <p>
     @Html.ActionLink("Settings", "PoolConfig", new { puid = pool.UniqueIdentifier})
 </p>
 <ul>
-    @foreach(var usr in pool.Participants)
+    @foreach(var usr in pool.Participants.Where(p => p.IsActive))
     {
         <li>@usr.SharedWith.Alias</li>
     }

@@ -21,6 +21,7 @@ using Cipha.Security.Cryptography;
 using CryptoPool.WebApp.Models;
 using CryptoPool.Entities.Models.Models.WebApp;
 using CryptoPool.Code.Membership;
+using System.Text;
 
 namespace CryptoPool.WebApp.Controllers
 {
@@ -34,6 +35,112 @@ namespace CryptoPool.WebApp.Controllers
             accRepo = new AccountRepository(context);
             var acc = accRepo.GetAccount(HttpContext.User.Identity.Name);
             return View(acc);
+        }
+
+        [ChildActionOnly]
+        [HttpGet]
+        public ActionResult Chat(string puid)
+        {
+            if(string.IsNullOrWhiteSpace(puid))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            accRepo = new AccountRepository(context);
+
+            Account curAcc = accRepo.GetAccount(User.Identity.Name);
+            PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
+            Pool curPool = curPoolShare.Pool;
+            ChatViewModel cvm = new ChatViewModel();
+
+            if (ModelState.IsValid)
+            {
+                cvm.PUID = puid;
+                
+                //Decrypt messages //take last x messages
+                List<Message> encryptedMessageList = curPool.Messages.Where(p => p.IsVisible).ToList();
+                cvm.NewMessage = new MessageViewModel();
+                cvm.NewMessage.PUID = puid;
+                if (encryptedMessageList.Count > 0)
+                {
+                    List<Message> decryptedMessageList = new List<Message>();
+
+                    using (CredentialHandler credHandler = new CredentialHandler(Session))
+                    {
+                        HttpCookie keypartCookie = Request.Cookies["Secret"];
+                        byte[] privKey = credHandler.Extract(keypartCookie, Session);
+
+                        PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
+                        byte[] key = psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare);
+                        byte[] iv = curPool.Config.IV;
+
+                        Message curMsg;
+                        using (var poolCipher = new SymmetricCipher<AesManaged>(key, iv))
+                        {
+                            foreach (var encMsg in encryptedMessageList)
+                            {
+                                curMsg = encMsg;
+                                curMsg.Text = poolCipher.DecryptToString(curMsg.Text);
+                                decryptedMessageList.Add(curMsg);
+                            }
+                        }
+                        Utilities.SetArrayValuesZero(privKey);
+                        Utilities.SetArrayValuesZero(key);
+                        Utilities.SetArrayValuesZero(iv);
+                    }
+                    cvm.Messages = decryptedMessageList;
+                }
+                else
+                {
+                    cvm.Messages = new List<Message>();
+                }
+            }
+
+            return View(cvm);
+        }
+
+        [PreserveModelState]
+        [HttpPost]
+        public ActionResult SendMessage(MessageViewModel cvm)
+        {
+            if(cvm == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if(ModelState.IsValid)
+            {
+                accRepo = new AccountRepository(context);
+                Account curAcc = accRepo.GetAccount(User.Identity.Name);
+
+                PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == cvm.PUID);
+                Pool curPool = curPoolShare.Pool;
+
+                Message msg = new Message();
+                msg.Pool = curPool;
+                msg.Sender = curAcc;
+                
+                using(CredentialHandler credHandler = new CredentialHandler(Session))
+                {
+                    HttpCookie keypartCookie = Request.Cookies["Secret"];
+                    byte[] privKey = credHandler.Extract(keypartCookie, Session);
+
+                    PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
+                    byte[] key = psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare);
+                    byte[] iv = curPool.Config.IV;
+
+                    using(var poolCipher = new SymmetricCipher<AesManaged>(key, iv))
+                    {
+                        msg.Text = poolCipher.EncryptToString(cvm.MessageText);
+                    }
+                    curPool.Messages.Add(msg);
+                    context.SaveChanges();
+                    Utilities.SetArrayValuesZero(privKey);
+                    Utilities.SetArrayValuesZero(key);
+                    Utilities.SetArrayValuesZero(iv);
+                }
+            }
+
+            return RedirectToAction("Pool", new { puid = cvm.PUID });
         }
 
         [ValidateAntiForgeryToken]
@@ -74,69 +181,44 @@ namespace CryptoPool.WebApp.Controllers
 
             if(ModelState.IsValid)
             {
-                PoolShare ps = new PoolShare();
                 var pool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == ivm.PoolUID);
                 if (pool != null)
                 {
                     if (pool.Participants.All(p => p.SharedWith.Alias != ivm.InviteAlias))
                     {
-                        ps.Pool = pool;
-
-                        ps.SharedWith = corAcc;
-                        if (!ivm.ShowAll)
-                        {
-                            ps.ShowSince = ivm.ShowSince;
-                        }
-
                         var curAcc = accRepo.GetAccount(User.Identity.Name);
 
-                        /*byte[] cookieKey = Session["CookieKey"] as byte[];
-                        byte[] cookieIV = Session["CookieIV"] as byte[];
-
-                        using (var bakery = new CryptoCookieBakery(cookieKey, cookieIV))
+                        PoolShare curAccPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.IsActive && p.PoolID == pool.ID);
+                        if (curAccPoolShare != null)
                         {
-                            string privKey = bakery.GetValue(Request.Cookies["Secret"]);
+                            int poolShareKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
 
-                            using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(privKey))
+                            using (var handler = new CredentialHandler(Session))
                             {
-                                byte[] poolKey = rsaCipher.Decrypt(pool.Config.Key);
+                                HttpCookie keypart = Request.Cookies["Secret"];
+                                byte[] privKey = handler.Extract(keypart, Session);
 
-
-                                using (var corCipher = new RSACipher<RSACryptoServiceProvider>(corAcc.Config.PublicKey))
+                                PoolShareHandler poolHandler = new PoolShareHandler(Session, HttpContext);
+                                PoolShare ps = poolHandler.Connect(curAccPoolShare, corAcc, pool, privKey);
+                                if (!ivm.ShowAll)
                                 {
-                                    poolShare.SharedKey = corCipher.Encrypt(poolKey);
+                                    ps.ShowSince = ivm.ShowSince;
                                 }
                             }
-                         * Utilities.SetArrayValuesZero(cookieKey);
-                        Utilities.SetArrayValuesZero(cookieIV);
-                        }*/
-
-                        /*byte[] AccEncPriKey = Session["AccEncPriKey"] as byte[];
-                        HttpCookie keypartCookie = Request.Cookies["KeyCookie"];
-                        HttpCookie ivCookie = Request.Cookies["IVCookie"];
-
-                        using(var cookieCipher = new SymmetricCipher<AesManaged>(Convert.FromBase64String(keypartCookie.Value), Convert.FromBase64String(ivCookie.Value)))
+                            context.SaveChanges();
+                        }
+                        else
                         {
-                            string accdecprikey = cookieCipher.DecryptToString(AccEncPriKey);
-                            using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(accdecprikey))
-                            {
-                                byte[] poolPrivKey = rsaCipher.Decrypt(poolShare.Pool.Config.PrivateKey);
-                                using (var corAccRsaCipher = new RSACipher<RSACryptoServiceProvider>(corAcc.Config.PublicKey))
-                                {
-                                    poolShare. = corAccRsaCipher.Encrypt(poolPrivKey);
-                                }
-                            }
-                        }*/
-                        corAcc.PoolShares.Add(ps);
-                        context.SaveChanges();
+                            ModelState.AddModelError("InviteAlias", "Cannot invite user. You shouldn't even be here.");
+                        }
                     }
                     else
                     {
-                        ModelState.AddModelError("InviteAlias", "Account is already part of this pool.");
+                        ModelState.AddModelError("InviteAlias", "Account is already part of this curPool.");
                     }
                 }
             }
-            return View(ivm);
+            return RedirectToAction("PoolConfig", new { puid = ivm.PoolUID });
         }
 
         [RestoreModelState]
@@ -150,7 +232,8 @@ namespace CryptoPool.WebApp.Controllers
             }
             bool isvalid = ModelState.IsValid;
             Pool curPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
-            Account curAcc = curPool.Owner;
+            accRepo = new AccountRepository(context);
+            Account curAcc = accRepo.GetAccount(User.Identity.Name);
             MemoryViewModel mvm = new MemoryViewModel();
             mvm.TotalPoolMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum();
             mvm.AssignedMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).ToList();
@@ -305,12 +388,9 @@ namespace CryptoPool.WebApp.Controllers
             }
             if(ModelState.IsValid)
             {
-                int poolSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolKeySize"]);
-                int poolRSAKeySize = Convert.ToInt32(HttpContext.Application["security.PoolRSAKeySize"]);
                 int saltByteLength = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]);
-                int poolShareKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
-                int poolShareRSAKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareRSAKeySize"]);
 
+                
                 PoolRepository repo = new PoolRepository(context);
                 accRepo = new AccountRepository(context);
                 Account curAcc = accRepo.GetAccount(User.Identity.Name);
@@ -320,6 +400,10 @@ namespace CryptoPool.WebApp.Controllers
                 pool.OwnerID = curAcc.ID;
                 pool.Salt = Cipha.Security.Cryptography.Utilities.GenerateBytes(saltByteLength);
 
+                int poolSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolKeySize"]);
+                int poolRSAKeySize = Convert.ToInt32(HttpContext.Application["security.PoolRSAKeySize"]);
+                int poolShareKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
+                int poolShareRSAKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareRSAKeySize"]);
 
                 CryptoConfiguration poolConfig = new CryptoConfiguration();
                 PoolShare poolShare = new PoolShare();
@@ -339,7 +423,7 @@ namespace CryptoPool.WebApp.Controllers
                         poolShareConfig.IV = accRSACipher.Encrypt(poolShareCipher.IV);
                         using (var poolRSACipher = new RSACipher<RSACryptoServiceProvider>(poolRSAKeySize))
                         {
-                            using(var poolSymCipher = new SymmetricCipher<AesManaged>(poolSymKeySize))
+                            using (var poolSymCipher = new SymmetricCipher<AesManaged>(poolSymKeySize))
                             {
                                 poolConfig.PublicKey = poolRSACipher.ToXmlString(false);
                                 poolConfig.IV = poolSymCipher.IV;
@@ -352,6 +436,7 @@ namespace CryptoPool.WebApp.Controllers
                         }
                     }
                 }
+
 
                 NotificationHelper.SendNotification(curAcc, "Pool {0} creation was a success!", pool.Description);
                 
