@@ -178,7 +178,10 @@ namespace CryptoPool.WebApp.Controllers
                                 }
                                 
                                 FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
-                                return RedirectToAction("Index", "Panel");
+                                if (Request.QueryString["ReturnUrl"] == null)
+                                    return RedirectToAction("Index", "Panel");
+                                else
+                                    Response.Redirect(Request.QueryString["ReturnUrl"]);
                             }
                             catch (CryptographicException)
                             {

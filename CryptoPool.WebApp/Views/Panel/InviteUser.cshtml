@@ -2,6 +2,7 @@
 @{
     Layout = null;
 }
+
 @using(Html.BeginForm("InviteUser", "Panel", FormMethod.Post))
 {
     <table border="1">
@@ -14,11 +15,12 @@
         </tr>
         <tr>
             <th>@Html.LabelFor(p => p.ShowAll)</th>
-            <td>@Html.EditorFor(p => p.ShowAll)</td>
+            <td>@Html.CheckBoxFor(p => p.ShowAll, new { id="ShowAllCheckBox" })</td>
         </tr>
-        <tr>
+        <tr id="ShowSinceDateTimeField">
             <th>@Html.LabelFor(p => p.ShowSince)</th>
-            <td>@Html.EditorFor(p => p.ShowSince)</td>
+            <td>@Html.EditorFor(p => p.ShowSince) </td>
+            <td>Examples:<br /> @DateTime.Now <br /> @DateTime.Now.AddDays(-2) <br /> @(new DateTime(2015, 2, 14, 13, 37, 42))</td>
         </tr>
         <tr>
             <td>@Html.AntiForgeryToken() @Html.HiddenFor(p => p.PoolUID)</td>
@@ -26,3 +28,12 @@
         </tr>
     </table>
 }
+<script>
+    $(function () {
+        $("#ShowSinceDateTimeField").toggle();
+        $("#ShowAllCheckBox").click(function () {
+            $("#ShowSinceDateTimeField").toggle();
+
+        });
+    });
+</script>

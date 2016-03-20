@@ -11,5 +11,6 @@ namespace CryptoPool.WebApp.Models
         public string PUID { get; set; }
         public ICollection<Message> Messages { get; set; }
         public MessageViewModel NewMessage { get; set; }
+        public int NextAmountShowLastMessageCount { get; set; }
     }
 }

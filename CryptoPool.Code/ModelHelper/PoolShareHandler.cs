@@ -83,5 +83,27 @@ namespace CryptoPool.Code.ModelHelper
                 }
             }
         }
+        public byte[] GetPoolKey(string curAccPrivateKeyString, PoolShare curAccPoolShare, out byte[] curAccPoolSharePriKey)
+        {
+            using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(curAccPrivateKeyString))
+            {
+                byte[] curPSKey = rsaCipher.Decrypt(curAccPoolShare.Config.Key);
+                byte[] curPSIV = rsaCipher.Decrypt(curAccPoolShare.Config.IV);
+
+                using (var curPSCipher = new SymmetricCipher<AesManaged>(curPSKey, curPSIV))
+                {
+                    curAccPoolSharePriKey = curPSCipher.Decrypt(curAccPoolShare.Config.PrivateKey);
+                    string encCurPSPriKey = Encoding.UTF8.GetString(curAccPoolSharePriKey);
+
+                    using (var poolKeyCipher = new RSACipher<RSACryptoServiceProvider>(encCurPSPriKey))
+                    {
+                        Utilities.SetArrayValuesZero(curPSKey);
+                        Utilities.SetArrayValuesZero(curPSIV);
+                        byte[] poolKey = poolKeyCipher.Decrypt(curAccPoolShare.PoolKey);
+                        return poolKey;
+                    }
+                }
+            }
+        }
     }
 }

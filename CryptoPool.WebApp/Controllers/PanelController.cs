@@ -57,8 +57,32 @@ namespace CryptoPool.WebApp.Controllers
             {
                 cvm.PUID = puid;
                 
-                //Decrypt messages //take last x messages
-                List<Message> encryptedMessageList = curPool.Messages.Where(p => p.IsVisible).ToList();
+                //Decrypt messages //take last x messages // show only since share date
+                List<Message> encryptedMessageList = null; //= curPool.Messages.Where(p => p.IsVisible).ToList();
+                int showAmountMessages = Request.QueryString["smc"] != null 
+                    ? Convert.ToInt32(Request.QueryString["smc"]) 
+                    : Convert.ToInt32(HttpContext.Application["pool.ShowLastMessageCount"]);
+                int incrementShowAmountMessages = Convert.ToInt32(HttpContext.Application["pool.IncrementShowMessageCount"]);
+                cvm.NextAmountShowLastMessageCount = showAmountMessages + incrementShowAmountMessages;
+
+                if(curPoolShare.ShowSince != null)
+                {
+                    DateTime showSince = (DateTime)curPoolShare.ShowSince;
+                    encryptedMessageList = curPool.Messages
+                                                  .Skip(curPool.Messages.Count - showAmountMessages)
+                                                  .Where(p => DateTime.Compare(showSince, (DateTime)p.Sent) < 0)
+                                                  .OrderByDescending(p => p.Sent)
+                                                  .ToList();
+
+                }
+                else
+                {
+                    encryptedMessageList = curPool.Messages
+                                                  .Skip(curPool.Messages.Count - showAmountMessages)
+                                                  .OrderByDescending(p => p.Sent)
+                                                  .ToList();
+                }
+
                 cvm.NewMessage = new MessageViewModel();
                 cvm.NewMessage.PUID = puid;
                 if (encryptedMessageList.Count > 0)
@@ -125,22 +149,24 @@ namespace CryptoPool.WebApp.Controllers
                     byte[] privKey = credHandler.Extract(keypartCookie, Session);
 
                     PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
-                    byte[] key = psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare);
+                    byte[] curAccPoolSharePriKey;
+                    byte[] key = psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare, out curAccPoolSharePriKey);
                     byte[] iv = curPool.Config.IV;
 
                     using(var poolCipher = new SymmetricCipher<AesManaged>(key, iv))
                     {
                         msg.Text = poolCipher.EncryptToString(cvm.MessageText);
                     }
-                    using(var curAccRSACipher = new RSACipher<RSACryptoServiceProvider>(Encoding.UTF8.GetString(privKey)))
+                    using(var curAccPSRSACipher = new RSACipher<RSACryptoServiceProvider>(Encoding.UTF8.GetString(curAccPoolSharePriKey)))
                     {
-                        msg.TextSignature = curAccRSACipher.SignStringToString<SHA256Cng>(msg.Text);
+                        msg.TextSignature = curAccPSRSACipher.SignStringToString<SHA256Cng>(msg.Text);
                     }
                     curPool.Messages.Add(msg);
                     context.SaveChanges();
                     Utilities.SetArrayValuesZero(privKey);
                     Utilities.SetArrayValuesZero(key);
                     Utilities.SetArrayValuesZero(iv);
+                    Utilities.SetArrayValuesZero(curAccPoolSharePriKey);
                 }
             }
 
@@ -170,12 +196,14 @@ namespace CryptoPool.WebApp.Controllers
         {
             InvitationViewModel ivm = new InvitationViewModel();
             ivm.PoolUID = puid;
+            ivm.ShowSince = DateTime.Now;
             return View(ivm);
         }
         [PreserveModelState]
         [HttpPost]
         public ActionResult InviteUser(InvitationViewModel ivm)
         {
+            var x = HttpContext.Cache["d"];
             accRepo = new AccountRepository(context);
             var corAcc = accRepo.GetAccount(ivm.InviteAlias);
             if (corAcc == null)

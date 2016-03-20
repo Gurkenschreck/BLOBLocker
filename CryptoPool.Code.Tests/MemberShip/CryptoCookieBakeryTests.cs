@@ -61,18 +61,5 @@ namespace CryptoPool.Code.Tests.MemberShip
 
             Assert.AreEqual(expected, got);
         }
-        [TestMethod]
-        public void CreateCookies_SplitLongValueIntoSeveralCookies_Pass()
-        {
-            IEnumerable<HttpCookie> cookies;
-
-            using(var rsaCipher = new RSACipher<RSACryptoServiceProvider>(4096))
-            {
-                using(var bakery = new CryptoCookieBakery())
-                {
-                    cookies = bakery.CreateCookies("Secret", rsaCipher.ToXmlString(true), 256);
-                }
-            }
-        }
     }
 }
