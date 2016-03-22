@@ -27,7 +27,7 @@ namespace BLOBLocker.Entities.Models.WebApp
 
         public BLWAContext()
 #if DEBUG
-            : base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.WebApp.CryptoPoolContext;Integrated Security=True")
+            : base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BLWA;Integrated Security=True")
 #endif
 #if !DEBUG
             :base(ConfigurationManager.ConnectionStrings["BLWA"].ConnectionString)

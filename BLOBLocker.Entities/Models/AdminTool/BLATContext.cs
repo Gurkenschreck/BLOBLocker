@@ -15,7 +15,7 @@ namespace BLOBLocker.Entities.Models.AdminTool
 
         public BLATContext()
 #if DEBUG
-            : base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.AdminTool.AdminToolContext;Integrated Security=True")
+            : base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BLAT;Integrated Security=True")
 #endif
 #if !DEBUG
             :base(ConfigurationManager.ConnectionStrings["BLAT"].ConnectionString)
