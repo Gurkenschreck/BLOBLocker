@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using Cipha.Security.Cryptography;
 
 namespace BLOBLocker.AdminTool.Controllers
 {
@@ -34,20 +35,18 @@ namespace BLOBLocker.AdminTool.Controllers
             }
             if (ModelState.IsValid)
             {
-                byte[] pwHash;
-                using (var hasher = new Hasher<SHA512Cng>())
+                using(var deriver = new Rfc2898DeriveBytes(pw, dbAccount.Salt, 20000))
                 {
-                    pwHash = hasher.Hash(pw);
-                }
-
-                if (Cipha.Security.Cryptography.Utilities.SlowEquals(dbAccount.PasswordHash, pwHash))
-                {
-                    FormsAuthentication.SetAuthCookie(dbAccount.Alias, false);
-                    return RedirectToAction("Index", "Manage");
-                }
-                else
-                {
-                    ModelState.AddModelError("AliasOrPasswordWrong", "Alias and/or password wrong.");
+                    byte[] derived = deriver.GetBytes(dbAccount.Salt.Length);
+                    if (Utilities.SlowEquals(dbAccount.DerivedPassword, derived))
+                    {
+                        FormsAuthentication.SetAuthCookie(dbAccount.Alias, false);
+                        return RedirectToAction("Index", "Manage");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("AliasOrPasswordWrong", "Alias and/or password wrong.");
+                    }
                 }
             }
             return View(acc);

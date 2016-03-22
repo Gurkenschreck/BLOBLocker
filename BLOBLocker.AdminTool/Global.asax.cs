@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Cipha.Security.Cryptography;
 
 namespace BLOBLocker.AdminTool
 {
@@ -30,9 +31,10 @@ namespace BLOBLocker.AdminTool
                 {
                     sysadm = new Entities.Models.AdminTool.Account();
                     sysadm.Alias = "Sysadm";
-                    using (var hasher = new Hasher<SHA512Cng>())
+                    sysadm.Salt = Utilities.GenerateBytes(32);
+                    using(var deriver = new Rfc2898DeriveBytes("changeme,4,4", sysadm.Salt, 21423))
                     {
-                        sysadm.PasswordHash = hasher.Hash("DefaultChangeMe");
+                        sysadm.DerivedPassword = deriver.GetBytes(sysadm.Salt.Length);
                     }
                     sysadm.Roles = new List<RoleLink>();
                     var adminRole = atcont.Roles.FirstOrDefault(p => p.Definition == "Administrator");
@@ -42,7 +44,6 @@ namespace BLOBLocker.AdminTool
                     {
                         adminRole = new Role();
                         adminRole.Definition = "Administrator";
-                        atcont.Roles.Add(adminRole);
                     }
                     if (moderatorRole == null)
                     {
@@ -61,6 +62,17 @@ namespace BLOBLocker.AdminTool
                         Account = sysadm,
                         Role = adminRole
                     });
+                    sysadm.Roles.Add(new RoleLink
+                    {
+                        Account = sysadm,
+                        Role = moderatorRole
+                    });
+                    sysadm.Roles.Add(new RoleLink
+                    {
+                        Account = sysadm,
+                        Role = translatorRole
+                    });
+
                     atcont.Accounts.Add(sysadm);
                     atcont.SaveChanges();
                 }

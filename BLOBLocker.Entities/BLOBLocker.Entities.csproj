@@ -89,6 +89,10 @@
     <Compile Include="Migrations\201603200402595_CPAddTextSignatureToMessage.Designer.cs">
       <DependentUpon>201603200402595_CPAddTextSignatureToMessage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603222214480_ATAddPasswordDerived.cs" />
+    <Compile Include="Migrations\201603222214480_ATAddPasswordDerived.Designer.cs">
+      <DependentUpon>201603222214480_ATAddPasswordDerived.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -145,6 +149,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603200402595_CPAddTextSignatureToMessage.resx">
       <DependentUpon>201603200402595_CPAddTextSignatureToMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603222214480_ATAddPasswordDerived.resx">
+      <DependentUpon>201603222214480_ATAddPasswordDerived.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
