@@ -13,7 +13,7 @@ namespace BLOBLocker.AdminTool.Controllers
     [RequireHttps]
     public class ManageController : BaseController
     {
-        AdminToolContext atContext = new AdminToolContext();
+        BLATContext atContext = new BLATContext();
         // GET: Manage
         public ActionResult Index()
         {

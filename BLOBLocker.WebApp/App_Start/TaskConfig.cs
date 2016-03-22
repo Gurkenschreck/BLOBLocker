@@ -16,15 +16,13 @@ namespace BLOBLocker.WebApp.App_Start
             {
                 if (cancellationToken.IsCancellationRequested)
                     cancellationToken.ThrowIfCancellationRequested();
-
-                using (CryptoPoolContext context = new CryptoPoolContext())
+                bool firstRun = true;
+                do
                 {
-                    SystemConfiguration configChangedItem;
-                    bool firstRun = true;
-
-                    do
+                    using (BLWAContext context = new BLWAContext())
                     {
-                        configChangedItem = context.SystemConfigurations.FirstOrDefault(p => p.Key == "ConfigChanged");
+                        SystemConfiguration configChangedItem = context.SystemConfigurations.First(p => p.Key == "ConfigChanged");
+
                         bool configChanged = firstRun ? firstRun : bool.Parse(configChangedItem.Value);
 
                         if (configChanged)
@@ -41,8 +39,9 @@ namespace BLOBLocker.WebApp.App_Start
                         }
                         firstRun = false;
                         Thread.Sleep(60 * 1000);
-                    } while (!cancellationToken.IsCancellationRequested);
-                }
+
+                    }
+                } while (!cancellationToken.IsCancellationRequested);
             }, cancellationToken);
         }
     }

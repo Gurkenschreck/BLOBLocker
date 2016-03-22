@@ -50,7 +50,7 @@ namespace BLOBLocker.Code.Membership
 
         public override string[] GetRolesForUser(string username)
         {
-            using(CryptoPoolContext context = new CryptoPoolContext())
+            using(BLWAContext context = new BLWAContext())
             {
                 var acc = context.Accounts.FirstOrDefault(p => p.Alias == username);
                 if(acc == null)
@@ -72,7 +72,7 @@ namespace BLOBLocker.Code.Membership
 
         public override bool IsUserInRole(string username, string roleName)
         {
-            using(var context = new CryptoPoolContext())
+            using(var context = new BLWAContext())
             {
                 var acc = context.Accounts.FirstOrDefault(x => x.Alias == username);
 
@@ -92,7 +92,7 @@ namespace BLOBLocker.Code.Membership
 
         public override bool RoleExists(string roleName)
         {
-            using(var context = new CryptoPoolContext())
+            using(var context = new BLWAContext())
             {
                 var role = context.AccountRoles.FirstOrDefault(r => r.Definition == roleName);
                 if (role != null)

@@ -10,7 +10,7 @@ namespace BLOBLocker.Code.ModelHelper
 {
     public class PoolRepository : Repository
     {
-        public PoolRepository(CryptoPoolContext context)
+        public PoolRepository(BLWAContext context)
             : base(context)
         { }
 

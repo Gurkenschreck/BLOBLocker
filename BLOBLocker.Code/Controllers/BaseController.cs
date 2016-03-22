@@ -13,7 +13,7 @@ namespace BLOBLocker.Code.Controllers
     [Authorize]
     public abstract class BaseController : Controller
     {
-        protected CryptoPoolContext context = new CryptoPoolContext();
+        protected BLWAContext context = new BLWAContext();
 
         protected override void Dispose(bool disposing)
         {

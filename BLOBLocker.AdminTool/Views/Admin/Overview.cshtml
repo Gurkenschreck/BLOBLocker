@@ -5,12 +5,12 @@
 
 <h2>Edit</h2>
 
-<p>There are @Model.ConfigValues.Count option(s) present.</p>
+<p>There are @Model.ConfigValues.Count settings present.</p>
 
 View:
 @if (Model != null)
 {
-    <table>
+    <table border="1" style="float:left;">
         <tr>
             <th>DBKey</th>
             <th>DBValue</th>
@@ -38,12 +38,7 @@ View:
     @Html.Partial("~/Views/Admin/Create.cshtml", new BLOBLocker.Entities.Models.WebApp.SystemConfiguration())
 </p>
 
-<p id="rData" onclick="ajaxGoSetShit()">T</p>
 <script>
-    jQuery(function () {
-        console.log("onload");
-    })
-
     function transferValues(obj) {
         $("#editKey").val($(obj).attr("id").split(" ")[0]);
         $("#editValue").val($(obj).attr("id").split(" ")[1]);
@@ -54,17 +49,13 @@ View:
     }
 
     function invokeApply() {
-        var url = "/Manage/ApplyDBConfiguration";
-        $.post(url, null, function (data) {
+        $.ajax({
+            type: "POST",
+            url: "/Admin/ApplyDBConfiguration",
+        }).done(function (data, status, req) {
             console.log("invoked");
-        });
-    }
-
-    function ajaxGoSetShit() {
-        console.log("d");
-        var url = "/Admin/TellDate";
-        $.get(url, null, function (data) {
-            $("#rData").html(data);
+        }).error(function (req, textStatus, errorThrown) {
+            alert("Error:" + req.status);
         });
     }
 </script>

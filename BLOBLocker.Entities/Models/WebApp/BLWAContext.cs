@@ -8,7 +8,7 @@ using System.Web;
 
 namespace BLOBLocker.Entities.Models.WebApp
 {
-    public class CryptoPoolContext : DbContext
+    public class BLWAContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AccountAddition> Additions { get; set; }
@@ -25,12 +25,12 @@ namespace BLOBLocker.Entities.Models.WebApp
         public DbSet<Contact> ContactLinks { get; set; }
         public DbSet<Message> Messages { get; set; }
 
-        public CryptoPoolContext()
+        public BLWAContext()
 #if DEBUG
             : base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.WebApp.CryptoPoolContext;Integrated Security=True")
 #endif
 #if !DEBUG
-            :base(ConfigurationManager.ConnectionStrings["CryptoPoolEntities"].ConnectionString)
+            :base(ConfigurationManager.ConnectionStrings["BLWA"].ConnectionString)
 #endif
         { }
 

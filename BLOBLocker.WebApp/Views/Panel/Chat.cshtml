@@ -3,31 +3,30 @@
     Layout = null;   
 }
 
-<div>
+<div style="width:60%;">
     @Html.Partial("SendMessage", Model.NewMessage)
 
-
-    
-    <div style="height:500px; overflow:auto; width:100%;">
+    <div style="height:500px; overflow:auto;">
         <table border="1" style="table-layout:fixed; width:100%;">
             @foreach (var message in Model.Messages)
             {
                 <tr>
                     <td colspan="3">@message.Sender.Alias</td>
                     <td>@message.Sent</td>
+                    <td>Validation passed image</td>
                 </tr>
                 <tr>
                     @{
-                string rawMessage = message.Text;
-                string lineBreakedMessage = rawMessage.Replace(Environment.NewLine, "<br />");
+                        string rawMessage = message.Text;
+                        string lineBreakedMessage = rawMessage.Replace(Environment.NewLine, "<br />");
 
-                string linkTexts = System.Text.RegularExpressions.Regex.Replace(lineBreakedMessage,
-                                 @"((http|ftp|https|mailto):.[^\s]*)",
-                                "<a target='_blank' title='Click to open in new tab' href='$1'>$1</a>");
+                        string linkTexts = System.Text.RegularExpressions.Regex.Replace(lineBreakedMessage,
+                                         @"((http|ftp|https|mailto):.[^\s]*)",
+                                        "<a target='_blank' title='Click to open in new tab' href='$1'>$1</a>");
 
-                IHtmlString transformedMessage = Html.Raw(linkTexts);
+                        IHtmlString transformedMessage = Html.Raw(linkTexts);
                     }
-                    <td colspan="4" style="word-wrap:break-word; overflow-wrap:break-word;">@transformedMessage</td>
+                    <td colspan="5" style="word-wrap:break-word; overflow-wrap:break-word;">@transformedMessage</td>
                 </tr>
             }
         </table>

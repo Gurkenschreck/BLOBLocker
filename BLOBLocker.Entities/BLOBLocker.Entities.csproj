@@ -89,10 +89,10 @@
     <Compile Include="Migrations\201603200402595_CPAddTextSignatureToMessage.Designer.cs">
       <DependentUpon>201603200402595_CPAddTextSignatureToMessage.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\AdminToolConfiguration.cs" />
-    <Compile Include="Migrations\CryptoPoolConfiguration.cs" />
+    <Compile Include="Migrations\BLATConfiguration.cs" />
+    <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
-    <Compile Include="Models\AdminTool\AdminToolContext.cs" />
+    <Compile Include="Models\AdminTool\BLATContext.cs" />
     <Compile Include="Models\AdminTool\Role.cs" />
     <Compile Include="Models\AdminTool\RoleLink.cs" />
     <Compile Include="Models\WebApp\Account.cs" />
@@ -106,7 +106,7 @@
     <Compile Include="Models\WebApp\Notification.cs" />
     <Compile Include="Models\WebApp\Pool.cs" />
     <Compile Include="Models\WebApp\PoolShare.cs" />
-    <Compile Include="Models\WebApp\CryptoPoolContext.cs" />
+    <Compile Include="Models\WebApp\BLWAContext.cs" />
     <Compile Include="Models\WebApp\SystemConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Models.Designer.cs">

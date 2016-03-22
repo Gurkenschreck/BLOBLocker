@@ -14,7 +14,7 @@ namespace BLOBLocker.AdminTool.Controllers
     [AllowAnonymous]
     public class AccountController : BaseController
     {
-        AdminToolContext atContext = new AdminToolContext();
+        BLATContext atContext = new BLATContext();
 
         // GET: Account
         [HttpGet]

@@ -23,7 +23,7 @@ namespace BLOBLocker.AdminTool
 
         void CreateAdminIfNotExistent()
         {
-            using (AdminToolContext atcont = new AdminToolContext())
+            using (BLATContext atcont = new BLATContext())
             {
                 var sysadm = atcont.Accounts.FirstOrDefault(p => p.Alias == "Sysadm");
                 if (sysadm == null)

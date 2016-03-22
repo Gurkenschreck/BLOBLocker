@@ -7,7 +7,7 @@
 
 @if(Model.Any(p => p.Definition == "Administrator"))
 {
-    <p>@Html.ActionLink("Admin area", "Configure", "Admin")</p>
+    <p>@Html.ActionLink("Admin area", "Overview", "Admin")</p>
 }
 
 @if (Model.Any(p => p.Definition == "Moderator"))

@@ -10,8 +10,8 @@ namespace BLOBLocker.Code.ModelHelper
 {
     public abstract class Repository
     {
-        protected CryptoPoolContext context;
-        public Repository(CryptoPoolContext context)
+        protected BLWAContext context;
+        public Repository(BLWAContext context)
         {
             this.context = context;
         }

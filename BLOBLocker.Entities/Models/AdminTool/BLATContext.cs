@@ -7,18 +7,18 @@ using System.Web;
 
 namespace BLOBLocker.Entities.Models.AdminTool
 {
-    public class AdminToolContext : DbContext
+    public class BLATContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Role> Roles { get; set; }
 
 
-        public AdminToolContext()
+        public BLATContext()
 #if DEBUG
             : base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CryptoPool.Entities.Models.AdminTool.AdminToolContext;Integrated Security=True")
 #endif
 #if !DEBUG
-            :base(ConfigurationManager.ConnectionStrings["CryptoPoolEntities"].ConnectionString)
+            :base(ConfigurationManager.ConnectionStrings["BLAT"].ConnectionString)
 #endif
         {
 

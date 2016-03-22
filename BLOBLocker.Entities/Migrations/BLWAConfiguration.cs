@@ -5,14 +5,14 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class CryptoPoolConfiguration : DbMigrationsConfiguration<BLOBLocker.Entities.Models.WebApp.CryptoPoolContext>
+    internal sealed class BLWAConfiguration : DbMigrationsConfiguration<BLOBLocker.Entities.Models.WebApp.BLWAContext>
     {
-        public CryptoPoolConfiguration()
+        public BLWAConfiguration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(BLOBLocker.Entities.Models.WebApp.CryptoPoolContext context)
+        protected override void Seed(BLOBLocker.Entities.Models.WebApp.BLWAContext context)
         {
             //  This method will be called after migrating to the latest version.
 

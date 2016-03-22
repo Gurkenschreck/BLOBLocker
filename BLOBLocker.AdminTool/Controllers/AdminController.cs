@@ -16,16 +16,18 @@ namespace BLOBLocker.AdminTool.Controllers
     [LocalOnly]
     public class AdminController : BaseController
     {
-        AdminToolContext atContext = new AdminToolContext();
+        BLATContext atContext = new BLATContext();
         // GET: Admin
         [HttpGet]
         public ActionResult Overview()
         {
             AdminOverviewViewModel aovm = new AdminOverviewViewModel();
             var configs = context.SystemConfigurations
-                .ToDictionary(k => k.Key,
-                              v => v.Value,
-                              StringComparer.OrdinalIgnoreCase);
+                                .OrderByDescending(p => p.Key)
+                                .ToDictionary(k => k.Key,
+                                            v => v.Value,
+                                            StringComparer.OrdinalIgnoreCase);
+                                            
             aovm.ConfigValues = configs;
             return View(aovm);
         }
@@ -85,6 +87,7 @@ namespace BLOBLocker.AdminTool.Controllers
 
             return RedirectToAction("Overview");
         }
+
         [HttpPost]
         public string ApplyDBConfiguration()
         {
@@ -95,13 +98,6 @@ namespace BLOBLocker.AdminTool.Controllers
                 context.SaveChangesAsync();
             }
             return "ok";
-        }
-
-        [HttpGet]
-        [AjaxOnly]
-        public string TellDate()
-        {
-            return DateTime.Now.ToString();
         }
     }
 }

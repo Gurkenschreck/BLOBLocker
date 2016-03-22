@@ -28,7 +28,7 @@ namespace BLOBLocker.Code.Membership
 
         public override void CreateRole(string roleName)
         {
-            using(AdminToolContext context = new AdminToolContext())
+            using(BLATContext context = new BLATContext())
             {
                 context.Roles.Add(new Role
                 {
@@ -55,7 +55,7 @@ namespace BLOBLocker.Code.Membership
 
         public override string[] GetRolesForUser(string username)
         {
-            using (var context = new AdminToolContext())
+            using (var context = new BLATContext())
             {
                 var acc = context.Accounts.FirstOrDefault(p => p.Alias == username);
 
@@ -66,7 +66,7 @@ namespace BLOBLocker.Code.Membership
 
         public override string[] GetUsersInRole(string roleName)
         {
-            using(var context = new AdminToolContext())
+            using(var context = new BLATContext())
             {
                 Role role = context.Roles.FirstOrDefault(p => p.Definition == roleName);
                 ICollection<Account> accs = (from acc in context.Accounts
@@ -80,7 +80,7 @@ namespace BLOBLocker.Code.Membership
 
         public override bool IsUserInRole(string username, string roleName)
         {
-            using(var context = new AdminToolContext())
+            using(var context = new BLATContext())
             {
                 Account acc = context.Accounts.FirstOrDefault(p => p.Alias == username);
                 if(acc != null)
@@ -102,7 +102,7 @@ namespace BLOBLocker.Code.Membership
 
         public override bool RoleExists(string roleName)
         {
-            using(var context = new AdminToolContext())
+            using(var context = new BLATContext())
             {
                 Role role = context.Roles.FirstOrDefault(p => p.Definition == roleName);
                 if (role != null)

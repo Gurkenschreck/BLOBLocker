@@ -21,7 +21,7 @@ namespace BLOBLocker.Code.ModelHelper
             public int RSAKeySize { get; set; }
             public int HashIterations { get; set; }
         }
-        public CryptoConfigRepository(CryptoPoolContext context)
+        public CryptoConfigRepository(BLWAContext context)
             :base(context)
         {  }
 
