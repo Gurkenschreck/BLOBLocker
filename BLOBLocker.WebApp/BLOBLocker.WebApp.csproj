@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\TaskConfig.cs" />
+    <Compile Include="Controllers\AjaxController.cs" />
     <Compile Include="Controllers\GlobalizationController.cs" />
     <Compile Include="Models\AccountViewModel.cs" />
     <Compile Include="Models\BuildPoolViewModel.cs" />

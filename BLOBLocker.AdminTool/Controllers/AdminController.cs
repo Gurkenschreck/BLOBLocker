@@ -23,7 +23,7 @@ namespace BLOBLocker.AdminTool.Controllers
         {
             AdminOverviewViewModel aovm = new AdminOverviewViewModel();
             var configs = context.SystemConfigurations
-                                .OrderByDescending(p => p.Key)
+                                .OrderBy(p => p.Key)
                                 .ToDictionary(k => k.Key,
                                             v => v.Value,
                                             StringComparer.OrdinalIgnoreCase);
