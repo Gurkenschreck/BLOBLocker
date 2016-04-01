@@ -1,0 +1,31 @@
+﻿@model IEnumerable<BLOBLocker.Entities.Models.AdminTool.Account>
+@{
+    ViewBag.Title = "Accounts";
+}
+
+<h2>Accounts</h2>
+
+@using (Html.BeginForm("EditAccount", "Admin", FormMethod.Get)) { 
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Alias</th>
+            <th>Email</th>
+            <th>Last login</th>
+            <th>Active roles</th>
+        </tr>
+        @foreach (var acc in Model)
+        {
+            <tr>
+                <td>@acc.ID</td>
+                <td>@acc.Alias</td>
+                <td>@acc.Email</td>
+                <td>@acc.LastLogin</td>
+                <td>
+                    @string.Join(", ", acc.Roles.Select(p => p.Role.Definition))
+                </td>
+                <td><button type="submit" name="ID" value="@acc.ID">Edit</button></td>
+            </tr>
+        }
+    </table>
+}

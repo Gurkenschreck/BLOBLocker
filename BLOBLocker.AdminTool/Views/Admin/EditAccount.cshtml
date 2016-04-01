@@ -1,0 +1,44 @@
+﻿@model BLOBLocker.AdminTool.Models.AdminEditAccountModel
+@{
+    ViewBag.Title = "EditAccount";
+}
+
+<h2>EditAccount</h2>
+
+@using (Html.BeginForm()) { 
+    <table>
+        <tr>
+            <th>@Html.LabelFor(p => p.ID)</th>
+            <td>@Html.ValueFor(p => p.ID)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.Alias)</th>
+            <td>@Html.ValueFor(p => p.Alias)</td>
+            @if (Model.Alias != "Sysadm") { 
+                <td>@Html.EditorFor(p => p.Alias)</td>
+            }
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.Email)</th>
+            <td>@Html.ValueFor(p => p.Email)</td>
+            <td>@Html.EditorFor(p => p.Email)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.Password)</th>
+            <td>@Html.PasswordFor(p => p.Password)</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>@Html.CheckBoxFor(p => p.IsActive) @Html.LabelFor(p => p.IsActive)</td>
+        </tr>
+        <tr>
+            <td>@Html.CheckBoxFor(p => p.IsAdmin) @Html.LabelFor(p => p.IsAdmin)</td>
+            <td>@Html.CheckBoxFor(p => p.IsModerator) @Html.LabelFor(p => p.IsModerator)</td>
+            <td>@Html.CheckBoxFor(p => p.IsTranslator) @Html.LabelFor(p => p.IsTranslator)</td>
+        </tr>
+        <tr>
+            <td>@Html.AntiForgeryToken()</td>
+            <td><button type="submit">Save changes</button></td>
+        </tr>
+    </table>
+}

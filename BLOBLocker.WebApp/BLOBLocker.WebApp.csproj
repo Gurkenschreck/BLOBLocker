@@ -331,10 +331,12 @@
     <EmbeddedResource Include="Resources\Account\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Global.de.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Global.de.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Home\Strings.de.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

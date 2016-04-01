@@ -33,15 +33,26 @@ namespace BLOBLocker.AdminTool.Controllers
             {
                 ModelState.AddModelError("AliasOrPasswordWrong", "Alias and/or password wrong.");
             }
+            else
+            {
+                if (!dbAccount.IsActive)
+                    ModelState.AddModelError("IsActive", "Account is disabled.");
+            }
+            
             if (ModelState.IsValid)
             {
-                using(var deriver = new Rfc2898DeriveBytes(pw, dbAccount.Salt, 20000))
+                using(var deriver = new Rfc2898DeriveBytes(pw, dbAccount.Salt, 21423))
                 {
                     byte[] derived = deriver.GetBytes(dbAccount.Salt.Length);
                     if (Utilities.SlowEquals(dbAccount.DerivedPassword, derived))
                     {
+                        dbAccount.LastLogin = DateTime.Now;
+                        atContext.SaveChangesAsync();
                         FormsAuthentication.SetAuthCookie(dbAccount.Alias, false);
-                        return RedirectToAction("Index", "Manage");
+                        if (Request.QueryString["ReturnUrl"] == null)
+                            return RedirectToAction("Index", "Manage");
+                        else
+                            Response.Redirect(Request.QueryString["ReturnUrl"]);
                     }
                     else
                     {
@@ -57,7 +68,7 @@ namespace BLOBLocker.AdminTool.Controllers
         {
             Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
             Session.Abandon();
-            return View();
+            return RedirectToAction("Index");
         }
     }
 }

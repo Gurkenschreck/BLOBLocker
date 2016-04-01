@@ -31,6 +31,7 @@ namespace BLOBLocker.AdminTool
                 {
                     sysadm = new Entities.Models.AdminTool.Account();
                     sysadm.Alias = "Sysadm";
+                    sysadm.IsActive = true;
                     sysadm.Salt = Utilities.GenerateBytes(32);
                     using(var deriver = new Rfc2898DeriveBytes("changeme,4,4", sysadm.Salt, 21423))
                     {
@@ -44,6 +45,7 @@ namespace BLOBLocker.AdminTool
                     {
                         adminRole = new Role();
                         adminRole.Definition = "Administrator";
+                        atcont.Roles.Add(adminRole);
                     }
                     if (moderatorRole == null)
                     {

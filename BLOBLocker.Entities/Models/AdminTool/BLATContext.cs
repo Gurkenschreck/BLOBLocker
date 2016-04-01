@@ -10,6 +10,7 @@ namespace BLOBLocker.Entities.Models.AdminTool
     public class BLATContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<RoleLink> RoleLinks { get; set; }
         public DbSet<Role> Roles { get; set; }
 
 

@@ -93,6 +93,10 @@
     <Compile Include="Migrations\201603222214480_ATAddPasswordDerived.Designer.cs">
       <DependentUpon>201603222214480_ATAddPasswordDerived.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603281340559_ATAddAccountIsActive.cs" />
+    <Compile Include="Migrations\201603281340559_ATAddAccountIsActive.Designer.cs">
+      <DependentUpon>201603281340559_ATAddAccountIsActive.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -152,6 +156,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603222214480_ATAddPasswordDerived.resx">
       <DependentUpon>201603222214480_ATAddPasswordDerived.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603281340559_ATAddAccountIsActive.resx">
+      <DependentUpon>201603281340559_ATAddAccountIsActive.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
