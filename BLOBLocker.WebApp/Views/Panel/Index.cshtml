@@ -51,7 +51,7 @@
             @foreach (BLOBLocker.Entities.Models.WebApp.Pool p in Model.Pools.Where(p => p.IsActive)) 
             { 
                 <tr>
-                    <td>@p.Description</td>
+                    <td>@p.Title</td>
                     <td>@p.IsActive</td>
                     <td>@p.CreatedOn</td>
                     <td>@p.Participants.Count</td>
@@ -80,7 +80,7 @@
             @foreach (var fp in Model.PoolShares.Where(p => p.IsActive))
             {
                 <tr style="text-align:center;">
-                    <td>@fp.Pool.Description</td>
+                    <td>@fp.Pool.Title</td>
                     <td>@fp.Pool.IsActive</td>
                     <td>@fp.Pool.CreatedOn</td>
                     <td>@fp.Pool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum()</td>

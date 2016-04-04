@@ -24,6 +24,7 @@ namespace BLOBLocker.Entities.Models.WebApp
         [Key]
         public int ID { get; set; }
         public string UniqueIdentifier { get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         [ForeignKey("Config")]
         public int ConfigID { get; set; }

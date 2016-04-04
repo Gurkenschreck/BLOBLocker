@@ -97,6 +97,14 @@
     <Compile Include="Migrations\201603281340559_ATAddAccountIsActive.Designer.cs">
       <DependentUpon>201603281340559_ATAddAccountIsActive.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604041845186_WARenamePoolDescToTitle.cs" />
+    <Compile Include="Migrations\201604041845186_WARenamePoolDescToTitle.Designer.cs">
+      <DependentUpon>201604041845186_WARenamePoolDescToTitle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604041952041_AWAddPoolDescription.cs" />
+    <Compile Include="Migrations\201604041952041_AWAddPoolDescription.Designer.cs">
+      <DependentUpon>201604041952041_AWAddPoolDescription.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -159,6 +167,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603281340559_ATAddAccountIsActive.resx">
       <DependentUpon>201603281340559_ATAddAccountIsActive.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604041845186_WARenamePoolDescToTitle.resx">
+      <DependentUpon>201604041845186_WARenamePoolDescToTitle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604041952041_AWAddPoolDescription.resx">
+      <DependentUpon>201604041952041_AWAddPoolDescription.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

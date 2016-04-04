@@ -355,18 +355,35 @@ namespace BLOBLocker.WebApp.Controllers
             if (corPool == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
-                accRepo = new AccountRepository(context);
-                Account curAcc = accRepo.GetAccount(User.Identity.Name);
-                if (accRepo.HasPoolRights(curAcc, corPool))
+            accRepo = new AccountRepository(context);
+            Account curAcc = accRepo.GetAccount(User.Identity.Name);
+            if (accRepo.HasPoolRights(curAcc, corPool))
+            {
+                PoolOverviewViewModel povm = new PoolOverviewViewModel();
+                povm.Populate(corPool);
+
+                PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
+                using (CredentialHandler credHandler = new CredentialHandler(Session))
                 {
-                    ViewBag.CurrentAccount = curAcc;
-                    ViewBag.Pool = corPool;
-                    ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory
-                                                                                            .Where(p => p.IsEnabled)
-                                                                                            .Select(p => p.Space)
-                                                                                            .Sum() : 0;
-                    return View();
+                    HttpCookie keypartCookie = Request.Cookies["Secret"];
+                    byte[] privKey = credHandler.Extract(keypartCookie, Session);
+
+                    PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
+                    byte[] curAccPoolSharePriKey;
+
+                    if (!string.IsNullOrWhiteSpace(corPool.Description))
+                    {
+                        using (var poolCipher = new SymmetricCipher<AesManaged>(
+                            psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey),
+                                                    curPoolShare, out curAccPoolSharePriKey),
+                            corPool.Config.IV))
+                        {
+                            povm.Description = poolCipher.DecryptToString(corPool.Description);
+                        }
+                    }
                 }
+                return View(povm);
+            }
             
             return RedirectToAction("JoinPool", new { puid = corPool.UniqueIdentifier });
         }
@@ -464,13 +481,18 @@ namespace BLOBLocker.WebApp.Controllers
                                 poolShare.PoolKey = poolRSACipher.Encrypt(poolSymCipher.Key);
 
                                 poolConfig.PublicKeySignature = poolRSACipher.SignStringToString<SHA256Cng>(poolConfig.PublicKey);
+
+                                if(!string.IsNullOrWhiteSpace(poolViewModel.Description))
+                                {
+                                    pool.Description = poolSymCipher.EncryptToString(poolViewModel.Description);
+                                }
                             }
                         }
                     }
                 }
 
 
-                NotificationHelper.SendNotification(curAcc, "Pool {0} creation was a success!", pool.Description);
+                NotificationHelper.SendNotification(curAcc, "Pool {0} creation was a success!", pool.Title);
                 
                 pool.Config = poolConfig;
                 poolShare.Config = poolShareConfig;

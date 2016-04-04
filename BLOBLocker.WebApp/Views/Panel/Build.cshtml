@@ -13,8 +13,12 @@
             <td>@Html.ValidationSummary()</td>
         </tr>
         <tr>
+            <td>@Html.LabelFor(p => p.Title)</td>
+            <td>@Html.EditorFor(p => p.Title)</td>
+        </tr>
+        <tr>
             <td>@Html.LabelFor(p => p.Description)</td>
-            <td>@Html.TextBoxFor(p => p.Description)</td>
+            <td>@Html.TextAreaFor(p => p.Description)</td>
         </tr>
         <tr>
             <td>@Html.EditorFor(p => p.IsChatEnabled) @Html.LabelFor(p => p.IsChatEnabled)</td>

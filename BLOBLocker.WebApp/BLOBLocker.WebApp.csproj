@@ -147,6 +147,7 @@
     <Compile Include="Models\MemoryViewModel.cs" />
     <Compile Include="Models\MessageViewModel.cs" />
     <Compile Include="Models\PoolConfigModel.cs" />
+    <Compile Include="Models\PoolOverviewViewModel.cs" />
     <Compile Include="Resources\Account\Strings.Designer.cs">
       <DependentUpon>Strings.resx</DependentUpon>
       <AutoGen>True</AutoGen>

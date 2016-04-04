@@ -10,7 +10,8 @@ namespace BLOBLocker.WebApp.Models
     public class BuildPoolViewModel
     {
         [Required]
-        [MaxLength(64, ErrorMessage="Description too long.")]
+        [MaxLength(64, ErrorMessage="Title too long.")]
+        public string Title { get; set; }
         public string Description { get; set; }
         public bool IsFileStorageEnabled { get; set; }
         public bool IsChatEnabled { get; set; }
@@ -19,7 +20,7 @@ namespace BLOBLocker.WebApp.Models
         public Pool Generate()
         {
             Pool p = new Pool();
-            p.Description = Description;
+            p.Title = Title;
             p.ChatEnabled = IsChatEnabled;
             p.FileStorageEnabled = IsFileStorageEnabled;
             p.LinkRepositoryEnabled = IsLinkRepositoryEnabled;
