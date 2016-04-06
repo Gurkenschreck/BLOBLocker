@@ -140,14 +140,6 @@
     <Compile Include="App_Start\TaskConfig.cs" />
     <Compile Include="Controllers\AjaxController.cs" />
     <Compile Include="Controllers\GlobalizationController.cs" />
-    <Compile Include="Models\AccountViewModel.cs" />
-    <Compile Include="Models\BuildPoolViewModel.cs" />
-    <Compile Include="Models\ChatViewModel.cs" />
-    <Compile Include="Models\InvitationViewModel.cs" />
-    <Compile Include="Models\MemoryViewModel.cs" />
-    <Compile Include="Models\MessageViewModel.cs" />
-    <Compile Include="Models\PoolConfigModel.cs" />
-    <Compile Include="Models\PoolOverviewViewModel.cs" />
     <Compile Include="Resources\Account\Strings.Designer.cs">
       <DependentUpon>Strings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -323,6 +315,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
     <Folder Include="Views\Manage\" />
   </ItemGroup>
   <ItemGroup>

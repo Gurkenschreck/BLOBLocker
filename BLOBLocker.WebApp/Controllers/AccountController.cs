@@ -20,8 +20,8 @@ using BLOBLocker.Code.Membership;
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Code.Attributes;
 using BLOBLocker.Entities.Models.WebApp;
-using BLOBLocker.WebApp.Models;
 using System.Text;
+using BLOBLocker.Code.ViewModels.WebApp;
 
 namespace BLOBLocker.WebApp.Controllers
 {

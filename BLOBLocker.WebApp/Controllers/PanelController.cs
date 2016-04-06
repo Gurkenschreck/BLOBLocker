@@ -18,10 +18,10 @@ using BLOBLocker.Code.Controllers;
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Entities.Models.WebApp;
 using Cipha.Security.Cryptography;
-using BLOBLocker.WebApp.Models;
 using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Code.Membership;
 using System.Text;
+using BLOBLocker.Code.ViewModels.WebApp;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -123,6 +123,7 @@ namespace BLOBLocker.WebApp.Controllers
             return View(cvm);
         }
 
+        [AllParametersRequired]
         [PreserveModelState]
         [HttpPost]
         public ActionResult SendMessage(MessageViewModel cvm)

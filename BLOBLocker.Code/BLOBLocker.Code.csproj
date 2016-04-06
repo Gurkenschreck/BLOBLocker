@@ -58,6 +58,7 @@
     <Compile Include="Attributes\AjaxOnlyAttribute.cs" />
     <Compile Include="Attributes\LocalOnlyAttribute.cs" />
     <Compile Include="Attributes\PreserveModelStateAttribute.cs" />
+    <Compile Include="Attributes\RequiredValuesAttribute.cs" />
     <Compile Include="Attributes\RestoreModelStateAttibute.cs" />
     <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
     <Compile Include="Membership\AdminToolRoleProvider.cs" />
@@ -72,6 +73,14 @@
     <Compile Include="ModelHelper\PoolRepository.cs" />
     <Compile Include="ModelHelper\Repository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\WebApp\AccountViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\BuildPoolViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\ChatViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\InvitationViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\MemoryViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\MessageViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\PoolConfigModel.cs" />
+    <Compile Include="ViewModels\WebApp\PoolOverviewViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLOBLocker.Entities\BLOBLocker.Entities.csproj">

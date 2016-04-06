@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BLOBLocker.WebApp.Models
+namespace BLOBLocker.Code.ViewModels.WebApp
 {
     public class MessageViewModel
     {

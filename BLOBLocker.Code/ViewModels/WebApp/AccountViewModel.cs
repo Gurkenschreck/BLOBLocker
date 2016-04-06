@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace BLOBLocker.WebApp.Models
+namespace BLOBLocker.Code.ViewModels.WebApp
 {
     public class AccountViewModel : IValidatableObject
     {
