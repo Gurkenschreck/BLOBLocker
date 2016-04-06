@@ -58,7 +58,7 @@
     <Compile Include="Attributes\AjaxOnlyAttribute.cs" />
     <Compile Include="Attributes\LocalOnlyAttribute.cs" />
     <Compile Include="Attributes\PreserveModelStateAttribute.cs" />
-    <Compile Include="Attributes\RequiredValuesAttribute.cs" />
+    <Compile Include="Attributes\RequiredParametersAttribute.cs" />
     <Compile Include="Attributes\RestoreModelStateAttibute.cs" />
     <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
     <Compile Include="Membership\AdminToolRoleProvider.cs" />
@@ -73,6 +73,8 @@
     <Compile Include="ModelHelper\PoolRepository.cs" />
     <Compile Include="ModelHelper\Repository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AdminTool\AdminEditAccountModel.cs" />
+    <Compile Include="ViewModels\AdminTool\AdminOverviewViewModel.cs" />
     <Compile Include="ViewModels\WebApp\AccountViewModel.cs" />
     <Compile Include="ViewModels\WebApp\BuildPoolViewModel.cs" />
     <Compile Include="ViewModels\WebApp\ChatViewModel.cs" />

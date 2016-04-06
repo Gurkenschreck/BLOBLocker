@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
 
-namespace BLOBLocker.AdminTool.Models
+namespace BLOBLocker.Code.ViewModels.AdminTool
 {
     public class AdminEditAccountModel
     {

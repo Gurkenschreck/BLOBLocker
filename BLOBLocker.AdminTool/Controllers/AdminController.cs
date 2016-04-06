@@ -1,6 +1,6 @@
-﻿using BLOBLocker.AdminTool.Models;
-using BLOBLocker.Code.Attributes;
+﻿using BLOBLocker.Code.Attributes;
 using BLOBLocker.Code.Controllers;
+using BLOBLocker.Code.ViewModels.AdminTool;
 using BLOBLocker.Entities.Models.AdminTool;
 using BLOBLocker.Entities.Models.WebApp;
 using System;
@@ -32,13 +32,10 @@ namespace BLOBLocker.AdminTool.Controllers
             return View(aovm);
         }
 
+        [RequiredParameters("config")]
         [HttpPost]
         public ActionResult Edit(SystemConfiguration config)
         {
-            if (config == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             if (string.IsNullOrWhiteSpace(config.Key))
             {
                 ModelState.AddModelError("key", "SharedKey is invalid");
@@ -63,6 +60,7 @@ namespace BLOBLocker.AdminTool.Controllers
             return RedirectToAction("Overview");
         }
 
+        [RequiredParameters("newConfig")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult Create(SystemConfiguration newConfig)
@@ -109,7 +107,7 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpGet]
         public ActionResult EditAccount(int id)
         {
-            if (id < 0 || id == null)
+            if (id < 0)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var acc = atContext.Accounts.FirstOrDefault(p => p.ID == id);
             if (acc == null)
@@ -118,12 +116,12 @@ namespace BLOBLocker.AdminTool.Controllers
             AdminEditAccountModel aeam = new AdminEditAccountModel(acc);
             return View(aeam);
         }
+
+        [RequiredParameters("aeam")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult EditAccount(AdminEditAccountModel aeam)
         {
-            if (aeam == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             BLOBLocker.Entities.Models.AdminTool.Account acc = atContext.Accounts.FirstOrDefault(p => p.ID == aeam.ID);
             if (acc == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
