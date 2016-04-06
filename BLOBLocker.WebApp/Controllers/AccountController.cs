@@ -37,16 +37,12 @@ namespace BLOBLocker.WebApp.Controllers
             return View();
         }
 
+        [RequiredParameters("acc")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult SignUp(AccountViewModel acc)
         {
-            if(acc == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            
             bool enableRegistration = bool.Parse(HttpContext.Application["system.EnableRegistration"] as string);
             if(!enableRegistration)
             {
@@ -131,16 +127,12 @@ namespace BLOBLocker.WebApp.Controllers
             return View();
         }
 
+        [RequiredParameters("acc")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult Login(AccountViewModel acc)
         {
-            if (acc == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            
             bool loginEnabled = bool.Parse(HttpContext.Application["system.EnableLogin"] as string);
             if (!loginEnabled)
             {

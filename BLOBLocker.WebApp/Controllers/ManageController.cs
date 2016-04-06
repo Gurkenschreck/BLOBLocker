@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Web.Providers.Entities;
 using BLOBLocker.Code.Controllers;
 using BLOBLocker.Entities.Models.WebApp;
+using BLOBLocker.Code.Attributes;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -37,13 +38,10 @@ namespace BLOBLocker.WebApp.Controllers
             return View(dbValues);
         }
 
+        [RequiredParameters("config")]
         [HttpPost]
         public ActionResult Edit(SystemConfiguration config)
         {
-            if (config == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             if(string.IsNullOrWhiteSpace(config.Key))
             {
                 ModelState.AddModelError("key", "SharedKey is invalid");
@@ -68,14 +66,11 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("Overview");
         }
 
+        [RequiredParameters("newConfig")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult Create(SystemConfiguration newConfig)
         {
-            if (newConfig == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             if (string.IsNullOrWhiteSpace(newConfig.Key))
             {
                 ModelState.AddModelError("key", "invalid key");

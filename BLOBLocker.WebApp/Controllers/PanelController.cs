@@ -37,15 +37,11 @@ namespace BLOBLocker.WebApp.Controllers
             return View(acc);
         }
 
+        [RequiredParameters("puid")]
         [ChildActionOnly]
         [HttpGet]
         public ActionResult Chat(string puid)
         {
-            if(string.IsNullOrWhiteSpace(puid))
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
             accRepo = new AccountRepository(context);
 
             Account curAcc = accRepo.GetAccount(User.Identity.Name);
@@ -123,15 +119,11 @@ namespace BLOBLocker.WebApp.Controllers
             return View(cvm);
         }
 
-        [AllParametersRequired]
+        [RequiredParameters("cvm")]
         [PreserveModelState]
         [HttpPost]
         public ActionResult SendMessage(MessageViewModel cvm)
         {
-            if(cvm == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             if(ModelState.IsValid)
             {
                 accRepo = new AccountRepository(context);
@@ -174,6 +166,7 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("Pool", new { puid = cvm.PUID });
         }
 
+        [RequiredParameters("assid", "puid")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult RemoveAssigned(int assid, string puid)
@@ -200,11 +193,12 @@ namespace BLOBLocker.WebApp.Controllers
             ivm.ShowSince = DateTime.Now;
             return View(ivm);
         }
+
+        [RequiredParameters("ivm")]
         [PreserveModelState]
         [HttpPost]
         public ActionResult InviteUser(InvitationViewModel ivm)
         {
-            var x = HttpContext.Cache["d"];
             accRepo = new AccountRepository(context);
             var corAcc = accRepo.GetAccount(ivm.InviteAlias);
             if (corAcc == null)
@@ -254,15 +248,12 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("PoolConfig", new { puid = ivm.PoolUID });
         }
 
+        [RequiredParameters("puid")]
         [RestoreModelState]
         [ChildActionOnly]
         [HttpGet]
         public ActionResult AssignMemory(string puid)
         {
-            if(string.IsNullOrWhiteSpace(puid))
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             bool isvalid = ModelState.IsValid;
             Pool curPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
             accRepo = new AccountRepository(context);
@@ -281,16 +272,12 @@ namespace BLOBLocker.WebApp.Controllers
             mvm.PoolUniqueIdentifier = curPool.UniqueIdentifier;
             return View(mvm);
         }
+        [RequiredParameters("mvm")]
         [PreserveModelState]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AssignMemory(MemoryViewModel mvm)
         {
-            if (mvm == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
             accRepo = new AccountRepository(context);
             var curAcc = accRepo.GetAccount(User.Identity.Name);
 
@@ -428,18 +415,14 @@ namespace BLOBLocker.WebApp.Controllers
             return View(p);
         }
 
+        [RequiredParameters("poolViewModel")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult Build(BuildPoolViewModel poolViewModel)
         {
-            if(poolViewModel == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             if(ModelState.IsValid)
             {
                 int saltByteLength = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]);
-
                 
                 PoolRepository repo = new PoolRepository(context);
                 accRepo = new AccountRepository(context);
@@ -512,14 +495,12 @@ namespace BLOBLocker.WebApp.Controllers
             return View(accRepo.GetAccount(User.Identity.Name));
         }
 
+
+        [RequiredParameters("addAlias")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult AddContact(string addAlias)
         {
-            if (addAlias == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             if(string.IsNullOrWhiteSpace(addAlias))
             {
                 ModelState.AddModelError("addAlias", "Invalid addAlias");
