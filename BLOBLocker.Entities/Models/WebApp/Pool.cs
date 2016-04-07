@@ -44,5 +44,7 @@ namespace BLOBLocker.Entities.Models.WebApp
         public bool ChatEnabled { get; set; }
         public bool FileStorageEnabled { get; set; }
         public bool LinkRepositoryEnabled { get; set; }
+
+        public int DefaultRights { get; set; }
     }
 }

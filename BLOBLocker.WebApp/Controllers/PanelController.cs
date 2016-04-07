@@ -475,11 +475,13 @@ namespace BLOBLocker.WebApp.Controllers
                     }
                 }
 
-
                 NotificationHelper.SendNotification(curAcc, "Pool {0} creation was a success!", pool.Title);
                 
                 pool.Config = poolConfig;
+                pool.DefaultRights = 4;
                 poolShare.Config = poolShareConfig;
+                poolShare.Rights = int.MaxValue;
+
                 curAcc.PoolShares.Add(poolShare);
                 context.Pools.Add(pool);
                 context.SaveChanges();

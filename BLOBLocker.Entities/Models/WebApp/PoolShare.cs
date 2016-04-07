@@ -28,5 +28,6 @@ namespace BLOBLocker.Entities.Models.WebApp
         public Nullable<DateTime> SharedOn { get; set; }
         public Nullable<DateTime> ShowSince { get; set; }
         public bool IsActive { get; set; }
+        public int Rights { get; set; }
     }
 }

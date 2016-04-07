@@ -66,6 +66,8 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Membership\CredentialHandler.cs" />
     <Compile Include="Membership\CryptoCookieBakery.cs" />
+    <Compile Include="Membership\PoolRight.cs" />
+    <Compile Include="Membership\PoolRightHelper.cs" />
     <Compile Include="ModelHelper\AccountRepository.cs" />
     <Compile Include="ModelHelper\CryptoConfigRepository.cs" />
     <Compile Include="ModelHelper\NotificationHelper.cs" />

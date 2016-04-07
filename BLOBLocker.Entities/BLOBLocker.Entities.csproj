@@ -105,6 +105,10 @@
     <Compile Include="Migrations\201604041952041_AWAddPoolDescription.Designer.cs">
       <DependentUpon>201604041952041_AWAddPoolDescription.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604071814486_AWAddPoolRights.cs" />
+    <Compile Include="Migrations\201604071814486_AWAddPoolRights.Designer.cs">
+      <DependentUpon>201604071814486_AWAddPoolRights.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -173,6 +177,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604041952041_AWAddPoolDescription.resx">
       <DependentUpon>201604041952041_AWAddPoolDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604071814486_AWAddPoolRights.resx">
+      <DependentUpon>201604071814486_AWAddPoolRights.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
