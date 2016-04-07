@@ -53,7 +53,7 @@ namespace BLOBLocker.Code.Membership
             Pa = encPriKey.Take((encPriKey.Length / 2)).ToArray();
             Pb = encPriKey.Skip((encPriKey.Length / 2)).ToArray();
             //4. Take last n bytes of Pa as new key
-            byte[] a = Pa.Skip(Pa.Length - (keySize / 8)).ToArray();
+            byte[] a = Pa.Take(keySize / 8).ToArray();
             //5. Save Pa in cookie of user
             keypartCookie = new HttpCookie("Secret");
             keypartCookie.Value = Convert.ToBase64String(Pa);
@@ -78,7 +78,7 @@ namespace BLOBLocker.Code.Membership
             HttpCookie receivedCookie = keypartCookie; //Request.Cookies["Secret"];
             byte[] rPa = Convert.FromBase64String(receivedCookie.Value);
             // 3. Get key extracted from user cookie key
-            byte[] ra = rPa.Skip(rPa.Length - (keySize / 8)).ToArray();
+            byte[] ra = rPa.Take(keySize / 8).ToArray();
             // 4. Initialize cipher with extracted keypart and cookieIV
             using (var cookieCipher = new SymmetricCipher<AesManaged>(ra, rIV))
             {
