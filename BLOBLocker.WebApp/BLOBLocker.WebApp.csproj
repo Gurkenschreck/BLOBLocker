@@ -312,6 +312,7 @@
     <Content Include="Views\Panel\InviteUser.cshtml" />
     <Content Include="Views\Panel\Chat.cshtml" />
     <Content Include="Views\Panel\SendMessage.cshtml" />
+    <Content Include="Views\Panel\_EditPoolRights.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

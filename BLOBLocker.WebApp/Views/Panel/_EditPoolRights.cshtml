@@ -1,0 +1,12 @@
+﻿@model ICollection<BLOBLocker.Code.Membership.PoolRightRepresentation>
+@{
+    Layout = null;
+}
+
+@foreach(var representation in Model)
+{
+    <tr>
+        <td>@representation</td>
+        <td>@representation.Right</td>
+    </tr>
+}

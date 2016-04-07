@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Entities.Models.WebApp;
+﻿using BLOBLocker.Code.Membership;
+using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,6 +17,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public bool IsFileStorageEnabled { get; set; }
         public bool IsChatEnabled { get; set; }
         public bool IsLinkRepositoryEnabled { get; set; }
+        public ICollection<PoolRightRepresentation> Rights { get; set; }
 
         public Pool Generate()
         {

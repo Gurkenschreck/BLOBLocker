@@ -357,7 +357,7 @@ namespace BLOBLocker.WebApp.Controllers
                     byte[] privKey = credHandler.Extract(keypartCookie, Session);
 
                     PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
-                    byte[] curAccPoolSharePriKey;
+                    byte[] curAccPoolSharePriKey = null;
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
@@ -369,6 +369,8 @@ namespace BLOBLocker.WebApp.Controllers
                             povm.Description = poolCipher.DecryptToString(corPool.Description);
                         }
                     }
+                    Utilities.SetArrayValuesZero(privKey);
+                    Utilities.SetArrayValuesZero(curAccPoolSharePriKey);
                 }
                 return View(povm);
             }
@@ -412,6 +414,7 @@ namespace BLOBLocker.WebApp.Controllers
         public ActionResult Build()
         {
             BuildPoolViewModel p = new BuildPoolViewModel();
+            p.Rights = PoolRightHelper.GetRights(int.MaxValue);
             return View(p);
         }
 
@@ -474,7 +477,6 @@ namespace BLOBLocker.WebApp.Controllers
                         }
                     }
                 }
-
                 NotificationHelper.SendNotification(curAcc, "Pool {0} creation was a success!", pool.Title);
                 
                 pool.Config = poolConfig;
