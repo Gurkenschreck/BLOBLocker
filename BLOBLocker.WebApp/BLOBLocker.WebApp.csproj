@@ -302,17 +302,19 @@
     <Content Include="Views\Support\Index.cshtml" />
     <Content Include="Views\Support\Faq.cshtml" />
     <Content Include="Views\Support\ShowUser.cshtml" />
-    <Content Include="Views\Panel\ContactList.cshtml" />
+    <Content Include="Views\Panel\Partial\_ContactList.cshtml" />
     <Content Include="Views\Panel\Build.cshtml" />
     <Content Include="Views\Panel\JoinPool.cshtml" />
     <Content Include="Views\Panel\Pool.cshtml" />
     <Content Include="Views\Panel\PoolConfig.cshtml" />
     <Content Include="Views\Panel\AssignMemory.cshtml" />
-    <Content Include="Views\Panel\ShowNotifications.cshtml" />
+    <Content Include="Views\Panel\Partial\_ShowNotifications.cshtml" />
     <Content Include="Views\Panel\InviteUser.cshtml" />
     <Content Include="Views\Panel\Chat.cshtml" />
     <Content Include="Views\Panel\SendMessage.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\PoolRightViewModel.cshtml" />
+    <Content Include="Views\Panel\Partial\_PoolShareList.cshtml" />
+    <Content Include="Views\Panel\Partial\_PoolList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

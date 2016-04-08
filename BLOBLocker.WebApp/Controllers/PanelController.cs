@@ -351,6 +351,7 @@ namespace BLOBLocker.WebApp.Controllers
                 povm.Populate(corPool);
 
                 PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
+                povm.CurrentPoolShare = curPoolShare;
                 using (CredentialHandler credHandler = new CredentialHandler(Session))
                 {
                     HttpCookie keypartCookie = Request.Cookies["Secret"];

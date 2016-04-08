@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Entities.Models;
+﻿using BLOBLocker.Code;
+using BLOBLocker.Entities.Models;
 using BLOBLocker.Entities.Models.WebApp;
 using BLOBLocker.WebApp.App_Start;
 using System;
@@ -27,6 +28,7 @@ namespace BLOBLocker.WebApp
 
         protected void Application_Start()
         {
+            ViewEngines.Engines.Add(new BlobLockerViewEngine());
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);

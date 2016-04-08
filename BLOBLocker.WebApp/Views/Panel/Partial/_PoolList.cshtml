@@ -1,0 +1,28 @@
+﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.Pool>
+
+@if (Model.Where(p => p.IsActive).Count() > 0)
+{
+    <table border="1">
+        <tr>
+            <th>@Html.Label("Name")</th>
+            <th>@Html.Label("Is active")</th>
+            <th>@Html.Label("Creation date")</th>
+            <th>@Html.Label("Participants")</th>
+        </tr>
+        @foreach (BLOBLocker.Entities.Models.WebApp.Pool p in Model.Where(p => p.IsActive))
+        {
+            <tr>
+                <td>@p.Title</td>
+                <td>@p.IsActive</td>
+                <td>@p.CreatedOn</td>
+                <td>@p.Participants.Count</td>
+                <td>@Html.ActionLink("Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
+            </tr>
+        }
+    </table>
+    @Html.ActionLink("Build some more!", "Build")
+}
+else
+{
+    <text>It seems like you cannot call yourself the owner of a pool. @Html.ActionLink("Build your own here!", "Build")</text>
+}

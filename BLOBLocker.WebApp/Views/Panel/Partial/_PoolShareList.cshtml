@@ -1,0 +1,30 @@
+﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.PoolShare>
+
+@if (Model.Count > 0)
+{
+    <table border="1">
+        <tr>
+            <th>@Html.Label("Name")</th>
+            <th>@Html.Label("Is active")</th>
+            <th>@Html.Label("Creation date")</th>
+            <th>@Html.Label("Assigned memory (MB)")</th>
+            <th>@Html.Label("Participants")</th>
+        </tr>
+        @foreach (var fp in Model.Where(p => p.IsActive))
+        {
+            <tr style="text-align:center;">
+                <td>@fp.Pool.Title</td>
+                <td>@fp.Pool.IsActive</td>
+                <td>@fp.Pool.CreatedOn</td>
+                <td>@fp.Pool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum()</td>
+
+                <td>@fp.Pool.Participants.Where(p => p.IsActive).Count()</td>
+                <td>@Html.ActionLink("Browse", "Pool", new { puid = fp.Pool.UniqueIdentifier })</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <text>You don't have access to any pools.</text>
+}

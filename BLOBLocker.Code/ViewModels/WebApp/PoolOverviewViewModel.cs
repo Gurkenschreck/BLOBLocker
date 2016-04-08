@@ -13,6 +13,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public string PUID { get; set; }
         public int OverallAssignedPoolSpace { get; set; }
         public ICollection<PoolShare> Participants { get; set; }
+        public PoolShare CurrentPoolShare { get; set; }
 
         public bool IsChatEnabled { get; set; }
         public bool IsFileStorageEnabled { get; set; }

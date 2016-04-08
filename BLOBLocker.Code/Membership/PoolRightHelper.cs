@@ -13,7 +13,7 @@ namespace BLOBLocker.Code.Membership
         {
             return share.Pool.Owner == user;
         }
-        public static bool HashRight(PoolShare share, PoolRight right)
+        public static bool HasRight(PoolShare share, PoolRight right)
         {
             return HasRight(share, (int)right);
         }
@@ -37,7 +37,7 @@ namespace BLOBLocker.Code.Membership
 
         public static void RemoveRight(PoolShare share, PoolRight right)
         {
-            if (HashRight(share, right))
+            if (HasRight(share, right))
                 share.Rights = share.Rights ^ (int)right;
         }
 

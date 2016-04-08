@@ -68,12 +68,7 @@ namespace BLOBLocker.Code.ModelHelper
         }
         public bool HasPoolRights(Account acc, Pool pool)
         {
-            if (acc.Pools.Any(p => p.ID == pool.ID))
-                return true;
-            if (acc.PoolShares.Any(p => p.PoolID == pool.ID))
-                return true;
-
-            return false;
+            return (acc.PoolShares.Any(p => p.PoolID == pool.ID && p.IsActive));
         }
         public void MemoryLeft(Account acc, out int basic, out int additional)
         {
