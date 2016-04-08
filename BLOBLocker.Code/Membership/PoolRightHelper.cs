@@ -41,16 +41,16 @@ namespace BLOBLocker.Code.Membership
                 share.Rights = share.Rights ^ (int)right;
         }
 
-        public static ICollection<PoolRightRepresentation> GetRights(PoolShare share)
+        public static ICollection<PoolRightViewModel> GetRights(PoolShare share)
         {
             return GetRights(share.Rights);
         }
-        public static ICollection<PoolRightRepresentation> GetRights(int rights)
+        public static ICollection<PoolRightViewModel> GetRights(int rights)
         {
-            var poolRightRepresentation = new List<PoolRightRepresentation>();
+            var poolRightRepresentation = new List<PoolRightViewModel>();
             foreach (PoolRight right in Enum.GetValues(typeof(PoolRight)))
             {
-                poolRightRepresentation.Add(new PoolRightRepresentation()
+                poolRightRepresentation.Add(new PoolRightViewModel()
                 {
                     Right = right,
                     IsChecked = HasRight(rights, (int)right)
@@ -58,7 +58,7 @@ namespace BLOBLocker.Code.Membership
             }
             return poolRightRepresentation;
         }
-        public static void SetRights(PoolShare share, ICollection<PoolRightRepresentation> rights)
+        public static void SetRights(PoolShare share, ICollection<PoolRightViewModel> rights)
         {
             share.Rights = 0;
             foreach(var right in rights)
@@ -67,8 +67,27 @@ namespace BLOBLocker.Code.Membership
                     AddRight(share, right.Right);
             }
         }
+        public static int CalculateRights(ICollection<PoolRightViewModel> rights)
+        {
+            int r = 0;
+            foreach (var right in rights)
+            {
+                if(right.IsChecked)
+                    r |= (int)right.Right;
+            }
+            return r;
+        }
+        public static int GetMaxRights()
+        {
+            int rights = 0;
+            foreach (PoolRight right in Enum.GetValues(typeof(PoolRight)))
+            {
+                rights += (int)right;
+            }
+            return rights;
+        }
     }
-    public class PoolRightRepresentation
+    public class PoolRightViewModel
     {
         public PoolRight Right { get; set; }
         public bool IsChecked { get; set; }

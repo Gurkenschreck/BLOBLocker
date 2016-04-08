@@ -17,7 +17,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public bool IsFileStorageEnabled { get; set; }
         public bool IsChatEnabled { get; set; }
         public bool IsLinkRepositoryEnabled { get; set; }
-        public ICollection<PoolRightRepresentation> Rights { get; set; }
+        public ICollection<PoolRightViewModel> Rights { get; set; }
 
         public Pool Generate()
         {

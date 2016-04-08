@@ -414,7 +414,7 @@ namespace BLOBLocker.WebApp.Controllers
         public ActionResult Build()
         {
             BuildPoolViewModel p = new BuildPoolViewModel();
-            p.Rights = PoolRightHelper.GetRights(int.MaxValue);
+            p.Rights = PoolRightHelper.GetRights(PoolRightHelper.GetMaxRights()).ToArray();
             return View(p);
         }
 
@@ -480,7 +480,7 @@ namespace BLOBLocker.WebApp.Controllers
                 NotificationHelper.SendNotification(curAcc, "Pool {0} creation was a success!", pool.Title);
                 
                 pool.Config = poolConfig;
-                pool.DefaultRights = 4;
+                pool.DefaultRights = PoolRightHelper.CalculateRights(poolViewModel.Rights);
                 poolShare.Config = poolShareConfig;
                 poolShare.Rights = int.MaxValue;
 

@@ -21,13 +21,14 @@
             <td>@Html.TextAreaFor(p => p.Description)</td>
         </tr>
         <tr>
-            <td>@Html.EditorFor(p => p.IsChatEnabled) @Html.LabelFor(p => p.IsChatEnabled)</td>
-            <td>@Html.EditorFor(p => p.IsFileStorageEnabled) @Html.LabelFor(p => p.IsFileStorageEnabled) </td>
+            <td colspan="2">@Html.EditorFor(p => p.IsChatEnabled) @Html.LabelFor(p => p.IsChatEnabled)
+            @Html.EditorFor(p => p.IsFileStorageEnabled) @Html.LabelFor(p => p.IsFileStorageEnabled) 
+            @Html.EditorFor(p => p.IsLinkRepositoryEnabled) @Html.LabelFor(p => p.IsLinkRepositoryEnabled)</td>
         </tr>
-        @Html.Partial("~/Views/Panel/_EditPoolRights.cshtml", Model.Rights)
         <tr>
-            <td>@Html.EditorFor(p => p.IsLinkRepositoryEnabled) @Html.LabelFor(p => p.IsLinkRepositoryEnabled)</td>
+            <td colspan="2">@Html.LabelFor(p => p.Rights)<br /> @Html.EditorFor(p => p.Rights)</td>
         </tr>
+
         <tr>
             <td>@Html.AntiForgeryToken()</td>
             <td><button type="submit">Start building!</button></td>

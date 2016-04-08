@@ -1,0 +1,5 @@
+﻿@model BLOBLocker.Code.Membership.PoolRightViewModel
+
+    @Html.CheckBoxFor(p => p.IsChecked)
+     @Html.LabelFor(p => p.IsChecked, Model.Right.ToString()) 
+    @Html.HiddenFor(p => p.Right)
