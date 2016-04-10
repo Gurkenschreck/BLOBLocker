@@ -100,10 +100,13 @@ namespace BLOBLocker.WebApp.Controllers
                 {
                     List<Message> decryptedMessageList = new List<Message>();
 
-                    using (CredentialHandler credHandler = new CredentialHandler(Session))
+                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                    using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
                     {
                         HttpCookie keypartCookie = Request.Cookies["Secret"];
-                        byte[] privKey = credHandler.Extract(keypartCookie);
+                        byte[] privKey = credHandler.Extract(keypartCookie, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
 
                         byte[] key = CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare);
                         byte[] iv = curPool.Config.IV;
@@ -149,11 +152,14 @@ namespace BLOBLocker.WebApp.Controllers
                 Message msg = new Message();
                 msg.Pool = curPool;
                 msg.Sender = curAcc;
-                
-                using(CredentialHandler credHandler = new CredentialHandler(Session))
+
+                byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
                 {
                     HttpCookie keypartCookie = Request.Cookies["Secret"];
-                    byte[] privKey = credHandler.Extract(keypartCookie);
+                    byte[] privKey = credHandler.Extract(keypartCookie, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
 
                     byte[] curAccPoolSharePriKey;
                     byte[] key = CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare, out curAccPoolSharePriKey);
@@ -233,10 +239,13 @@ namespace BLOBLocker.WebApp.Controllers
                         {
                             int poolShareKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
 
-                            using (var handler = new CredentialHandler(Session))
+                            byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                            byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                            byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                            using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
                             {
-                                HttpCookie keypart = Request.Cookies["Secret"];
-                                byte[] privKey = handler.Extract(keypart);
+                                HttpCookie keypartCookie = Request.Cookies["Secret"];
+                                byte[] privKey = credHandler.Extract(keypartCookie, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
 
                                 PoolShareHandler poolHandler = new PoolShareHandler(Session, HttpContext);
                                 PoolShare ps = poolHandler.Connect(curAccPoolShare, corAcc, pool, privKey);
@@ -364,10 +373,14 @@ namespace BLOBLocker.WebApp.Controllers
 
                 PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
                 povm.CurrentPoolShare = curPoolShare;
-                using (CredentialHandler credHandler = new CredentialHandler(Session))
+
+                byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
                 {
                     HttpCookie keypartCookie = Request.Cookies["Secret"];
-                    byte[] privKey = credHandler.Extract(keypartCookie);
+                    byte[] privKey = credHandler.Extract(keypartCookie, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
                     byte[] curAccPoolSharePriKey = null;
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))

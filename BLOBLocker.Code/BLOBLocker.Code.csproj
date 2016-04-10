@@ -62,6 +62,7 @@
     <Compile Include="Attributes\RestoreModelStateAttibute.cs" />
     <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
     <Compile Include="BlobLockerViewEngine.cs" />
+    <Compile Include="Cryptography\CryptoManager.cs" />
     <Compile Include="Membership\AdminToolRoleProvider.cs" />
     <Compile Include="Membership\CPRoleProvider.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -71,7 +72,7 @@
     <Compile Include="Membership\PoolRightHelper.cs" />
     <Compile Include="ModelHelper\AccountRepository.cs" />
     <Compile Include="ModelHelper\CryptoConfigRepository.cs" />
-    <Compile Include="ModelHelper\CryptoHelper.cs" />
+    <Compile Include="Cryptography\CryptoHelper.cs" />
     <Compile Include="ModelHelper\NotificationHelper.cs" />
     <Compile Include="ModelHelper\PoolShareHandler.cs" />
     <Compile Include="ModelHelper\PoolRepository.cs" />

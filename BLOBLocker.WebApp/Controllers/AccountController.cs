@@ -104,10 +104,20 @@ namespace BLOBLocker.WebApp.Controllers
                     {
                         HttpCookie keyPartCookie = null;
 
-                        using(var credHandler = new CredentialHandler(cookieKeySize, Session))
+                        using(var credHandler = new CredentialHandler(cookieKeySize))
                         {
-                            credHandler.Inject(symC.Decrypt(newAcc.Config.PrivateKey), Session, out keyPartCookie);
+                            byte[] sessionCookieKey;
+                            byte[] sessionCookieIV;
+                            byte[] sessionStoredKeyPart;
+                            credHandler.Inject(symC.Decrypt(newAcc.Config.PrivateKey),
+                                out keyPartCookie,
+                                out sessionCookieKey,
+                                out sessionCookieIV,
+                                out sessionStoredKeyPart);
                             Response.Cookies.Add(keyPartCookie);
+                            Session["AccPriKeyCookieKey"] = sessionCookieKey;
+                            Session["AccPriKeyCookieIV"] = sessionCookieIV;
+                            Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
                         }
                     }
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
@@ -160,14 +170,19 @@ namespace BLOBLocker.WebApp.Controllers
                                 byte[] plainPrivKey = symC.Decrypt(correspondingAcc.Config.PrivateKey);
                                 string pPriKey = symC.DecryptToString(correspondingAcc.Config.PrivateKey);
                                 HttpCookie cryptoCookie = null;
-                                
-                                using(var credHandler = new CredentialHandler(cookieKeySize, Session))
+
+
+                                byte[] sessionCookieKey;
+                                byte[] sessionCookieIV;
+                                byte[] sessionStoredKeyPart;
+                                using(var credHandler = new CredentialHandler(cookieKeySize))
                                 {
-                                    HttpCookie keypartCookie;
-                                    credHandler.Inject(plainPrivKey, Session, out keypartCookie);
-                                    cryptoCookie = keypartCookie;
-                                    Response.Cookies.Add(keypartCookie);
+                                    credHandler.Inject(symC.Decrypt(correspondingAcc.Config.PrivateKey), out cryptoCookie, out sessionCookieKey, out sessionCookieIV, out sessionStoredKeyPart);
+                                    Response.Cookies.Add(cryptoCookie);
                                 }
+                                Session["AccPriKeyCookieKey"] = sessionCookieKey;
+                                Session["AccPriKeyCookieIV"] = sessionCookieIV;
+                                Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
                                 
                                 FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                                 if (Request.QueryString["ReturnUrl"] == null)

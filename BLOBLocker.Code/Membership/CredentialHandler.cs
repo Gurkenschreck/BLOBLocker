@@ -15,41 +15,31 @@ namespace BLOBLocker.Code.Membership
         public bool HttpOnly { get; set; }
         public bool Secure { get; set; }
         SymmetricCipher<AesManaged> cipher;
-        public byte[] Key { get { return cipher.Key; } }
-        public byte[] IV { get { return cipher.IV; } }
-        HttpSessionStateBase Session;
 
-        public CredentialHandler(int keySize, HttpSessionStateBase Session)
+        public CredentialHandler(int keySize)
         {
-            this.keySize = keySize;
+            cipher = new SymmetricCipher<AesManaged>(keySize);
             HttpOnly = true;
             Secure = true;
-            cipher = new SymmetricCipher<AesManaged>(keySize);
-            this.Session = Session;
         }
-        public CredentialHandler(HttpSessionStateBase Session)
+        public CredentialHandler(byte[] key, byte[] iv)
         {
-
-            cipher = new SymmetricCipher<AesManaged>(Session["CookieKey"] as byte[],
-                Session["CookieIV"] as byte[]);
+            cipher = new SymmetricCipher<AesManaged>(key, iv);
             this.keySize = cipher.KeySize;
             HttpOnly = true;
             Secure = true;
-            this.Session = Session;
         }
 
-        private CredentialHandler(byte[] key, byte[] iv, HttpSessionStateBase Session)
-        {
-            
-        }
-        
         ~CredentialHandler()
         {
             Dispose(false);
             GC.SuppressFinalize(this);
         }
 
-        public void Inject(byte[] plain, HttpSessionStateBase Session , out HttpCookie keypartCookie) 
+        public void Inject(byte[] plain, out HttpCookie keypartCookie,
+            out byte[] sessionCookieKey,
+            out byte[] sessionCookieIV,
+            out byte[] sessionStoredKeyPart) 
         {
             //1. Encrypt plain priv key
             byte[] encPriKey = cipher.Encrypt(plain);
@@ -59,10 +49,11 @@ namespace BLOBLocker.Code.Membership
             //3. Split encrypted privKey
             byte[] Pa;
             byte[] Pb;
-            Pa = encPriKey.Take((encPriKey.Length / 2)).ToArray();
-            Pb = encPriKey.Skip((encPriKey.Length / 2)).ToArray();
-            //4. Take last n bytes of Pa as new key
-            byte[] a = Pa.Take(keySize / 8).ToArray();
+            Pa = encPriKey.Take(keySize / 8).ToArray();
+            Pb = encPriKey.Skip(keySize / 8).ToArray();
+            //4. Take n bytes of Pa as new key
+            // In this case you could just use Pa as the key because it is already keySize / 8 bits longs
+            byte[] a = Pa.Take(keySize / 8).ToArray(); 
             //5. Save Pa in cookie of user
             keypartCookie = new HttpCookie("Secret");
             keypartCookie.Value = Convert.ToBase64String(Pa);
@@ -71,17 +62,17 @@ namespace BLOBLocker.Code.Membership
             //5. Initialize 2nd cipher to encrypt Pb for session storage
             using (var cookieCipher = new SymmetricCipher<AesManaged>(a, iv))
             {
-                Session["AccKeyPart"] = cookieCipher.Encrypt(Pb);
-                Session["CookieKey"] = key;
-                Session["CookieIV"] = iv;
+                sessionStoredKeyPart = cookieCipher.Encrypt(Pb);
+                sessionCookieKey = key;
+                sessionCookieIV = iv;
             }
         }
 
-        public byte[] Extract(HttpCookie keypartCookie)
+        public byte[] Extract(HttpCookie keypartCookie, byte[] sessionCookieKey, byte[] sessionCookieIV, byte[] sessionStoredKeyPart)
         {
             // 1. Get session key and iv
-            byte[] rKey = Session["CookieKey"] as byte[];
-            byte[] rIV = Session["CookieIV"] as byte[];
+            byte[] rKey = sessionCookieKey;
+            byte[] rIV = sessionCookieIV;
 
             // 2. Get user part of key
             HttpCookie receivedCookie = keypartCookie; //Request.Cookies["Secret"];
@@ -92,7 +83,7 @@ namespace BLOBLocker.Code.Membership
             using (var cookieCipher = new SymmetricCipher<AesManaged>(ra, rIV))
             {
                 // 5. Get server side second key part and decrypt it
-                byte[] encAccKeyPart = Session["AccKeyPart"] as byte[];
+                byte[] encAccKeyPart = sessionStoredKeyPart;
                 byte[] rPb = cookieCipher.Decrypt(encAccKeyPart);
                 // 6. Combine both pairs
                 byte[] rP = new byte[rPa.Length + rPb.Length];
