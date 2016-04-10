@@ -31,6 +31,7 @@ namespace BLOBLocker.Code.ModelHelper
 
             ps.Pool = pool;
             ps.SharedWith = corAcc;
+            ps.Rights = pool.DefaultRights;
 
             string curAccPrivateKeyString = Encoding.UTF8.GetString(accPrivateKey);
 
@@ -54,7 +55,11 @@ namespace BLOBLocker.Code.ModelHelper
                             ps.Config.IV = corAccRSACipher.Encrypt(corPSCipher.IV);
                         }
                     }
+                    Utilities.SetArrayValuesZero(curPSPriKey);
                 }
+                Utilities.SetArrayValuesZero(curPSKey);
+                Utilities.SetArrayValuesZero(curPSIV);
+
             }
             corAcc.PoolShares.Add(ps);
             pool.Participants.Add(ps);
