@@ -37,6 +37,21 @@ namespace BLOBLocker.WebApp.Controllers
             return View(acc);
         }
 
+        [RequiredParameters("revm")]
+        [HttpPost]
+        [PreserveModelState]
+        public ActionResult EditDefaultRights(RightsEditViewModel revm)
+        {
+            var curAcc = context.Accounts.FirstOrDefault(p => p.Alias == User.Identity.Name);
+            PoolShare ps = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == revm.PoolUID);
+            if(ModelState.IsValid)
+            {
+                ps.Pool.DefaultRights = PoolRightHelper.CalculateRights(revm.Rights);
+                context.SaveChanges();
+            }
+            return RedirectToAction("PoolConfig", new { puid = revm.PoolUID });
+        }
+
         [RequiredParameters("puid")]
         [ChildActionOnly]
         [HttpGet]
@@ -48,9 +63,9 @@ namespace BLOBLocker.WebApp.Controllers
             PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
             Pool curPool = curPoolShare.Pool;
             ChatViewModel cvm = new ChatViewModel();
-
             if (ModelState.IsValid)
             {
+                cvm.PoolShare = curPoolShare;
                 cvm.PUID = puid;
                 
                 //Decrypt messages //take last x messages // show only since share date
@@ -88,10 +103,9 @@ namespace BLOBLocker.WebApp.Controllers
                     using (CredentialHandler credHandler = new CredentialHandler(Session))
                     {
                         HttpCookie keypartCookie = Request.Cookies["Secret"];
-                        byte[] privKey = credHandler.Extract(keypartCookie, Session);
+                        byte[] privKey = credHandler.Extract(keypartCookie);
 
-                        PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
-                        byte[] key = psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare);
+                        byte[] key = CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare);
                         byte[] iv = curPool.Config.IV;
 
                         Message curMsg;
@@ -139,11 +153,10 @@ namespace BLOBLocker.WebApp.Controllers
                 using(CredentialHandler credHandler = new CredentialHandler(Session))
                 {
                     HttpCookie keypartCookie = Request.Cookies["Secret"];
-                    byte[] privKey = credHandler.Extract(keypartCookie, Session);
+                    byte[] privKey = credHandler.Extract(keypartCookie);
 
-                    PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
                     byte[] curAccPoolSharePriKey;
-                    byte[] key = psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare, out curAccPoolSharePriKey);
+                    byte[] key = CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(privKey), curPoolShare, out curAccPoolSharePriKey);
                     byte[] iv = curPool.Config.IV;
 
                     using(var poolCipher = new SymmetricCipher<AesManaged>(key, iv))
@@ -223,7 +236,7 @@ namespace BLOBLocker.WebApp.Controllers
                             using (var handler = new CredentialHandler(Session))
                             {
                                 HttpCookie keypart = Request.Cookies["Secret"];
-                                byte[] privKey = handler.Extract(keypart, Session);
+                                byte[] privKey = handler.Extract(keypart);
 
                                 PoolShareHandler poolHandler = new PoolShareHandler(Session, HttpContext);
                                 PoolShare ps = poolHandler.Connect(curAccPoolShare, corAcc, pool, privKey);
@@ -283,9 +296,7 @@ namespace BLOBLocker.WebApp.Controllers
 
             if(ModelState.IsValid)
             {
-                Pool pool = curAcc.Pools.FirstOrDefault(p => p.UniqueIdentifier == mvm.PoolUniqueIdentifier);
-                if (pool == null)
-                    pool = curAcc.PoolShares.Select(p => p.Pool).FirstOrDefault(p => p.UniqueIdentifier == mvm.PoolUniqueIdentifier);
+                Pool pool = curAcc.PoolShares.Select(p => p.Pool).FirstOrDefault(p => p.UniqueIdentifier == mvm.PoolUniqueIdentifier);
                 AssignedMemory assignBasicMemory = null;
                 AssignedMemory assignAdditionalMemory = null;
                 int basicMemLeft, additionalMemLeft;
@@ -312,7 +323,8 @@ namespace BLOBLocker.WebApp.Controllers
                     {
                         assignAdditionalMemory = new AssignedMemory();
                         assignAdditionalMemory.MemoryPool = curAcc.MemoryPool;
-                        assignAdditionalMemory.Space = mvm.BasicMemoryToAdd;
+                        assignAdditionalMemory.Space = mvm.AdditionalMemoryToAdd;
+                        assignAdditionalMemory.IsBasic = false;
                         pool.AssignedMemory.Add(assignAdditionalMemory);
                         curAcc.MemoryPool.AssignedMemory.Add(assignAdditionalMemory);
                     }
@@ -355,23 +367,21 @@ namespace BLOBLocker.WebApp.Controllers
                 using (CredentialHandler credHandler = new CredentialHandler(Session))
                 {
                     HttpCookie keypartCookie = Request.Cookies["Secret"];
-                    byte[] privKey = credHandler.Extract(keypartCookie, Session);
-
-                    PoolShareHandler psHandler = new PoolShareHandler(Session, HttpContext);
+                    byte[] privKey = credHandler.Extract(keypartCookie);
                     byte[] curAccPoolSharePriKey = null;
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
                         using (var poolCipher = new SymmetricCipher<AesManaged>(
-                            psHandler.GetPoolKey(Encoding.UTF8.GetString(privKey),
+                            CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(privKey),
                                                     curPoolShare, out curAccPoolSharePriKey),
                             corPool.Config.IV))
                         {
                             povm.Description = poolCipher.DecryptToString(corPool.Description);
                         }
+                        Utilities.SetArrayValuesZero(curAccPoolSharePriKey);
                     }
                     Utilities.SetArrayValuesZero(privKey);
-                    Utilities.SetArrayValuesZero(curAccPoolSharePriKey);
                 }
                 return View(povm);
             }
@@ -398,13 +408,24 @@ namespace BLOBLocker.WebApp.Controllers
                 configModel.Pool = corPool;
                 configModel.Account = curAcc;
                 configModel.IsOwner = corPool.OwnerID == curAcc.ID;
+                configModel.PoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
 
                 ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory
                                                                                         .Where(p => p.IsEnabled)
                                                                                         .Select(p => p.Space)
                                                                                         .Sum() : 0;
-
-                return View();
+                configModel.RightsEditViewModel = new RightsEditViewModel
+                {
+                    PoolUID = puid,
+                    Rights = PoolRightHelper.GetRights(corPool.DefaultRights)
+                };
+                configModel.TitleDescriptionViewModel = new TitleDescriptionViewModel
+                {
+                    PUID = puid,
+                    Title = corPool.Title,
+                    Description = corPool.Description
+                };
+                return View(configModel);
             }
             else
             {

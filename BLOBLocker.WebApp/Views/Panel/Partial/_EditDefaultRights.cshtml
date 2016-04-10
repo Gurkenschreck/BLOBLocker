@@ -1,0 +1,11 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.RightsEditViewModel
+
+@using(Html.BeginForm("EditDefaultRights", "Panel", FormMethod.Post))
+{
+    @Html.LabelFor(p => p.Rights)<br />
+     @Html.EditorFor(p => p.Rights)
+    
+    @Html.HiddenFor(p => p.PoolUID)
+    
+    <button type="submit">Save</button>
+}

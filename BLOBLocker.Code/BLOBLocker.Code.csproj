@@ -71,6 +71,7 @@
     <Compile Include="Membership\PoolRightHelper.cs" />
     <Compile Include="ModelHelper\AccountRepository.cs" />
     <Compile Include="ModelHelper\CryptoConfigRepository.cs" />
+    <Compile Include="ModelHelper\CryptoHelper.cs" />
     <Compile Include="ModelHelper\NotificationHelper.cs" />
     <Compile Include="ModelHelper\PoolShareHandler.cs" />
     <Compile Include="ModelHelper\PoolRepository.cs" />
@@ -86,6 +87,8 @@
     <Compile Include="ViewModels\WebApp\MessageViewModel.cs" />
     <Compile Include="ViewModels\WebApp\PoolConfigModel.cs" />
     <Compile Include="ViewModels\WebApp\PoolOverviewViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\RightsEditViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\TitleDescriptionViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLOBLocker.Entities\BLOBLocker.Entities.csproj">

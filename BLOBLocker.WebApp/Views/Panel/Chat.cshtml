@@ -4,34 +4,15 @@
 }
 
 <div style="width:60%;">
-    @Html.Partial("SendMessage", Model.NewMessage)
+    @if (BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.WriteChat)) { 
+        @Html.Partial("_SendMessage", Model.NewMessage)
+    }
 
-    <div style="height:500px; overflow:auto;">
-        <table border="1" style="table-layout:fixed; width:100%;">
-            @foreach (var message in Model.Messages)
-            {
-                <tr>
-                    <td colspan="3">@message.Sender.Alias</td>
-                    <td>@message.Sent</td>
-                    <td>Validation passed image</td>
-                </tr>
-                <tr>
-                    @{
-                        string rawMessage = message.Text;
-                        string lineBreakedMessage = rawMessage.Replace(Environment.NewLine, "<br />");
+    @if(BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.ReadChat)) {
+        @Html.Partial("_ChatMessages", Model.Messages)
 
-                        string linkTexts = System.Text.RegularExpressions.Regex.Replace(lineBreakedMessage,
-                                         @"((http|ftp|https|mailto):.[^\s]*)",
-                                        "<a target='_blank' title='Click to open in new tab' href='$1'>$1</a>");
-
-                        IHtmlString transformedMessage = Html.Raw(linkTexts);
-                    }
-                    <td colspan="5" style="word-wrap:break-word; overflow-wrap:break-word;">@transformedMessage</td>
-                </tr>
-            }
-        </table>
-    </div>
-    <div style="width:100%; text-align:center;">
-        @Html.ActionLink("Load more messages...", "Pool", new { puid = Request.QueryString["puid"], smc = Model.NextAmountShowLastMessageCount })
-    </div>
+        <div style="width:100%; text-align:center;">
+            @Html.ActionLink("Load more messages...", "Pool", new { puid = Request.QueryString["puid"], smc = Model.NextAmountShowLastMessageCount })
+        </div>
+    }
 </div>

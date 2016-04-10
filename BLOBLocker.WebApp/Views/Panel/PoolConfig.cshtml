@@ -5,13 +5,25 @@
 
 <h2>PoolConfig</h2>
 
+<p>
+    @Html.Partial("_EditTitleAndDescription", Model.TitleDescriptionViewModel)
+</p>
 
 <p>
     @Html.Action("AssignMemory")
 </p>
 
 <p>
-    @Html.Action("InviteUser")
+    @if (BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.InviteUser)) { 
+        @Html.Action("InviteUser")
+    }
+</p>
+
+<p>
+    @if(BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.AssignRights))
+    {
+        @Html.Partial("_EditDefaultRights", Model.RightsEditViewModel)
+    }
 </p>
 
 <hr />

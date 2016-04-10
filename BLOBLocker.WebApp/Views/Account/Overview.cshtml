@@ -34,7 +34,7 @@ Account Information
     </tr>
     <tr>
         <td>@Html.LabelFor(p => p.Salt)</td>
-        <td>@Html.ValueFor(p => p.Salt)</td>
+        <td>@Convert.ToBase64String(Model.Salt)</td>
     </tr>
     <tr>
         <td>@Html.LabelFor(p => p.Roles)</td>
@@ -80,7 +80,7 @@ Your memory pool
     </tr>
     <tr>
         <td>@Html.LabelFor(p => p.MemoryPool.AssignedMemory)</td>
-        <td>@Html.ValueFor(p => p.MemoryPool.AssignedMemory.Count)</td>
+        <td>@Model.MemoryPool.AssignedMemory.Where(p => p.IsEnabled).Select(q => q.Space).Sum()</td>
     </tr>
 </table>
 <hr />

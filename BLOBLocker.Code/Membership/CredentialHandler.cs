@@ -17,23 +17,32 @@ namespace BLOBLocker.Code.Membership
         SymmetricCipher<AesManaged> cipher;
         public byte[] Key { get { return cipher.Key; } }
         public byte[] IV { get { return cipher.IV; } }
-        public CredentialHandler(int keySize)
+        HttpSessionStateBase Session;
+
+        public CredentialHandler(int keySize, HttpSessionStateBase Session)
         {
             this.keySize = keySize;
             HttpOnly = true;
             Secure = true;
             cipher = new SymmetricCipher<AesManaged>(keySize);
+            this.Session = Session;
         }
-        public CredentialHandler(byte[] key, byte[] iv)
+        public CredentialHandler(HttpSessionStateBase Session)
         {
-            cipher = new SymmetricCipher<AesManaged>(key, iv);
+
+            cipher = new SymmetricCipher<AesManaged>(Session["CookieKey"] as byte[],
+                Session["CookieIV"] as byte[]);
             this.keySize = cipher.KeySize;
             HttpOnly = true;
             Secure = true;
+            this.Session = Session;
         }
-        public CredentialHandler(HttpSessionStateBase Session)
-            : this(Session["CookieKey"] as byte[], Session["CookieIV"] as byte[])
-        {   }
+
+        private CredentialHandler(byte[] key, byte[] iv, HttpSessionStateBase Session)
+        {
+            
+        }
+        
         ~CredentialHandler()
         {
             Dispose(false);
@@ -68,7 +77,7 @@ namespace BLOBLocker.Code.Membership
             }
         }
 
-        public byte[] Extract(HttpCookie keypartCookie, HttpSessionStateBase Session)
+        public byte[] Extract(HttpCookie keypartCookie)
         {
             // 1. Get session key and iv
             byte[] rKey = Session["CookieKey"] as byte[];

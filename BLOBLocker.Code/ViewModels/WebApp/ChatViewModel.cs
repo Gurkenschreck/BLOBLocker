@@ -1,4 +1,5 @@
 ﻿using BLOBLocker.Entities.Models.Models.WebApp;
+using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public ICollection<Message> Messages { get; set; }
         public MessageViewModel NewMessage { get; set; }
         public int NextAmountShowLastMessageCount { get; set; }
+        public PoolShare PoolShare { get; set; }
     }
 }

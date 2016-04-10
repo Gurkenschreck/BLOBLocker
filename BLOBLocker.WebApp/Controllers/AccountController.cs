@@ -104,7 +104,7 @@ namespace BLOBLocker.WebApp.Controllers
                     {
                         HttpCookie keyPartCookie = null;
 
-                        using(var credHandler = new CredentialHandler(cookieKeySize))
+                        using(var credHandler = new CredentialHandler(cookieKeySize, Session))
                         {
                             credHandler.Inject(symC.Decrypt(newAcc.Config.PrivateKey), Session, out keyPartCookie);
                             Response.Cookies.Add(keyPartCookie);
@@ -161,7 +161,7 @@ namespace BLOBLocker.WebApp.Controllers
                                 string pPriKey = symC.DecryptToString(correspondingAcc.Config.PrivateKey);
                                 HttpCookie cryptoCookie = null;
                                 
-                                using(var credHandler = new CredentialHandler(cookieKeySize))
+                                using(var credHandler = new CredentialHandler(cookieKeySize, Session))
                                 {
                                     HttpCookie keypartCookie;
                                     credHandler.Inject(plainPrivKey, Session, out keypartCookie);
