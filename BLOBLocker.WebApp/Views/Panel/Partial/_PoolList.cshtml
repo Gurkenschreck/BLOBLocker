@@ -1,5 +1,6 @@
 ﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.Pool>
 
+<h4>Your pools</h4>
 @if (Model.Where(p => p.IsActive).Count() > 0)
 {
     <table border="1">

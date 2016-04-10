@@ -33,10 +33,6 @@ Account Information
         <td>@Html.ValueFor(p => p.Password)</td>
     </tr>
     <tr>
-        <td>@Html.LabelFor(p => p.Salt)</td>
-        <td>@Convert.ToBase64String(Model.Salt)</td>
-    </tr>
-    <tr>
         <td>@Html.LabelFor(p => p.Roles)</td>
         <td>
             @foreach(var role in Model.Roles) { <text>@role.Role.Definition,</text> }
@@ -89,7 +85,7 @@ Your pools
     @foreach(var pool in Model.Pools)
     {
         <tr>
-            <td>Pool ID: @pool.ID</td>
+            <td>Pool ID: @pool.Title</td>
             <td>Is active: @pool.IsActive</td>
             <td>Description: @pool.Description</td>
             <td>Participant count: @pool.Participants.Count</td>
