@@ -11,7 +11,6 @@ namespace BLOBLocker.Code.Membership
 {
     public sealed class CredentialHandler : IDisposable
     {
-        int keySize;
         public bool HttpOnly { get; set; }
         public bool Secure { get; set; }
         SymmetricCipher<AesManaged> cipher;
@@ -25,7 +24,6 @@ namespace BLOBLocker.Code.Membership
         public CredentialHandler(byte[] key, byte[] iv)
         {
             cipher = new SymmetricCipher<AesManaged>(key, iv);
-            this.keySize = cipher.KeySize;
             HttpOnly = true;
             Secure = true;
         }
@@ -49,11 +47,11 @@ namespace BLOBLocker.Code.Membership
             //3. Split encrypted privKey
             byte[] Pa;
             byte[] Pb;
-            Pa = encPriKey.Take(keySize / 8).ToArray();
-            Pb = encPriKey.Skip(keySize / 8).ToArray();
+            Pa = encPriKey.Take(cipher.KeySize / 8).ToArray();
+            Pb = encPriKey.Skip(cipher.KeySize / 8).ToArray();
             //4. Take n bytes of Pa as new key
             // In this case you could just use Pa as the key because it is already keySize / 8 bits longs
-            byte[] a = Pa.Take(keySize / 8).ToArray(); 
+            byte[] a = Pa.Take(cipher.KeySize / 8).ToArray(); 
             //5. Save Pa in cookie of user
             keypartCookie = new HttpCookie("Secret");
             keypartCookie.Value = Convert.ToBase64String(Pa);
@@ -78,7 +76,7 @@ namespace BLOBLocker.Code.Membership
             HttpCookie receivedCookie = keypartCookie; //Request.Cookies["Secret"];
             byte[] rPa = Convert.FromBase64String(receivedCookie.Value);
             // 3. Get key extracted from user cookie key
-            byte[] ra = rPa.Take(keySize / 8).ToArray();
+            byte[] ra = rPa.Take(cipher.KeySize / 8).ToArray();
             // 4. Initialize cipher with extracted keypart and cookieIV
             using (var cookieCipher = new SymmetricCipher<AesManaged>(ra, rIV))
             {
@@ -106,7 +104,6 @@ namespace BLOBLocker.Code.Membership
         {
             if(disposing)
             {
-                keySize = 0;
                 cipher.Dispose();
             }
         }
