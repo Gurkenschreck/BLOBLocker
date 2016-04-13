@@ -274,8 +274,7 @@ namespace BLOBLocker.WebApp.Controllers
 
         [RequiredParameters("puid")]
         [RestoreModelState]
-        [ChildActionOnly]
-        [HttpGet]
+        [ChildActionOnly, HttpGet]
         public ActionResult AssignMemory(string puid)
         {
             bool isvalid = ModelState.IsValid;
@@ -296,10 +295,10 @@ namespace BLOBLocker.WebApp.Controllers
             mvm.PoolUniqueIdentifier = curPool.UniqueIdentifier;
             return View(mvm);
         }
+
         [RequiredParameters("mvm")]
         [PreserveModelState]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult AssignMemory(MemoryViewModel mvm)
         {
             accRepo = new AccountRepository(context);
@@ -445,7 +444,7 @@ namespace BLOBLocker.WebApp.Controllers
         {
             if(ModelState.IsValid)
             {
-                int saltByteLength = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]);
+                int saltByteLength = HttpContext.Application["security.SaltByteLength"].As<int>();
                 
                 PoolRepository repo = new PoolRepository(context);
                 accRepo = new AccountRepository(context);
@@ -456,10 +455,10 @@ namespace BLOBLocker.WebApp.Controllers
                 pool.OwnerID = curAcc.ID;
                 pool.Salt = Cipha.Security.Cryptography.Utilities.GenerateBytes(saltByteLength);
 
-                int poolSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolKeySize"]);
-                int poolRSAKeySize = Convert.ToInt32(HttpContext.Application["security.PoolRSAKeySize"]);
-                int poolShareKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
-                int poolShareRSAKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareRSAKeySize"]);
+                int poolSymKeySize = HttpContext.Application["security.PoolKeySize"].As<int>();
+                int poolRSAKeySize = HttpContext.Application["security.PoolRSAKeySize"].As<int>();
+                int poolShareKeySize = HttpContext.Application["security.PoolShareKeySize"].As<int>();
+                int poolShareRSAKeySize = HttpContext.Application["security.PoolShareRSAKeySize"].As<int>();
 
                 CryptoConfiguration poolConfig = new CryptoConfiguration();
                 PoolShare poolShare = new PoolShare();
@@ -518,7 +517,6 @@ namespace BLOBLocker.WebApp.Controllers
             accRepo = new AccountRepository(context);
             return View(accRepo.GetAccount(User.Identity.Name));
         }
-
 
         [RequiredParameters("addAlias")]
         [ValidateAntiForgeryToken]
@@ -621,6 +619,5 @@ namespace BLOBLocker.WebApp.Controllers
             }
             return RedirectToAction("Index");
         }
-
     }
 }

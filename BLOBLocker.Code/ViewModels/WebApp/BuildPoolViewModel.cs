@@ -11,11 +11,15 @@ namespace BLOBLocker.Code.ViewModels.WebApp
     public class BuildPoolViewModel
     {
         [Required]
+        [MinLength(1, ErrorMessage = "Title cannot be empty.")]
         [MaxLength(64, ErrorMessage="Title too long.")]
         public string Title { get; set; }
         public string Description { get; set; }
+        [Display(Name="Is filestorage enabled")]
         public bool IsFileStorageEnabled { get; set; }
+        [Display(Name = "Is chat enabled")]
         public bool IsChatEnabled { get; set; }
+        [Display(Name = "Is Linkrepo enabled")]
         public bool IsLinkRepositoryEnabled { get; set; }
         public ICollection<PoolRightViewModel> Rights { get; set; }
 
