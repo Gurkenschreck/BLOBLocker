@@ -1,6 +1,8 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.PoolOverviewViewModel
+@using BLOBLocker.Code.Membership
 @{
     ViewBag.Title = "Pool";
+    int rights = ViewBag.Rights;
 }
 
 <h2>Pool - @Model.Title - @Model.OverallAssignedPoolSpace MB</h2>
@@ -10,7 +12,10 @@
 
 @if(Model.IsChatEnabled)
 {
-    <p>@Html.Action("Chat", new { puid = Request.QueryString["puid"] })</p>
+    if(PoolRightHelper.HasRight(rights, PoolRight.WriteChat) || PoolRightHelper.HasRight(rights, PoolRight.ReadChat))
+    {
+        <p>@Html.Action("Chat", new { puid = Request.QueryString["puid"] })</p>
+    }
 }
 @if(Model.IsFileStorageEnabled)
 {

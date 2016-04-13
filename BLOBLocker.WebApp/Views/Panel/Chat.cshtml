@@ -3,12 +3,12 @@
     Layout = null;   
 }
 
-<div style="width:60%;">
-    @if (BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.WriteChat)) { 
+<div style="width:100%;">
+    @if (BLOBLocker.Code.Membership.PoolRightHelper.HasRight(ViewBag.Rights, BLOBLocker.Code.Membership.PoolRight.WriteChat)) { 
         @Html.Partial("_SendMessage", Model.NewMessage)
     }
 
-    @if(BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.ReadChat)) {
+    @if(BLOBLocker.Code.Membership.PoolRightHelper.HasRight(ViewBag.Rights, BLOBLocker.Code.Membership.PoolRight.ReadChat)) {
         @Html.Partial("_ChatMessages", Model.Messages)
 
         <div style="width:100%; text-align:center;">

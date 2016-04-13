@@ -15,11 +15,15 @@ namespace BLOBLocker.Code.Membership
         }
         public static bool HasRight(PoolShare share, PoolRight right)
         {
-            return HasRight(share, (int)right);
+            return HasRight(share.Rights, (int)right);
         }
         public static bool HasRight(PoolShare share, int right)
         {
             return HasRight(share.Rights, right);
+        }
+        public static bool HasRight(int shareRights, PoolRight right)
+        {
+            return HasRight(shareRights, (int)right);
         }
         public static bool HasRight(int rights, int right)
         {

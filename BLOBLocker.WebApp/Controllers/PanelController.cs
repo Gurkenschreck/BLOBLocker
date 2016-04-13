@@ -1,4 +1,5 @@
 ﻿using Cipha.Security.Cryptography.Asymmetric;
+using BLOBLocker.Code.Extention;
 using Cipha.Security.Cryptography.Symmetric;
 using BLOBLocker.WebApp.Controllers;
 using BLOBLocker.Entities.Models;
@@ -66,6 +67,7 @@ namespace BLOBLocker.WebApp.Controllers
             if (ModelState.IsValid)
             {
                 cvm.PoolShare = curPoolShare;
+                ViewBag.Rights = curPoolShare.Rights;
                 cvm.PUID = puid;
                 
                 //Decrypt messages //take last x messages // show only since share date
@@ -396,6 +398,7 @@ namespace BLOBLocker.WebApp.Controllers
                     }
                     Utilities.SetArrayValuesZero(privKey);
                 }
+                ViewBag.Rights = curPoolShare.Rights;
                 return View(povm);
             }
             
@@ -438,6 +441,7 @@ namespace BLOBLocker.WebApp.Controllers
                     Title = corPool.Title,
                     Description = corPool.Description
                 };
+                ViewBag.Rights = configModel.PoolShare.Rights;
                 return View(configModel);
             }
             else
