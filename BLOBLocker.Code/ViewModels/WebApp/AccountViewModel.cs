@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLOBLocker.Code.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,8 +15,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public string Alias { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Account_Password",
-            ResourceType = typeof(BLOBLocker.Entities.Models.Resources.Models))]
+        [LocalizedDisplayName("Account_Password")]
         public string Password { get; set; }
         [Display(Name = "AccountAddition_ContactEmail",
             ResourceType = typeof(BLOBLocker.Entities.Models.Resources.Models))]

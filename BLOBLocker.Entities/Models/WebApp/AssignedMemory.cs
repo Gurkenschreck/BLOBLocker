@@ -24,6 +24,6 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         public Nullable<DateTime> DateAssigned { get; set; }
         public int Space { get; set; }
         public bool IsBasic { get; set; }
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } // Create enum with assignment state .Assigned, .WithdrawQueue, .Withdrawed or similar
     }
 }

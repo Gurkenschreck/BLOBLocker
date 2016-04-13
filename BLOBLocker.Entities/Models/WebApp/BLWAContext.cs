@@ -25,6 +25,8 @@ namespace BLOBLocker.Entities.Models.WebApp
         public DbSet<Contact> ContactLinks { get; set; }
         public DbSet<Message> Messages { get; set; }
 
+        public DbSet<Translation> Translations { get; set; }
+
         public BLWAContext()
 #if DEBUG
             : base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BLWA;Integrated Security=True")

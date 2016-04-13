@@ -12,6 +12,9 @@ namespace BLOBLocker.Code.Extention
     {
         public static T As<T>(this object obj)
         {
+            if (obj == null)
+                return default(T);
+
             if (obj.GetType() == typeof(T))
                 return (T)obj;
 

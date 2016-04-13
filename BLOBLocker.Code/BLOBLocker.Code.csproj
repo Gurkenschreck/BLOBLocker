@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AjaxOnlyAttribute.cs" />
+    <Compile Include="Attributes\LocalizedDisplayNameAttribute.cs" />
     <Compile Include="Attributes\LocalOnlyAttribute.cs" />
     <Compile Include="Attributes\PreserveModelStateAttribute.cs" />
     <Compile Include="Attributes\RequiredParametersAttribute.cs" />
@@ -80,6 +81,8 @@
     <Compile Include="ModelHelper\PoolRepository.cs" />
     <Compile Include="ModelHelper\Repository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\BLResourceProvider.cs" />
+    <Compile Include="Resources\BLResourceProviderFactory.cs" />
     <Compile Include="ViewModels\AdminTool\AdminEditAccountModel.cs" />
     <Compile Include="ViewModels\AdminTool\AdminOverviewViewModel.cs" />
     <Compile Include="ViewModels\PoolRightViewModel.cs" />

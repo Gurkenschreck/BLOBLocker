@@ -109,6 +109,10 @@
     <Compile Include="Migrations\201604071814486_AWAddPoolRights.Designer.cs">
       <DependentUpon>201604071814486_AWAddPoolRights.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604132104151_AddTranslation.cs" />
+    <Compile Include="Migrations\201604132104151_AddTranslation.Designer.cs">
+      <DependentUpon>201604132104151_AddTranslation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -128,6 +132,7 @@
     <Compile Include="Models\WebApp\PoolShare.cs" />
     <Compile Include="Models\WebApp\BLWAContext.cs" />
     <Compile Include="Models\WebApp\SystemConfiguration.cs" />
+    <Compile Include="Models\WebApp\Translation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Models.Designer.cs">
       <DependentUpon>Models.resx</DependentUpon>
@@ -180,6 +185,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604071814486_AWAddPoolRights.resx">
       <DependentUpon>201604071814486_AWAddPoolRights.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604132104151_AddTranslation.resx">
+      <DependentUpon>201604132104151_AddTranslation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

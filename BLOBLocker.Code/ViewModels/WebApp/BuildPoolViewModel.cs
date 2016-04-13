@@ -11,7 +11,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
     public class BuildPoolViewModel
     {
         [Required]
-        [MinLength(1, ErrorMessage = "Title cannot be empty.")]
+        [MinLength(1, ErrorMessage="Title cannot be empty.")]
         [MaxLength(64, ErrorMessage="Title too long.")]
         public string Title { get; set; }
         public string Description { get; set; }

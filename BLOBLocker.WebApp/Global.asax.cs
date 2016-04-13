@@ -36,7 +36,6 @@ namespace BLOBLocker.WebApp
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-
             cancellationTokenSource = new CancellationTokenSource();
             cancellationToken = cancellationTokenSource.Token;
 
