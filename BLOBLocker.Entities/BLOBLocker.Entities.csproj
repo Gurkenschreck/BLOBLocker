@@ -191,6 +191,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Scripts\AdminTool\160413_dbo.Roles.data.sql" />
+    <Content Include="Scripts\WebApp\160413_dbo.AccountRoles.data.sql" />
+    <Content Include="Scripts\WebApp\160413_dbo.SystemConfigurations.data.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

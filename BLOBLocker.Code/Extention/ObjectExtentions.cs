@@ -12,6 +12,9 @@ namespace BLOBLocker.Code.Extention
     {
         public static T As<T>(this object obj)
         {
+            if (obj.GetType() == typeof(T))
+                return (T)obj;
+
             var converter = TypeDescriptor.GetConverter(typeof(T));
             if(converter != null)
             {

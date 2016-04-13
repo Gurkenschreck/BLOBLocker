@@ -5,28 +5,35 @@
 
 <h2>SignUp</h2>
 
+<p>
+    @Html.ValidationSummary()
+</p>
+
 @using (Html.BeginForm())
 {
-    <p>
-        @Html.ValidationSummary()
-    </p>
-    <p>
-        @Html.LabelFor(model => model.Alias) *:
-        @Html.EditorFor(model => model.Alias)
-    </p>
-    <p>
-        @Html.LabelFor(model => model.Password) *:
-        @Html.PasswordFor(model => model.Password)
-    </p>
-    <p>
-        @Html.LabelFor(model => model.ContactEmail)
-        @Html.EditorFor(model => model.ContactEmail)
-    </p>
-    if (ViewBag.IsRegistrationRestricted)
-    {
-        <p>@BLOBLocker.WebApp.Resources.Account.Strings.RegistrationCodeLabel *:
-        @Html.TextBox("registrationCode", "")</p>
-    }
-    @Html.AntiForgeryToken();
-    <input type="submit" value="@BLOBLocker.WebApp.Resources.Account.Strings.btn_SignUp" />
+    <table>
+        <tr>
+            <th>@Html.LabelFor(model => model.Alias) *:</th>
+            <td>@Html.EditorFor(model => model.Alias)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(model => model.Password) *:</th>
+            <td>@Html.PasswordFor(model => model.Password)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(model => model.ContactEmail)</th>
+            <td>@Html.EditorFor(model => model.ContactEmail)</td>
+        </tr>
+        @if (ViewBag.IsRegistrationRestricted)
+        {
+            <tr>
+                <th>@BLOBLocker.WebApp.Resources.Account.Strings.RegistrationCodeLabel *:</th>
+                <td>@Html.TextBox("registrationCode", "")</td>
+            </tr>
+        }
+        <tr>
+            <th>@Html.AntiForgeryToken()</th>
+            <td><input type="submit" value="@BLOBLocker.WebApp.Resources.Account.Strings.btn_SignUp" /></td>
+        </tr>
+    </table>
 }

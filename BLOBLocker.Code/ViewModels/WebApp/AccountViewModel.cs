@@ -28,10 +28,8 @@ namespace BLOBLocker.Code.ViewModels.WebApp
             if (string.IsNullOrWhiteSpace(Alias))
                 yield return new ValidationResult("Alias cannot be empty or white string", new[] { "Alias" });
 
-
             if(string.IsNullOrEmpty(Password))
                 yield return new ValidationResult("Password cannot be empty", new[] { "Password" });
-
         }
     }
 }

@@ -23,6 +23,7 @@ using BLOBLocker.Entities.Models.WebApp;
 using System.Text;
 using BLOBLocker.Code.ViewModels.WebApp;
 using BLOBLocker.Code.Extention;
+using BLOBLocker.Code.ViewModels.Validation;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -39,36 +40,10 @@ namespace BLOBLocker.WebApp.Controllers
         }
 
         [RequiredParameters("acc")]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        [HttpPost]
+        [CustomValidate(typeof(AccountViewModelValidation))]
+        [ValidateAntiForgeryToken, AllowAnonymous, HttpPost]
         public ActionResult SignUp(AccountViewModel acc)
         {
-            bool enableRegistration = HttpContext.Application["system.EnableRegistration"].As<bool>();
-            if(!enableRegistration)
-            {
-                ModelState.AddModelError("RegistrationDisabled", Resources.Account.Strings.RegistrationDisabled);
-            }
-            bool isRegistrationRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
-            if (isRegistrationRestricted)
-            {
-                if(string.IsNullOrEmpty(acc.RegistrationCode))
-                {
-                    ModelState.AddModelError("InvalidRegistrationCode", Resources.Account.Strings.InvalidRegistrationCode);
-
-                }
-                string expectedRegistrationCode = HttpContext.Application["system.RestrictedRegistrationCode"].As<string>();
-                if (acc.RegistrationCode != expectedRegistrationCode)
-                {
-                    ModelState.AddModelError("RegistrationRestricted", Resources.Account.Strings.RestrictedRegistrationMessage);
-                }
-            }
-            int accLimit = HttpContext.Application["system.AccountLimit"].As<int>();
-            int actual = context.Accounts.Count();
-            if(actual >= accLimit)
-            {
-                ModelState.AddModelError("AccountLimitReached", Resources.Account.Strings.AccountLimitReached);
-            }
             // Check if info is correct
             if(ModelState.IsValid)
             {
@@ -137,9 +112,7 @@ namespace BLOBLocker.WebApp.Controllers
         }
 
         [RequiredParameters("acc")]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        [HttpPost]
+        [ValidateAntiForgeryToken, AllowAnonymous, HttpPost]
         public ActionResult Login(AccountViewModel acc)
         {
             bool loginEnabled = HttpContext.Application["system.EnableLogin"].As<bool>();

@@ -61,6 +61,7 @@
     <Compile Include="Attributes\RequiredParametersAttribute.cs" />
     <Compile Include="Attributes\RestoreModelStateAttibute.cs" />
     <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
+    <Compile Include="Attributes\CustomValidateAttribute.cs" />
     <Compile Include="BlobLockerViewEngine.cs" />
     <Compile Include="Cryptography\CryptoManager.cs" />
     <Compile Include="Extention\ObjectExtentions.cs" />
@@ -82,6 +83,8 @@
     <Compile Include="ViewModels\AdminTool\AdminEditAccountModel.cs" />
     <Compile Include="ViewModels\AdminTool\AdminOverviewViewModel.cs" />
     <Compile Include="ViewModels\PoolRightViewModel.cs" />
+    <Compile Include="ViewModels\Validation\AccountViewModelValidation.cs" />
+    <Compile Include="ViewModels\Validation\IActionModelValidation.cs" />
     <Compile Include="ViewModels\WebApp\AccountViewModel.cs" />
     <Compile Include="ViewModels\WebApp\BuildPoolViewModel.cs" />
     <Compile Include="ViewModels\WebApp\ChatViewModel.cs" />
