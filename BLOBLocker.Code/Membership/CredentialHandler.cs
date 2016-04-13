@@ -1,4 +1,5 @@
-﻿using Cipha.Security.Cryptography.Symmetric;
+﻿using Cipha.Security.Cryptography;
+using Cipha.Security.Cryptography.Symmetric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace BLOBLocker.Code.Membership
             keypartCookie.Value = Convert.ToBase64String(Pa);
             keypartCookie.HttpOnly = true;
             keypartCookie.Secure = true;
-            //5. Initialize 2nd cipher to encrypt Pb for session storage
+            //6. Initialize 2nd cipher to encrypt Pb for session storage
             using (var cookieCipher = new SymmetricCipher<AesManaged>(a, iv))
             {
                 sessionStoredKeyPart = cookieCipher.Encrypt(Pb);
@@ -87,6 +88,7 @@ namespace BLOBLocker.Code.Membership
                 byte[] rP = new byte[rPa.Length + rPb.Length];
                 Array.Copy(rPa, rP, rPa.Length);
                 Array.Copy(rPb, 0, rP, rPa.Length, rPb.Length);
+
 
                 // 7. Decrypt encrypted private key of account
                 using (var symCi = new SymmetricCipher<AesManaged>(rKey, rIV))

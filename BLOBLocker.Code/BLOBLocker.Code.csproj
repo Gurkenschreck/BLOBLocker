@@ -63,6 +63,7 @@
     <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
     <Compile Include="BlobLockerViewEngine.cs" />
     <Compile Include="Cryptography\CryptoManager.cs" />
+    <Compile Include="Extention\DictionaryExtention.cs" />
     <Compile Include="Membership\AdminToolRoleProvider.cs" />
     <Compile Include="Membership\CPRoleProvider.cs" />
     <Compile Include="Controllers\BaseController.cs" />
