@@ -421,26 +421,7 @@ namespace BLOBLocker.WebApp.Controllers
             if (accRepo.HasPoolRights(curAcc, corPool))
             {
                 PoolConfigModel configModel = new PoolConfigModel();
-                configModel.Pool = corPool;
-                configModel.Account = curAcc;
-                configModel.IsOwner = corPool.OwnerID == curAcc.ID;
-                configModel.PoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
-
-                ViewBag.AssignedPoolSpace = (corPool.AssignedMemory.Count != 0) ? corPool.AssignedMemory
-                                                                                        .Where(p => p.IsEnabled)
-                                                                                        .Select(p => p.Space)
-                                                                                        .Sum() : 0;
-                configModel.RightsEditViewModel = new RightsEditViewModel
-                {
-                    PoolUID = puid,
-                    Rights = PoolRightHelper.GetRights(corPool.DefaultRights)
-                };
-                configModel.TitleDescriptionViewModel = new TitleDescriptionViewModel
-                {
-                    PUID = puid,
-                    Title = corPool.Title,
-                    Description = corPool.Description
-                };
+                configModel.Populate(corPool, curAcc);
                 ViewBag.Rights = configModel.PoolShare.Rights;
                 return View(configModel);
             }
@@ -641,29 +622,5 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        [ValidateAntiForgeryToken]
-        [AjaxOnly]
-        [HttpPost]
-        public string DisableNotificationAsync(int id)
-        {
-            if (id < 0)
-                return "id<0";
-            var notification = context.Notifications.Where(p => p.ID == id).FirstOrDefault();
-            if (notification == null)
-                return "notificationNotExistent";
-            else
-            {
-                notification.IsVisible = false;
-                try
-                {
-                    context.SaveChanges();
-                }
-                catch(Exception ex)
-                {
-                    return ex.Message;
-                }
-            }
-            return "ok";
-        }
     }
 }

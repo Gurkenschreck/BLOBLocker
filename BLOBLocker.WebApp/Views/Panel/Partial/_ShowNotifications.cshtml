@@ -1,7 +1,4 @@
 ﻿@model IEnumerable<BLOBLocker.Entities.Models.WebApp.Notification>
-@{
-    Layout = null;
-}
 
 @using (Html.BeginForm("DisableNotification", "Panel", FormMethod.Post))
 {
@@ -24,14 +21,13 @@
 }
 
 <script>
-
     $(function () {
         $("button[type=submit]").click(function () {
             var clickedBtn = $(this);
             var rvt = $("input[name=__RequestVerificationToken]");
             $.ajax({
                 type: "POST",
-                url: "/Panel/DisableNotificationAsync",
+                url: "/Ajax/DisableNotificationAsync",
                 data: { "id": clickedBtn.val(), "__RequestVerificationToken": rvt.val() },
                 cache: false
             }).done(function (data, status, req) {
@@ -40,7 +36,6 @@
                 alert("Error:" + req.status);
             });
             return false;
-
         });
     });
 </script>

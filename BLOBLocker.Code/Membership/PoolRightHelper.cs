@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Entities.Models.WebApp;
+﻿using BLOBLocker.Code.ViewModels;
+using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,10 +91,5 @@ namespace BLOBLocker.Code.Membership
             }
             return rights;
         }
-    }
-    public class PoolRightViewModel
-    {
-        public PoolRight Right { get; set; }
-        public bool IsChecked { get; set; }
     }
 }

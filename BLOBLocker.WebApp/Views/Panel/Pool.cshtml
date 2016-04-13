@@ -5,7 +5,7 @@
     int rights = ViewBag.Rights;
 }
 
-<h2>Pool - @Model.Title - @Model.OverallAssignedPoolSpace MB</h2>
+<h2>Pool - @Model.Title - @Model.OverallAssignedPoolSpace MB<small> - @Html.ActionLink("Settings", "PoolConfig", new { puid = Model.PUID })</small></h2>
 <div style="background-color:#9cf3ff;">
     @Html.Raw(Model.Description)
 </div>
@@ -26,12 +26,11 @@
     <p>Link repository goes here</p>
 }
 
-<p>
-    @Html.ActionLink("Settings", "PoolConfig", new { puid = Model.PUID})
-</p>
-<ul>
-    @foreach(var usr in Model.Participants.Where(p => p.IsActive))
-    {
-        <li>@usr.SharedWith.Alias</li>
-    }
-</ul>
+@if (PoolRightHelper.HasRight(rights, PoolRight.ViewParticipants)) { 
+    <ul>
+        @foreach(var usr in Model.Participants.Where(p => p.IsActive))
+        {
+            <li>@usr.SharedWith.Alias</li>
+        }
+    </ul>
+}

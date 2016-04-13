@@ -1,9 +1,12 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.PoolConfigModel
+@using BLOBLocker.Code.Membership
 @{
     ViewBag.Title = "PoolConfig";
 }
 
 <h2>PoolConfig</h2>
+
+<p>@Html.ActionLink("Back", "Pool", new { puid = Request.QueryString["puid"] })</p>
 
 <p>
     @Html.Partial("_EditTitleAndDescription", Model.TitleDescriptionViewModel)
@@ -14,17 +17,17 @@
 </p>
 
 <p>
-    @if (BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.InviteUser)) { 
+    @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.InviteUser)) { 
         @Html.Action("InviteUser")
     }
 </p>
 
 <p>
-    @if(BLOBLocker.Code.Membership.PoolRightHelper.HasRight(Model.PoolShare, BLOBLocker.Code.Membership.PoolRight.AssignRights))
+    @if(PoolRightHelper.HasRight(Model.PoolShare, PoolRight.AssignRights))
     {
         @Html.Partial("_EditDefaultRights", Model.RightsEditViewModel)
     }
 </p>
 
 <hr />
-<p>@Html.ActionLink("Back", "Pool", new { puid = Request.QueryString["puid"] })</p>
+

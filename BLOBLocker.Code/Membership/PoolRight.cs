@@ -24,6 +24,7 @@ namespace BLOBLocker.Code.Membership
         ChangeBanner = 1 << 13,
         ManageFileStorage = 1 << 14,
         ManageChat = 1 << 15,
-        ViewPoolLog = 1 << 16
+        ViewPoolLog = 1 << 16,
+        ViewParticipants = 1 << 17
     }
 }

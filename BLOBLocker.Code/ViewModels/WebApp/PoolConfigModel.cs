@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Entities.Models.Models.WebApp;
+﻿using BLOBLocker.Code.Membership;
+using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,26 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public AssignedMemory AdditionalMemory { get; set; }
         public RightsEditViewModel RightsEditViewModel { get; set; }
         public TitleDescriptionViewModel TitleDescriptionViewModel { get; set; }
+
+        public void Populate(Pool pool, Account curAcc)
+        {
+            Pool = pool;
+            Account = curAcc;
+            IsOwner = pool.OwnerID == curAcc.ID;
+            PoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == pool.UniqueIdentifier);
+
+            RightsEditViewModel = new RightsEditViewModel
+            {
+                PoolUID = pool.UniqueIdentifier,
+                Rights = PoolRightHelper.GetRights(pool.DefaultRights)
+            };
+
+            TitleDescriptionViewModel = new TitleDescriptionViewModel
+            {
+                PUID = pool.UniqueIdentifier,
+                Title = pool.Title,
+                Description = pool.Description
+            };
+        }
     }
 }
