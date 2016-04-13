@@ -31,7 +31,7 @@ namespace BLOBLocker.Code.Resources
             }
             else
             {
-                var localized = translation.Translations.FirstOrDefault(p => p.Culture == culture.Name);
+                var localized = translation.Translations.FirstOrDefault(p => p.UICulture == culture.Name);
                 if(localized == null)
                 {
                     return translation.Base;

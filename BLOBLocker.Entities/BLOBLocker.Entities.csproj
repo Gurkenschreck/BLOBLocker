@@ -125,6 +125,7 @@
     <Compile Include="Models\WebApp\AssignedMemory.cs" />
     <Compile Include="Models\WebApp\Contact.cs" />
     <Compile Include="Models\WebApp\CryptoConfiguration.cs" />
+    <Compile Include="Models\WebApp\LocalizedString.cs" />
     <Compile Include="Models\WebApp\MemoryPool.cs" />
     <Compile Include="Models\WebApp\Message.cs" />
     <Compile Include="Models\WebApp\Notification.cs" />
