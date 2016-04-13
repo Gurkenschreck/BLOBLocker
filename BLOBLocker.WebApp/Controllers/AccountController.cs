@@ -22,6 +22,7 @@ using BLOBLocker.Code.Attributes;
 using BLOBLocker.Entities.Models.WebApp;
 using System.Text;
 using BLOBLocker.Code.ViewModels.WebApp;
+using BLOBLocker.Code.Extention;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -33,7 +34,7 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpGet]
         public ActionResult SignUp()
         {
-            ViewBag.IsRegistrationRestricted = bool.Parse(HttpContext.Application["system.RestrictRegistration"] as string);
+            ViewBag.IsRegistrationRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
             return View();
         }
 
@@ -43,12 +44,12 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpPost]
         public ActionResult SignUp(AccountViewModel acc)
         {
-            bool enableRegistration = bool.Parse(HttpContext.Application["system.EnableRegistration"] as string);
+            bool enableRegistration = HttpContext.Application["system.EnableRegistration"].As<bool>();
             if(!enableRegistration)
             {
                 ModelState.AddModelError("RegistrationDisabled", Resources.Account.Strings.RegistrationDisabled);
             }
-            bool isRegistrationRestricted = bool.Parse(HttpContext.Application["system.RestrictRegistration"] as string);
+            bool isRegistrationRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
             if (isRegistrationRestricted)
             {
                 if(string.IsNullOrEmpty(acc.RegistrationCode))
@@ -56,13 +57,13 @@ namespace BLOBLocker.WebApp.Controllers
                     ModelState.AddModelError("InvalidRegistrationCode", Resources.Account.Strings.InvalidRegistrationCode);
 
                 }
-                string expectedRegistrationCode = HttpContext.Application["system.RestrictedRegistrationCode"] as string;
+                string expectedRegistrationCode = HttpContext.Application["system.RestrictedRegistrationCode"].As<string>();
                 if (acc.RegistrationCode != expectedRegistrationCode)
                 {
                     ModelState.AddModelError("RegistrationRestricted", Resources.Account.Strings.RestrictedRegistrationMessage);
                 }
             }
-            int accLimit = Convert.ToInt32(HttpContext.Application["system.AccountLimit"]);
+            int accLimit = HttpContext.Application["system.AccountLimit"].As<int>();
             int actual = context.Accounts.Count();
             if(actual >= accLimit)
             {
@@ -76,19 +77,19 @@ namespace BLOBLocker.WebApp.Controllers
 
                 if(newAcc == null)
                 {
-                    int basicMemoryPoolSize = Convert.ToInt32(HttpContext.Application["account.InitialMemoryPoolSize"].ToString());
+                    int basicMemoryPoolSize = HttpContext.Application["account.InitialMemoryPoolSize"].As<int>();
                     newAcc = accRepo.CreateNew(acc.Alias, acc.Password, acc.ContactEmail, basicMemoryPoolSize, new CryptoConfigRepository.Config
                     {
                         Password = acc.Password,
-                        SaltByteLength = Convert.ToInt32(HttpContext.Application["security.SaltByteLength"]),
-                        SymKeySize = Convert.ToInt32(HttpContext.Application["security.AccountKeySize"]),
-                        RSAKeySize = Convert.ToInt32(HttpContext.Application["security.AccountRSAKeySize"]),
-                        HashIterations = Convert.ToInt32(HttpContext.Application["security.HashIterationCount"])
+                        SaltByteLength = HttpContext.Application["security.SaltByteLength"].As<int>(),
+                        SymKeySize = HttpContext.Application["security.AccountKeySize"].As<int>(),
+                        RSAKeySize = HttpContext.Application["security.AccountRSAKeySize"].As<int>(),
+                        HashIterations = HttpContext.Application["security.HashIterationCount"].As<int>()
                     });
-                    bool createPersistentCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
-                    int cookieKeySize = Convert.ToInt32(HttpContext.Application["security.CookieCryptoKeySize"]);
+                    bool createPersistentCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
+                    int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>();
 
-                    string basicRoleName = HttpContext.Application["account.DefaultRole"] as string;
+                    string basicRoleName = HttpContext.Application["account.DefaultRole"].As<string>();
                     accRepo.AddRole(newAcc, basicRoleName);
 
                     NotificationHelper.SendNotification(newAcc,
@@ -99,7 +100,6 @@ namespace BLOBLocker.WebApp.Controllers
                     context.Additions.Add(newAcc.Addition);
                     context.SaveChanges();
 
-                    
                     using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV))
                     {
                         HttpCookie keyPartCookie = null;
@@ -125,8 +125,7 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 ModelState.AddModelError("AliasAlreadyExists", Resources.Account.Strings.AliasAlreadyExists);
             }
-            ViewBag.IsRegistrationRestricted = bool.Parse(HttpContext.Application["system.RestrictRegistration"] as string);
-            
+            ViewBag.IsRegistrationRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
             return View(acc);
         }
 
@@ -143,7 +142,7 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpPost]
         public ActionResult Login(AccountViewModel acc)
         {
-            bool loginEnabled = bool.Parse(HttpContext.Application["system.EnableLogin"] as string);
+            bool loginEnabled = HttpContext.Application["system.EnableLogin"].As<bool>();
             if (!loginEnabled)
             {
                 ModelState.AddModelError("LoginClosed", Resources.Account.Strings.LoginDisabled);
@@ -157,8 +156,8 @@ namespace BLOBLocker.WebApp.Controllers
                 {
                     if (correspondingAcc.IsEnabled)
                     {
-                        bool createPersistentAuthCookie = bool.Parse(HttpContext.Application["security.CreatePersistentAuthCookie"].ToString());
-                        int cookieKeySize = Convert.ToInt32(HttpContext.Application["security.CookieCryptoKeySize"]);
+                        bool createPersistentAuthCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
+                        int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>(); ;
 
                         using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV, iterations:correspondingAcc.Config.IterationCount))
                         {

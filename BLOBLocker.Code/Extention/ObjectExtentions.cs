@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,14 +12,12 @@ namespace BLOBLocker.Code.Extention
     {
         public static T As<T>(this object obj)
         {
-            try
+            var converter = TypeDescriptor.GetConverter(typeof(T));
+            if(converter != null)
             {
-                return (T)obj;
+                return (T)converter.ConvertFrom(obj);
             }
-            catch (Exception)
-            {
-                return default(T);
-            }
+            return default(T);
         }
     }
 }
