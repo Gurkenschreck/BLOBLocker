@@ -65,10 +65,6 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpPost]
         public ActionResult Create(SystemConfiguration newConfig)
         {
-            if (newConfig == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             if (string.IsNullOrWhiteSpace(newConfig.Key))
             {
                 ModelState.AddModelError("key", "invalid key");

@@ -16,10 +16,17 @@ namespace BLOBLocker.Code.Attributes
     {
         readonly IResourceProvider provider;
 
-        public LocalizedDisplayNameAttribute(string displayName)
+        public LocalizedDisplayNameAttribute(string displayName, Type resourceProvider = null)
             : base(displayName)
         {
-            provider = new BLResourceProvider(string.Empty);
+            if (resourceProvider != null)
+            {
+                provider = (IResourceProvider)Activator.CreateInstance(resourceProvider);
+            }
+            else
+            {
+                provider = new BLResourceProvider(string.Empty);
+            }
         }
 
         public override string DisplayName

@@ -14,6 +14,7 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         public LocalizedString()
         {
             Translation = "nt";
+            Status = TranslationStatus.New;
         }
         [Key]
         public int ID { get; set; }
@@ -24,5 +25,6 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         public string Translation { get; set; }
         [Timestamp]
         public byte[] Version { get; set; }
+        public TranslationStatus Status { get; set; }
     }
 }
