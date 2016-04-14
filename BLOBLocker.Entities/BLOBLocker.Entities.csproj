@@ -117,6 +117,10 @@
     <Compile Include="Migrations\201604141406491_WAChangeTranslation.Designer.cs">
       <DependentUpon>201604141406491_WAChangeTranslation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604141717530_AddTranslationType.cs" />
+    <Compile Include="Migrations\201604141717530_AddTranslationType.Designer.cs">
+      <DependentUpon>201604141717530_AddTranslationType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -126,6 +130,7 @@
     <Compile Include="Models\WebApp\Account.cs" />
     <Compile Include="Models\WebApp\AccountAdditions.cs" />
     <Compile Include="Models\WebApp\AccountRole.cs" />
+    <Compile Include="Models\WebApp\AccountRoleLink.cs" />
     <Compile Include="Models\WebApp\AssignedMemory.cs" />
     <Compile Include="Models\WebApp\Contact.cs" />
     <Compile Include="Models\WebApp\CryptoConfiguration.cs" />
@@ -198,6 +203,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604141406491_WAChangeTranslation.resx">
       <DependentUpon>201604141406491_WAChangeTranslation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604141717530_AddTranslationType.resx">
+      <DependentUpon>201604141717530_AddTranslationType.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

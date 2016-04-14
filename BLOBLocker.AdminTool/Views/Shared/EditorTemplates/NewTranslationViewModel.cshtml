@@ -1,0 +1,13 @@
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.NewTranslationViewModel
+
+<table>
+    <tr>
+        <td>@Html.LabelFor(p => p.Key)</td> <td>@Html.EditorFor(p => p.Key)</td> 
+        <td>@Html.LabelFor(p => p.Type)</td> <td>@Html.EnumDropDownListFor(p => p.Type)</td>
+        <td>@Html.LabelFor(p => p.Comment)</td> <td>@Html.EditorFor(p => p.Comment)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(p => p.Languages)</td> <td>@Html.EditorFor(p => p.Languages)</td> 
+        <td>@Html.LabelFor(p => p.Base)</td> <td>@Html.EditorFor(p => p.Base)</td>
+    </tr>
+</table>

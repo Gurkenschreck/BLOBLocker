@@ -26,11 +26,10 @@
             @if (curAcc.Roles.Any(p => p.Role.Definition == "Moderator"))
             {
                 <li>@Html.ActionLink("Mod - User Accounts", "Manage", "Manage")</li>
-                <li>@Html.ActionLink("Mod - Translator Interface", "Translation", "Manage")</li>
             }
-            @if (curAcc.Roles.Any(p => p.Role.Definition == "Translator"))
+            @if (curAcc.Roles.Any(p => p.Role.Definition == "Translator" || p.Role.Definition == "Moderator"))
             {
-                <li>@Html.ActionLink("Mod - Tranlations", "Translate", "Translator")</li>
+                <li>@Html.ActionLink("Mod - Tranlations", "Index", "Translation")</li>
             }
             <li>@Html.ActionLink("Logout", "LogOut", "Account")</li>
         </ul>

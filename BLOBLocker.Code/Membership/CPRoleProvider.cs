@@ -1,4 +1,5 @@
 ﻿using BLOBLocker.Entities.Models;
+using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;

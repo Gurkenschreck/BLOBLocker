@@ -1,0 +1,53 @@
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.TranslationIndexViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+@Html.ValidationSummary()
+
+@if (Model.IsModerator) { 
+    using (Html.BeginForm("AddTranslation", "Translation", FormMethod.Post))
+    {
+        @Html.EditorFor(p => p.NewTranslation)
+        <button type="submit">Add</button>
+    }
+}
+
+<table border="1">
+    <tr>
+        <td colspan="2">Roles @(Model.IsModerator?"Moderator,":"") @(Model.IsTranslator?"Translator":"")</td>
+    </tr>
+
+
+    @foreach (var trans in Model.Translations)
+    {
+        <tr>
+            <td>
+                <table border="1">
+                    <tr>
+                        <td>@trans.Key</td>
+                        <td>@trans.Base</td>
+                        <td>@trans.Type</td>
+                        <td>@trans.Comment</td>
+                        <td>@Convert.ToBase64String(trans.Version)</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table border="1">
+                    @foreach (var locStr in trans.Translations)
+                    {
+                        <tr>
+                            <td>@locStr.UICulture</td>
+                            <td>@locStr.Translation</td>
+                            <td>@locStr.Status</td>
+                            <td>@Convert.ToBase64String(locStr.Version)</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    
+</table>

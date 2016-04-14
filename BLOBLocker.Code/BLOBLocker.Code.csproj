@@ -56,6 +56,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AjaxOnlyAttribute.cs" />
+    <Compile Include="Extention\EnumExtentions.cs" />
+    <Compile Include="Helper\EnumDropdownList.cs" />
     <Compile Include="Resources\LocalizedDisplayNameAttribute.cs" />
     <Compile Include="Attributes\LocalOnlyAttribute.cs" />
     <Compile Include="Attributes\PreserveModelStateAttribute.cs" />
@@ -85,6 +87,8 @@
     <Compile Include="Resources\BLResourceProviderFactory.cs" />
     <Compile Include="ViewModels\AdminTool\AdminEditAccountModel.cs" />
     <Compile Include="ViewModels\AdminTool\AdminOverviewViewModel.cs" />
+    <Compile Include="ViewModels\AdminTool\NewTranslationViewModel.cs" />
+    <Compile Include="ViewModels\AdminTool\TranslationIndexViewModel.cs" />
     <Compile Include="ViewModels\PoolRightViewModel.cs" />
     <Compile Include="ViewModels\Validation\AccountViewModelValidation.cs" />
     <Compile Include="ViewModels\Validation\IActionModelValidation.cs" />

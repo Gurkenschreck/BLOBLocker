@@ -31,6 +31,12 @@ namespace BLOBLocker.Code.ModelHelper
                 });
             }
         }
+
+        public bool IsInRole(Account acc, string roleName)
+        {
+            return acc.Roles.Any(p => p.Role.Definition == roleName);
+        }
+
         public Account GetAccount(string name)
         {
             return context.Accounts.FirstOrDefault(p => p.Alias == name);

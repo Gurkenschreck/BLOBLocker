@@ -119,6 +119,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\TranslationController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -146,6 +147,8 @@
     <Content Include="Views\Admin\Accounts.cshtml" />
     <Content Include="Views\Admin\EditAccount.cshtml" />
     <Content Include="Views\Shared\_NavigationMenu.cshtml" />
+    <Content Include="Views\Translation\Index.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\NewTranslationViewModel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -14,11 +14,4 @@ namespace BLOBLocker.Entities.Models.WebApp
             ResourceType = typeof(Resources.Models))]
         public string Definition { get; set; }
     }
-
-    public class AccountRoleLink
-    {
-        public int ID { get; set; }
-        public virtual Account Account { get; set; }
-        public virtual AccountRole Role { get; set; }
-    }
 }

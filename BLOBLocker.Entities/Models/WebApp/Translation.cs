@@ -20,6 +20,7 @@ namespace BLOBLocker.Entities.Models.WebApp
         [Key]
         [Required]
         public string Key { get; set; }
+        public TranslationType Type { get; set; }
         public string Base { get; set; }
         public virtual ICollection<LocalizedString> Translations { get; set; }
         public string Comment { get; set; }
