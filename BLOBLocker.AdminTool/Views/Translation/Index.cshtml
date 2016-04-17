@@ -14,7 +14,10 @@
     <tr>
         <td colspan="2">Roles @(Model.IsModerator?"Moderator,":"") @(Model.IsTranslator?"Translator":"")</td>
     </tr>
-
+    <tr>
+        <td>@Html.Label("Translations")</td>
+        <td>@Html.Label("Localized Strings")</td>
+    </tr>
 
     @foreach (var trans in Model.Translations)
     {
