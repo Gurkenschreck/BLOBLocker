@@ -38,7 +38,7 @@ namespace BLOBLocker.Code.Resources
                 }
                 else
                 {
-                    return localized.Translation;
+                    return localized.LiveTranslation;
                 }
             }
         }
