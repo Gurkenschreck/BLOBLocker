@@ -149,6 +149,7 @@
     <Content Include="Views\Shared\_NavigationMenu.cshtml" />
     <Content Include="Views\Translation\Index.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\NewTranslationViewModel.cshtml" />
+    <Content Include="Views\Translation\Partial\_AddTranslation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

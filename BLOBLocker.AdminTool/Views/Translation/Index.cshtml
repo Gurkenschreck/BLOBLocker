@@ -7,11 +7,7 @@
 @Html.ValidationSummary()
 
 @if (Model.IsModerator) { 
-    using (Html.BeginForm("AddTranslation", "Translation", FormMethod.Post))
-    {
-        @Html.EditorFor(p => p.NewTranslation)
-        <button type="submit">Add</button>
-    }
+    @Html.Partial("_AddTranslation", new BLOBLocker.Code.ViewModels.AdminTool.NewTranslationViewModel())
 }
 
 <table border="1">
@@ -41,6 +37,7 @@
                         <tr>
                             <td>@locStr.UICulture</td>
                             <td>@locStr.Translation</td>
+                            <td>@locStr.LiveTranslation</td>
                             <td>@locStr.Status</td>
                             <td>@Convert.ToBase64String(locStr.Version)</td>
                         </tr>

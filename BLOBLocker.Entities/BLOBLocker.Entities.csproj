@@ -121,6 +121,10 @@
     <Compile Include="Migrations\201604141717530_AddTranslationType.Designer.cs">
       <DependentUpon>201604141717530_AddTranslationType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604171502498_AddLiveTranslation.cs" />
+    <Compile Include="Migrations\201604171502498_AddLiveTranslation.Designer.cs">
+      <DependentUpon>201604171502498_AddLiveTranslation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -206,6 +210,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604141717530_AddTranslationType.resx">
       <DependentUpon>201604141717530_AddTranslationType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604171502498_AddLiveTranslation.resx">
+      <DependentUpon>201604171502498_AddLiveTranslation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

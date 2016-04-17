@@ -15,6 +15,7 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         {
             Translation = "nt";
             Status = TranslationStatus.New;
+            LiveTranslation = "nt";
         }
         [Key]
         public int ID { get; set; }
@@ -23,6 +24,7 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         public virtual Translation TranslationOf { get; set; }
         public string UICulture { get; set; }
         public string Translation { get; set; }
+        public string LiveTranslation { get; set; }
         [Timestamp]
         public byte[] Version { get; set; }
         public TranslationStatus Status { get; set; }
