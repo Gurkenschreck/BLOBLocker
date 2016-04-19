@@ -22,7 +22,7 @@ namespace BLOBLocker.AdminTool.Controllers
         public ActionResult Overview()
         {
             AdminOverviewViewModel aovm = new AdminOverviewViewModel();
-            var configs = context.SystemConfigurations
+            var configs = context.SystemConfigurations.Where(p => p.Key != "ConfigChanged")
                                 .OrderBy(p => p.Key)
                                 .ToDictionary(k => k.Key,
                                             v => v.Value,
@@ -36,14 +36,6 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpPost]
         public ActionResult Edit(SystemConfiguration config)
         {
-            if (string.IsNullOrWhiteSpace(config.Key))
-            {
-                ModelState.AddModelError("key", "SharedKey is invalid");
-            }
-            if (string.IsNullOrWhiteSpace(config.Value))
-            {
-                ModelState.AddModelError("value", "Value is invalid");
-            }
             if (ModelState.IsValid)
             {
                 var dbValues = context.SystemConfigurations.FirstOrDefault(p => p.Key == config.Key);
@@ -65,14 +57,6 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpPost]
         public ActionResult Create(SystemConfiguration newConfig)
         {
-            if (string.IsNullOrWhiteSpace(newConfig.Key))
-            {
-                ModelState.AddModelError("key", "invalid key");
-            }
-            if (string.IsNullOrWhiteSpace(newConfig.Value))
-            {
-                ModelState.AddModelError("value", "invalid value");
-            }
             if (ModelState.IsValid)
             {
                 context.SystemConfigurations.Add(newConfig);
@@ -100,36 +84,75 @@ namespace BLOBLocker.AdminTool.Controllers
             var accs = atContext.Accounts.ToList();
             return View(accs);
         }
-        [HttpGet]
+
+        [RequiredParameters("id")]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
         public ActionResult EditAccount(int id)
         {
-            if (id < 0)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var acc = atContext.Accounts.FirstOrDefault(p => p.ID == id);
-            if (acc == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
+            BLOBLocker.Entities.Models.AdminTool.Account acc = atContext.Accounts.FirstOrDefault(p => p.ID == id);
             AdminEditAccountModel aeam = new AdminEditAccountModel(acc);
             return View(aeam);
         }
 
-        [RequiredParameters("aeam")]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult EditAccount(AdminEditAccountModel aeam)
+        public ActionResult CreateAccount()
         {
-            BLOBLocker.Entities.Models.AdminTool.Account acc = atContext.Accounts.FirstOrDefault(p => p.ID == aeam.ID);
-            if (acc == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            BLOBLocker.Entities.Models.AdminTool.Account acc = new Entities.Models.AdminTool.Account();
+            var aeam = new AdminEditAccountModel(acc);
+            return View(aeam);
+        }
 
-            var roles = atContext.Roles.ToList();
-            aeam.ApplyChanges(acc, roles, atContext);
-            atContext.Entry<BLOBLocker.Entities.Models.AdminTool.Account>(acc).State = System.Data.Entity.EntityState.Modified;
-            atContext.SaveChanges();
+        [HttpPost]
+        public ActionResult AddOrChangeAccount(AdminEditAccountModel aeam, bool add)
+        {
 
-            aeam.Alias = acc.Alias;
-            aeam.Email = acc.Email;
-            
+            if (ModelState.IsValid)
+            {
+                if (add)
+                {
+                    BLOBLocker.Entities.Models.AdminTool.Account newAcc = aeam.Parse();
+                    if (aeam.IsAdmin)
+                    {
+                        var adminRole = atContext.Roles.First(p => p.Definition == "Administrator");
+                        newAcc.Roles.Add(new RoleLink()
+                        {
+                            Role = adminRole,
+                            Account = newAcc
+                        });
+                    }
+                    if (aeam.IsModerator)
+                    {
+                        var modRole = atContext.Roles.First(p => p.Definition == "Moderator");
+                        newAcc.Roles.Add(new RoleLink()
+                        {
+                            Role = modRole,
+                            Account = newAcc
+                        });
+                    }
+                    if (aeam.IsTranslator)
+                    {
+                        var transRole = atContext.Roles.First(p => p.Definition == "Translator");
+                        newAcc.Roles.Add(new RoleLink()
+                        {
+                            Role = transRole,
+                            Account = newAcc
+                        });
+                    }
+                    atContext.Accounts.Add(newAcc);
+                    atContext.SaveChanges();
+                }
+                else
+                {
+                    BLOBLocker.Entities.Models.AdminTool.Account acc = atContext.Accounts.FirstOrDefault(p => p.ID == aeam.ID);
+                    var roles = atContext.Roles.ToList();
+                    aeam.ApplyChanges(acc, roles, atContext);
+                    atContext.Entry<BLOBLocker.Entities.Models.AdminTool.Account>(acc).State = System.Data.Entity.EntityState.Modified;
+                    atContext.SaveChanges();
+                }
+                return RedirectToAction("Accounts");
+            }
             return View(aeam);
         }
     }

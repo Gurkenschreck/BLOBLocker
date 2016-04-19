@@ -1,0 +1,36 @@
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.AdminEditAccountModel
+
+<hr />
+<p>
+Create a new account
+@using (Html.BeginForm("AddOrChangeAccount", "Admin", new { add = true }, FormMethod.Post))
+{
+    <table>
+        <tr>
+            <th>@Html.LabelFor(p => p.Alias)</th>
+            <td>@Html.EditorFor(p => p.Alias)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.Password)</th>
+            <td>@Html.PasswordFor(p => p.Password)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.Email)</th>
+            <td>@Html.EditorFor(p => p.Email)</td>
+        </tr>
+        <tr>
+            <th></th>
+            <td>@Html.CheckBoxFor(p => p.IsActive) @Html.LabelFor(p => p.IsActive)</td>
+        </tr>
+        <tr>
+            <td>@Html.CheckBoxFor(p => p.IsAdmin) @Html.LabelFor(p => p.IsAdmin)</td>
+            <td>@Html.CheckBoxFor(p => p.IsModerator) @Html.LabelFor(p => p.IsModerator)</td>
+            <td>@Html.CheckBoxFor(p => p.IsTranslator) @Html.LabelFor(p => p.IsTranslator)</td>
+        </tr>
+        <tr>
+            <td>@Html.AntiForgeryToken()</td>
+            <td><button type="submit">Add Account</button></td>
+        </tr>
+    </table>
+}
+</p>

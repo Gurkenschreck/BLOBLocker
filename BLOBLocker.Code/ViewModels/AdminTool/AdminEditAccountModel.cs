@@ -1,6 +1,8 @@
 ﻿using BLOBLocker.Entities.Models.AdminTool;
+using Cipha.Security.Cryptography;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
@@ -9,6 +11,17 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
 {
     public class AdminEditAccountModel
     {
+        public int ID { get; set; }
+        public string Alias { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsAdmin { get; set; }
+        public bool IsModerator { get; set; }
+        public bool IsTranslator { get; set; }
+        int hashIterations = 21423;
+
+
         public AdminEditAccountModel()
         {
 
@@ -23,6 +36,22 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
             IsModerator = acc.Roles.Select(p => p.Role.Definition).Any(p => p == "Moderator");
             IsTranslator = acc.Roles.Select(p => p.Role.Definition).Any(p => p == "Translator");
         }
+
+        public Account Parse()
+        {
+            var acc = new Account();
+
+            acc.Alias = Alias;
+            acc.Email = Email;
+            acc.Salt = Utilities.GenerateBytes(32);
+            using (var deriver = new Rfc2898DeriveBytes(Password, acc.Salt, hashIterations))
+            {
+                acc.DerivedPassword = deriver.GetBytes(acc.Salt.Length);
+            }
+
+            return acc;
+        }
+
         public void ApplyChanges(Account acc, ICollection<Role> roles, BLATContext context)
         {
             if (acc.ID != ID)
@@ -35,7 +64,7 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
             // derive password
             if (!string.IsNullOrWhiteSpace(Password))
             {
-                using (var deriver = new Rfc2898DeriveBytes(Password, acc.Salt, 21423))
+                using (var deriver = new Rfc2898DeriveBytes(Password, acc.Salt, hashIterations))
                 {
                     acc.DerivedPassword = deriver.GetBytes(acc.Salt.Length);
                 }
@@ -87,14 +116,5 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
                     });
             }
         }
-        public int ID { get; set; }
-        public string Alias { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsAdmin { get; set; }
-        public bool IsModerator { get; set; }
-        public bool IsTranslator { get; set; }
-
     }
 }

@@ -1,12 +1,9 @@
 ﻿@model BLOBLocker.Entities.Models.WebApp.SystemConfiguration
 
-@{
-    Layout = null;
-}
 Add new
 
 <table>
-    @using (Html.BeginForm("Create", "Manage"))
+    @using (Html.BeginForm("Create", "Manage", FormMethod.Post))
     {
         <tr>
             <td>

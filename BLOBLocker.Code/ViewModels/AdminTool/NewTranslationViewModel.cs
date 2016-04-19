@@ -18,6 +18,7 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
             Type = TranslationType.Global;
             Languages = "de,pl,es";
         }
+
         [Required]
         public string Key { get; set; }
         public string Base { get; set; }
@@ -32,7 +33,6 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
             translation.Type = Type;
             translation.Base = Base;
             translation.Comment = Comment;
-
 
             var langs = Languages.Split(',');
 

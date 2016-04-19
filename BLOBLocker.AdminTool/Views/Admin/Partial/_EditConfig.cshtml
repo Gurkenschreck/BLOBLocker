@@ -1,10 +1,7 @@
 ﻿@model BLOBLocker.Entities.Models.WebApp.SystemConfiguration
 
-@{
-    Layout = null;
-}
 
-@using (Html.BeginForm("Edit", "Admin"))
+@using (Html.BeginForm("Edit", "Admin", FormMethod.Post))
 {
     @:Edit Database value<br />
     @Html.LabelFor(p => p.Key)

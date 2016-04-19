@@ -1,12 +1,14 @@
 ﻿@model IEnumerable<BLOBLocker.Entities.Models.AdminTool.Account>
 @{
     ViewBag.Title = "Accounts";
+    
 }
 
 <h2>Accounts</h2>
 
-@using (Html.BeginForm("EditAccount", "Admin", FormMethod.Get)) { 
+@using (Html.BeginForm("EditAccount", "Admin", FormMethod.Post)) {
     <table>
+        @Html.AntiForgeryToken()
         <tr>
             <th>ID</th>
             <th>Alias</th>
@@ -29,3 +31,5 @@
         }
     </table>
 }
+
+@Html.Partial("_CreateAccount", new BLOBLocker.Code.ViewModels.AdminTool.AdminEditAccountModel())

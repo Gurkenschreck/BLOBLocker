@@ -11,7 +11,9 @@ namespace BLOBLocker.Entities.Models.WebApp
     {
         [Key]
         public int ID { get; set; }
+        [Required]
         public string Key { get; set; }
+        [Required]
         public string Value { get; set; }
     }
 }

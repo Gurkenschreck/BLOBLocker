@@ -136,20 +136,17 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Admin\Index.cshtml">
-      <SubType>
-      </SubType>
-    </Content>
     <Content Include="Views\Account\LogOut.cshtml" />
     <Content Include="Views\Admin\Overview.cshtml" />
-    <Content Include="Views\Admin\Create.cshtml" />
-    <Content Include="Views\Admin\Edit.cshtml" />
+    <Content Include="Views\Admin\Partial\_CreateConfig.cshtml" />
+    <Content Include="Views\Admin\Partial\_EditConfig.cshtml" />
     <Content Include="Views\Admin\Accounts.cshtml" />
     <Content Include="Views\Admin\EditAccount.cshtml" />
     <Content Include="Views\Shared\_NavigationMenu.cshtml" />
     <Content Include="Views\Translation\Index.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\NewTranslationViewModel.cshtml" />
     <Content Include="Views\Translation\Partial\_AddTranslation.cshtml" />
+    <Content Include="Views\Admin\Partial\_CreateAccount.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

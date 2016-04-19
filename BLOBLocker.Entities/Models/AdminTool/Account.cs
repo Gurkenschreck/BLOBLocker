@@ -14,8 +14,14 @@ namespace BLOBLocker.Entities.Models.AdminTool
         public string Email { get; set; }
         public byte[] DerivedPassword { get; set; }
         public virtual ICollection<RoleLink> Roles { get; set; }
+
         public Nullable<DateTime> LastLogin { get; set; }
         public byte[] Salt { get; set; }
         public bool IsActive { get; set; }
+
+        public Account()
+        {
+            Roles = new List<RoleLink>();
+        }
     }
 }

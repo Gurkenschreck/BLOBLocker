@@ -10,17 +10,13 @@
 View:
 @if (Model != null)
 {
-    <table border="1" style="float:left;">
+    <table border="1">
         <tr>
             <th>DBKey</th>
             <th>DBValue</th>
         </tr>
         @foreach (KeyValuePair<string, string> pair in Model.ConfigValues)
         {
-            if (pair.Key == "ConfigChanged")
-            {
-                continue;
-            }
             <tr>
                 <td>@pair.Key</td>
                 <td>@pair.Value</td>
@@ -35,11 +31,11 @@ View:
 }
 <hr />
 <p>
-    @Html.Partial("~/Views/Admin/Edit.cshtml", new BLOBLocker.Entities.Models.WebApp.SystemConfiguration())
+    @Html.Partial("_EditConfig", new BLOBLocker.Entities.Models.WebApp.SystemConfiguration())
 </p>
 <hr />
 <p>
-    @Html.Partial("~/Views/Admin/Create.cshtml", new BLOBLocker.Entities.Models.WebApp.SystemConfiguration())
+    @Html.Partial("_CreateConfig", new BLOBLocker.Entities.Models.WebApp.SystemConfiguration())
 </p>
 
 <script>
