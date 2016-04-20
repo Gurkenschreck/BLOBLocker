@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Info";
+    if (ViewBag.NoLayout != null)
+    {
+        if (ViewBag.NoLayout) { 
+            Layout = null;
+        }
+    }
+}
+
+<h2>Info</h2>
+
+These are the infos we could find out about you:
+
+<table>
+    <tr>
+        <th>IP:</th>
+        <td>@Request.UserHostAddress</td>
+        <th>User Agent:</th>
+        <td>@Request.UserAgent</td>
+    </tr>
+    <tr>
+        <th>Connection is secured:</th>
+        <td>@Request.IsSecureConnection</td>
+        <td colspan="2"><noscript>Javascript is disabled</noscript></td>
+    </tr>
+    <tr>
+        <th>Browser:</th>
+        <td>@Request.Browser.Browser</td>
+        <th>Version:</th>
+        <td>@Request.Browser.Version</td>
+    </tr>
+    <tr>
+        <th>Platform:</th>
+        <td>@Request.Browser.Platform</td>
+        <th>Url Referrer:</th>
+        <td>@Request.UrlReferrer</td>
+    </tr>
+    <tr>
+        <th>Is Mobile:</th>
+        <td>@Request.Browser.IsMobileDevice</td>
+        <th>Mobile Manufacturer:</th>
+        <td>@Request.Browser.MobileDeviceManufacturer</td>
+    </tr>
+    
+</table>

@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Peek";
+    Layout = "~/Views/Shared/_MinimalLayout.cshtml";
+}
+
+<i>This does not work with non-https websites. Some sites disallow the embedding in iframes, like we do.</i>
+@using (Html.BeginForm("Peek", "Security", FormMethod.Get)) //http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
+{
+    <text>
+        @Html.Label("Url:") @Html.TextBox("url", new { }, new { style="min-width:300px; width:50%;" }) <button type="submit">Go</button>
+    </text>
+}
+
+<iframe src="@ViewBag.URL" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation" style="height:75%;">
+    Your frame must support iframes.
+</iframe>

@@ -148,6 +148,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PanelController.cs" />
+    <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\SupportController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -319,6 +320,9 @@
     <Content Include="Views\Panel\Partial\_ChatMessages.cshtml" />
     <Content Include="Views\Panel\Partial\_EditDefaultRights.cshtml" />
     <Content Include="Views\Panel\Partial\_EditTitleAndDescription.cshtml" />
+    <Content Include="Views\Security\Info.cshtml" />
+    <Content Include="Views\Security\Peek.cshtml" />
+    <Content Include="Views\Shared\_MinimalLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
