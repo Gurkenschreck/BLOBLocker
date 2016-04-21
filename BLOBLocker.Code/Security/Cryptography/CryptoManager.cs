@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLOBLocker.Code.Cryptography
+namespace BLOBLocker.Code.Security.Cryptography
 {
     public class CryptoManager : IDisposable
     {

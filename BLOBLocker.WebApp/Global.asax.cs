@@ -58,10 +58,14 @@ namespace BLOBLocker.WebApp
 
         protected void Application_AcquireRequestState(object sender, EventArgs args)
         {
-            var custumLanguage = Session["customCulture"] as CultureInfo;
-            if (custumLanguage != null)
+            CultureInfo customLanguage = null;
+            if (Session != null)
             {
-                var culture = custumLanguage;
+                customLanguage = Session["customCulture"] as CultureInfo;
+            }
+            if (customLanguage != null)
+            {
+                var culture = customLanguage;
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = culture;
             }

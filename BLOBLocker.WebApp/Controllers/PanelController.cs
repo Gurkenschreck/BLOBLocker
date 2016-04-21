@@ -23,6 +23,7 @@ using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Code.Membership;
 using System.Text;
 using BLOBLocker.Code.ViewModels.WebApp;
+using BLOBLocker.Code.Security.Cryptography;
 
 namespace BLOBLocker.WebApp.Controllers
 {

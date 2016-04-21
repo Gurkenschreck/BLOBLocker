@@ -2,16 +2,49 @@
 @{
     ViewBag.Title = "Peek";
     Layout = "~/Views/Shared/_MinimalLayout.cshtml";
+    List<string> sandBoxTags = new List<string>();
+    
+    if(ViewBag.ActivateJS != null && ViewBag.ActivateJS == true){
+        sandBoxTags.Add("allow-scripts");
+    }
+    if(ViewBag.ActivateForms != null && ViewBag.ActivateForms == true){
+        sandBoxTags.Add("allow-forms");
+    }
+    if(ViewBag.ActivateSameOrigin != null && ViewBag.ActivateSameOrigin == true){
+        sandBoxTags.Add("allow-same-origin");
+    }
+    if (ViewBag.ActivateTopNavigation != null && ViewBag.ActivateTopNavigation == true)
+    {
+        sandBoxTags.Add("allow-top-navigation");
+    }
+    if (ViewBag.ActivatePopups != null && ViewBag.ActivatePopups == true)
+    {
+        sandBoxTags.Add("allow-popups");
+    }
+    if (ViewBag.ActivatePointerLock != null && ViewBag.ActivatePointerLock == true)
+    {
+        sandBoxTags.Add("allow-pointer-lock");
+    }
+
+    string tags = String.Join(" ", sandBoxTags);
 }
 
 <i>This does not work with non-https websites. Some sites disallow the embedding in iframes, like we do.</i>
 @using (Html.BeginForm("Peek", "Security", FormMethod.Get)) //http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
 {
     <text>
-        @Html.Label("Url:") @Html.TextBox("url", new { }, new { style="min-width:300px; width:50%;" }) <button type="submit">Go</button>
+        @Html.Label("Url:") @Html.TextBox("url", null, new { style="min-width:300px; width:50%;" }) <button type="submit">Go</button>
+        @Html.CheckBox("activateProxy") @Html.Label("Activate Proxy", new { @for="activateProxy" })
+
+        @Html.CheckBox("activateJS") @Html.Label("Allow JS", new { @for = "activateJS" })
+        @Html.CheckBox("activateForms") @Html.Label("Allow Forms", new { @for = "activateForms" })
+        @Html.CheckBox("activatePopups") @Html.Label("Allow Popups", new { @for = "activatePopups" })
+        @Html.CheckBox("activatePointerLock") @Html.Label("Allow Pointer Lock", new { @for = "activatePointerLock" })
+        @Html.CheckBox("activateSameOrigin") @Html.Label("Allow Same Origin", new { @for = "activateSameOrigin" })
+        @Html.CheckBox("activateTopNavigation") @Html.Label("Allow Top Navigation", new { @for = "activateTopNavigation" })
     </text>
 }
 
-<iframe src="@ViewBag.URL" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation" style="height:75%;">
+<iframe src="@ViewBag.URL" sandbox="@tags" style=" height:75%;">
     Your frame must support iframes.
 </iframe>

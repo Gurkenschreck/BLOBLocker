@@ -66,7 +66,7 @@
     <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
     <Compile Include="Attributes\CustomValidateAttribute.cs" />
     <Compile Include="BlobLockerViewEngine.cs" />
-    <Compile Include="Cryptography\CryptoManager.cs" />
+    <Compile Include="Security\Cryptography\CryptoManager.cs" />
     <Compile Include="Extention\ObjectExtentions.cs" />
     <Compile Include="Membership\AdminToolRoleProvider.cs" />
     <Compile Include="Membership\CPRoleProvider.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="Membership\PoolRightHelper.cs" />
     <Compile Include="ModelHelper\AccountRepository.cs" />
     <Compile Include="ModelHelper\CryptoConfigRepository.cs" />
-    <Compile Include="Cryptography\CryptoHelper.cs" />
+    <Compile Include="Security\Cryptography\CryptoHelper.cs" />
     <Compile Include="ModelHelper\NotificationHelper.cs" />
     <Compile Include="ModelHelper\PoolShareHandler.cs" />
     <Compile Include="ModelHelper\PoolRepository.cs" />
@@ -85,6 +85,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\BLResourceProvider.cs" />
     <Compile Include="Resources\BLResourceProviderFactory.cs" />
+    <Compile Include="Security\ReverseProxy.cs" />
     <Compile Include="ViewModels\AdminTool\AdminEditAccountModel.cs" />
     <Compile Include="ViewModels\AdminTool\AdminOverviewViewModel.cs" />
     <Compile Include="ViewModels\AdminTool\NewTranslationViewModel.cs" />

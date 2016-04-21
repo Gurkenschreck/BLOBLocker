@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLOBLocker.Code.ModelHelper
+namespace BLOBLocker.Code.Security.Cryptography
 {
     public static class CryptoHelper
     {
