@@ -62,9 +62,15 @@ namespace BLOBLocker.WebApp.Controllers
         
         public void Proxy(string url)
         {
-            ReverseProxy rproxy = new ReverseProxy();
-            rproxy.ProcessRequest(HttpContext.ApplicationInstance.Context, url);
-
+            try
+            {
+                ReverseProxy rproxy = new ReverseProxy();
+                rproxy.ProcessRequest(HttpContext.ApplicationInstance.Context, url);
+            }
+            catch (Exception)
+            {
+                Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
+            }
         }
     }
 }
