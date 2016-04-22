@@ -135,6 +135,8 @@
     <Compile Include="Models\AdminTool\BLATContext.cs" />
     <Compile Include="Models\AdminTool\Role.cs" />
     <Compile Include="Models\AdminTool\RoleLink.cs" />
+    <Compile Include="Models\IDataEntity.cs" />
+    <Compile Include="Models\IRepository.cs" />
     <Compile Include="Models\WebApp\Account.cs" />
     <Compile Include="Models\WebApp\AccountAdditions.cs" />
     <Compile Include="Models\WebApp\AccountRole.cs" />

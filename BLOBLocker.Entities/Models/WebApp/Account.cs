@@ -9,7 +9,7 @@ using System.Web;
 
 namespace BLOBLocker.Entities.Models.WebApp
 {
-    public class Account
+    public class Account : IDataEntity
     {
         public Account()
         {
