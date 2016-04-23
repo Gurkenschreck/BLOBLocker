@@ -14,8 +14,10 @@ namespace BLOBLocker.Entities.Models.Migrations.AT
                         ID = c.Int(nullable: false, identity: true),
                         Alias = c.String(),
                         Email = c.String(),
-                        PasswordHash = c.Binary(),
+                        DerivedPassword = c.Binary(),
                         LastLogin = c.DateTime(),
+                        Salt = c.Binary(),
+                        IsActive = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.ID);
             

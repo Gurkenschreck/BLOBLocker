@@ -49,93 +49,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Migrations\201603061950060_ATInitial.cs" />
-    <Compile Include="Migrations\201603061950060_ATInitial.Designer.cs">
-      <DependentUpon>201603061950060_ATInitial.cs</DependentUpon>
+    <Compile Include="Migrations\201604232258482_WAInitial.cs" />
+    <Compile Include="Migrations\201604232258482_WAInitial.Designer.cs">
+      <DependentUpon>201604232258482_WAInitial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603091756125_CPInitial.cs" />
-    <Compile Include="Migrations\201603091756125_CPInitial.Designer.cs">
-      <DependentUpon>201603091756125_CPInitial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603092116051_AddedPoolEnableConfigs.cs" />
-    <Compile Include="Migrations\201603092116051_AddedPoolEnableConfigs.Designer.cs">
-      <DependentUpon>201603092116051_AddedPoolEnableConfigs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603092246440_AddedUniqueIdentifierToPool.cs" />
-    <Compile Include="Migrations\201603092246440_AddedUniqueIdentifierToPool.Designer.cs">
-      <DependentUpon>201603092246440_AddedUniqueIdentifierToPool.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603131504310_AddAssignedIsEnabled.cs" />
-    <Compile Include="Migrations\201603131504310_AddAssignedIsEnabled.Designer.cs">
-      <DependentUpon>201603131504310_AddAssignedIsEnabled.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603181805353_CPAddPoolShareCryptoConfig.cs" />
-    <Compile Include="Migrations\201603181805353_CPAddPoolShareCryptoConfig.Designer.cs">
-      <DependentUpon>201603181805353_CPAddPoolShareCryptoConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603190032036_CPAddPoolKeyToShare.cs" />
-    <Compile Include="Migrations\201603190032036_CPAddPoolKeyToShare.Designer.cs">
-      <DependentUpon>201603190032036_CPAddPoolKeyToShare.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603191915494_CPRemoveForeignKeyFromAccount.cs" />
-    <Compile Include="Migrations\201603191915494_CPRemoveForeignKeyFromAccount.Designer.cs">
-      <DependentUpon>201603191915494_CPRemoveForeignKeyFromAccount.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603192336491_CPAddMessages.cs" />
-    <Compile Include="Migrations\201603192336491_CPAddMessages.Designer.cs">
-      <DependentUpon>201603192336491_CPAddMessages.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603200402595_CPAddTextSignatureToMessage.cs" />
-    <Compile Include="Migrations\201603200402595_CPAddTextSignatureToMessage.Designer.cs">
-      <DependentUpon>201603200402595_CPAddTextSignatureToMessage.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603222214480_ATAddPasswordDerived.cs" />
-    <Compile Include="Migrations\201603222214480_ATAddPasswordDerived.Designer.cs">
-      <DependentUpon>201603222214480_ATAddPasswordDerived.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603281340559_ATAddAccountIsActive.cs" />
-    <Compile Include="Migrations\201603281340559_ATAddAccountIsActive.Designer.cs">
-      <DependentUpon>201603281340559_ATAddAccountIsActive.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604041845186_WARenamePoolDescToTitle.cs" />
-    <Compile Include="Migrations\201604041845186_WARenamePoolDescToTitle.Designer.cs">
-      <DependentUpon>201604041845186_WARenamePoolDescToTitle.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604041952041_AWAddPoolDescription.cs" />
-    <Compile Include="Migrations\201604041952041_AWAddPoolDescription.Designer.cs">
-      <DependentUpon>201604041952041_AWAddPoolDescription.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604071814486_AWAddPoolRights.cs" />
-    <Compile Include="Migrations\201604071814486_AWAddPoolRights.Designer.cs">
-      <DependentUpon>201604071814486_AWAddPoolRights.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604132104151_AddTranslation.cs" />
-    <Compile Include="Migrations\201604132104151_AddTranslation.Designer.cs">
-      <DependentUpon>201604132104151_AddTranslation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604141406491_WAChangeTranslation.cs" />
-    <Compile Include="Migrations\201604141406491_WAChangeTranslation.Designer.cs">
-      <DependentUpon>201604141406491_WAChangeTranslation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604141717530_AddTranslationType.cs" />
-    <Compile Include="Migrations\201604141717530_AddTranslationType.Designer.cs">
-      <DependentUpon>201604141717530_AddTranslationType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604171502498_AddLiveTranslation.cs" />
-    <Compile Include="Migrations\201604171502498_AddLiveTranslation.Designer.cs">
-      <DependentUpon>201604171502498_AddLiveTranslation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604191746142_AddRequiredSysConfig.cs" />
-    <Compile Include="Migrations\201604191746142_AddRequiredSysConfig.Designer.cs">
-      <DependentUpon>201604191746142_AddRequiredSysConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604232154520_WARenamedTranslation.cs" />
-    <Compile Include="Migrations\201604232154520_WARenamedTranslation.Designer.cs">
-      <DependentUpon>201604232154520_WARenamedTranslation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604232210143_WARenamed.cs" />
-    <Compile Include="Migrations\201604232210143_WARenamed.Designer.cs">
-      <DependentUpon>201604232210143_WARenamed.cs</DependentUpon>
+    <Compile Include="Migrations\201604232304324_ATInitial.cs" />
+    <Compile Include="Migrations\201604232304324_ATInitial.Designer.cs">
+      <DependentUpon>201604232304324_ATInitial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
@@ -171,71 +91,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603061950060_ATInitial.resx">
-      <DependentUpon>201603061950060_ATInitial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201604232258482_WAInitial.resx">
+      <DependentUpon>201604232258482_WAInitial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603091756125_CPInitial.resx">
-      <DependentUpon>201603091756125_CPInitial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603092116051_AddedPoolEnableConfigs.resx">
-      <DependentUpon>201603092116051_AddedPoolEnableConfigs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603092246440_AddedUniqueIdentifierToPool.resx">
-      <DependentUpon>201603092246440_AddedUniqueIdentifierToPool.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603131504310_AddAssignedIsEnabled.resx">
-      <DependentUpon>201603131504310_AddAssignedIsEnabled.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603181805353_CPAddPoolShareCryptoConfig.resx">
-      <DependentUpon>201603181805353_CPAddPoolShareCryptoConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603190032036_CPAddPoolKeyToShare.resx">
-      <DependentUpon>201603190032036_CPAddPoolKeyToShare.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603191915494_CPRemoveForeignKeyFromAccount.resx">
-      <DependentUpon>201603191915494_CPRemoveForeignKeyFromAccount.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603192336491_CPAddMessages.resx">
-      <DependentUpon>201603192336491_CPAddMessages.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603200402595_CPAddTextSignatureToMessage.resx">
-      <DependentUpon>201603200402595_CPAddTextSignatureToMessage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603222214480_ATAddPasswordDerived.resx">
-      <DependentUpon>201603222214480_ATAddPasswordDerived.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603281340559_ATAddAccountIsActive.resx">
-      <DependentUpon>201603281340559_ATAddAccountIsActive.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604041845186_WARenamePoolDescToTitle.resx">
-      <DependentUpon>201604041845186_WARenamePoolDescToTitle.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604041952041_AWAddPoolDescription.resx">
-      <DependentUpon>201604041952041_AWAddPoolDescription.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604071814486_AWAddPoolRights.resx">
-      <DependentUpon>201604071814486_AWAddPoolRights.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604132104151_AddTranslation.resx">
-      <DependentUpon>201604132104151_AddTranslation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604141406491_WAChangeTranslation.resx">
-      <DependentUpon>201604141406491_WAChangeTranslation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604141717530_AddTranslationType.resx">
-      <DependentUpon>201604141717530_AddTranslationType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604171502498_AddLiveTranslation.resx">
-      <DependentUpon>201604171502498_AddLiveTranslation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604191746142_AddRequiredSysConfig.resx">
-      <DependentUpon>201604191746142_AddRequiredSysConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604232154520_WARenamedTranslation.resx">
-      <DependentUpon>201604232154520_WARenamedTranslation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604232210143_WARenamed.resx">
-      <DependentUpon>201604232210143_WARenamed.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201604232304324_ATInitial.resx">
+      <DependentUpon>201604232304324_ATInitial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -249,8 +109,10 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Scripts\AdminTool\160413_dbo.Roles.data.sql" />
+    <Content Include="Scripts\AdminTool\160424_Update-Database_From-Source.sql" />
     <Content Include="Scripts\WebApp\160413_dbo.AccountRoles.data.sql" />
     <Content Include="Scripts\WebApp\160413_dbo.SystemConfigurations.data.sql" />
+    <Content Include="Scripts\WebApp\160424_dbo.SystemConfigurations.data.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
