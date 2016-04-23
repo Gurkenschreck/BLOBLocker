@@ -6,20 +6,39 @@
 
 <h2>EditTranslation</h2>
 
+@Html.ActionLink("Back to translation table", "Index")
+
+<hr />
 
 @using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Post)) { 
     <table>
         <tr>
             <td>
-                @Html.LabelFor(p => p.Translation.Key)
+                @Html.LabelFor(p => p.StringResource.Key)
             </td>
             <td>
-                @Html.EditorFor(p => p.Translation.Key)
+                @Html.EditorFor(p => p.StringResource.Key)
+            </td>
+            <td>
+                @Html.LabelFor(p => p.StringResource.Type)
+            </td>
+            <td>
+                @Html.EnumDropDownListFor(p => p.StringResource.Type)
+            </td>
+            <td>
+                @Html.LabelFor(p => p.StringResource.Comment)
+            </td>
+            <td>
+                @Html.TextAreaFor(p => p.StringResource.Comment)
             </td>
         </tr>
     </table>
     
-    @Html.EditorFor(p => p.Translation.Translations)
+    <hr />
     
+    @Html.EditorFor(p => p.StringResource.Translations)
+    
+    <br />
+    @Html.HiddenFor(p => p.Key)
     <button type="submit">Translate</button>
 }

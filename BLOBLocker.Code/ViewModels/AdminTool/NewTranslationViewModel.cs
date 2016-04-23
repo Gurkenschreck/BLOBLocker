@@ -26,9 +26,9 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
         public TranslationType Type { get; set; }
         public string Languages { get; set; }
 
-        public Translation Parse()
+        public StringResource Parse()
         {
-            Translation translation = new Translation();
+            StringResource translation = new StringResource();
             translation.Key = Key;
             translation.Type = Type;
             translation.Base = Base;
@@ -39,9 +39,9 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
             foreach (var lang in langs)
             {
                 LocalizedString lstr = new LocalizedString();
-                lstr.TranslationOf = translation;
+                lstr.BaseResource = translation;
                 lstr.UICulture = lang;
-                translation.Translations.Add(lstr);
+                translation.LocalizedStrings.Add(lstr);
             }
 
             return translation;

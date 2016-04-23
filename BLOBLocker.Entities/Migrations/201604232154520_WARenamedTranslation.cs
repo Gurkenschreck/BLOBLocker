@@ -3,16 +3,16 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AddTranslationType : DbMigration
+    public partial class WARenamedTranslation : DbMigration
     {
         public override void Up()
         {
-            AddColumn("dbo.LocalizedStrings", "Type", c => c.Byte(nullable: false));
+            RenameTable(name: "dbo.LocalizedStrings", newName: "StringResources");
         }
         
         public override void Down()
         {
-            DropColumn("dbo.LocalizedStrings", "Type");
+            RenameTable(name: "dbo.StringResources", newName: "LocalizedStrings");
         }
     }
 }

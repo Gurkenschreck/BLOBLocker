@@ -47,7 +47,7 @@ namespace BLOBLocker.WebApp
             {
                 Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
                 Response.Cookies["Secret"].Expires = DateTime.Now.AddDays(-1);
-                Response.Redirect("/Account/Index");
+                Response.Redirect(FormsAuthentication.LoginUrl);
             }
         }
 

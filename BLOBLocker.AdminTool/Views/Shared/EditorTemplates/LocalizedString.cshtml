@@ -1,9 +1,12 @@
 ﻿@model BLOBLocker.Entities.Models.Models.WebApp.LocalizedString
 
-<table style="float:right;">
+@Html.HiddenFor(p => p.ID) 
+@Html.HiddenFor(p => p.BaseResourceKey)
+
+<table style="display:inline-block; padding:10px;" border="1">
     <tr>
         <th>@Html.LabelFor(p => p.UICulture)</th>
-        <td>@Html.DisplayFor(p => p.UICulture)</td>
+        <td>@Html.DisplayFor(p => p.UICulture) @Html.HiddenFor(p => p.UICulture)</td>
     </tr>
     <tr>
         <th>@Html.LabelFor(p => p.Translation)</th>
@@ -11,10 +14,10 @@
     </tr>
     <tr>
         <th>@Html.LabelFor(p => p.Status)</th>
-        <td>@Html.DisplayFor(p => p.Status)</td>
+        <td>@Html.DisplayFor(p => p.Status) @Html.HiddenFor(p => p.Status)</td>
     </tr>
     <tr>
         <th>@Html.LabelFor(p => p.LiveTranslation)</th>
-        <td>@Html.DisplayFor(p => p.LiveTranslation)</td>
+        <td>@Html.DisplayFor(p => p.LiveTranslation) @Html.HiddenFor(p => p.LiveTranslation)</td>
     </tr>
 </table>

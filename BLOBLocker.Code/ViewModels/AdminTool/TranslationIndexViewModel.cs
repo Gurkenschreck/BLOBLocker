@@ -16,6 +16,6 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
         }
         public bool IsModerator { get; set; }
         public bool IsTranslator { get; set; }
-        public ICollection<Translation> Translations { get; set; }
+        public ICollection<StringResource> Translations { get; set; }
     }
 }

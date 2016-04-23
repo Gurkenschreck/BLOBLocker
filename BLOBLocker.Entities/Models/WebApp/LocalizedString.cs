@@ -19,9 +19,9 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         }
         [Key]
         public int ID { get; set; }
-        [ForeignKey("TranslationOf")]
-        public string TranslationKey { get; set; }
-        public virtual Translation TranslationOf { get; set; }
+        [ForeignKey("BaseResource")]
+        public string BaseResourceKey { get; set; }
+        public virtual StringResource BaseResource { get; set; }
         public string UICulture { get; set; }
         public string Translation { get; set; }
         public string LiveTranslation { get; set; }

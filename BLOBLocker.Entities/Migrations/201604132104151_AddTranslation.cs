@@ -8,7 +8,7 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
         public override void Up()
         {
             CreateTable(
-                "dbo.Translations",
+                "dbo.LocalizedStrings",
                 c => new
                     {
                         Key = c.String(nullable: false, maxLength: 128),
@@ -26,17 +26,17 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
                         Translation = c.String(),
                     })
                 .PrimaryKey(t => t.ID)
-                .ForeignKey("dbo.Translations", t => t.TranslationKey)
+                .ForeignKey("dbo.LocalizedStrings", t => t.TranslationKey)
                 .Index(t => t.TranslationKey);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.LocalizedStrings", "TranslationKey", "dbo.Translations");
-            DropIndex("dbo.LocalizedStrings", new[] { "TranslationKey" });
+            DropForeignKey("dbo.LocalizedStrings", "BaseResourceKey", "dbo.LocalizedStrings");
+            DropIndex("dbo.LocalizedStrings", new[] { "BaseResourceKey" });
             DropTable("dbo.LocalizedStrings");
-            DropTable("dbo.Translations");
+            DropTable("dbo.LocalizedStrings");
         }
     }
 }

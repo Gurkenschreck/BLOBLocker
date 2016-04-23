@@ -129,6 +129,10 @@
     <Compile Include="Migrations\201604191746142_AddRequiredSysConfig.Designer.cs">
       <DependentUpon>201604191746142_AddRequiredSysConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604232154520_WARenamedTranslation.cs" />
+    <Compile Include="Migrations\201604232154520_WARenamedTranslation.Designer.cs">
+      <DependentUpon>201604232154520_WARenamedTranslation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -152,7 +156,7 @@
     <Compile Include="Models\WebApp\PoolShare.cs" />
     <Compile Include="Models\WebApp\BLWAContext.cs" />
     <Compile Include="Models\WebApp\SystemConfiguration.cs" />
-    <Compile Include="Models\WebApp\Translation.cs" />
+    <Compile Include="Models\WebApp\StringResource.cs" />
     <Compile Include="Models\WebApp\TranslationStatus.cs" />
     <Compile Include="Models\WebApp\TranslationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -222,6 +226,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604191746142_AddRequiredSysConfig.resx">
       <DependentUpon>201604191746142_AddRequiredSysConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604232154520_WARenamedTranslation.resx">
+      <DependentUpon>201604232154520_WARenamedTranslation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

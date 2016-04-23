@@ -18,7 +18,7 @@ namespace BLOBLocker.AdminTool.Controllers
     {
         BLATContext atcontext = new BLATContext();
 
-        // GET: Translation
+        // GET: StringResource
         [RestoreModelState]
         [HttpGet]
         public ActionResult Index()
@@ -42,14 +42,14 @@ namespace BLOBLocker.AdminTool.Controllers
             var translation = context.Translations.FirstOrDefault(p => p.Key == key);
             if (translation == null)
             {
-                ModelState.AddModelError("key", "Translation with key " + key + " not found.");
+                ModelState.AddModelError("key", "StringResource with key " + key + " not found.");
             }
 
             if (ModelState.IsValid)
             {
                 var etvm = new EditTranslationViewModel();
                 etvm.Key = key;
-                etvm.Translation = translation;
+                etvm.StringResource = translation;
                 return View(etvm);
             }
             return Redirect(Request.UrlReferrer.AbsoluteUri);
@@ -59,27 +59,37 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpPost]
         public ActionResult EditTranslation(EditTranslationViewModel etvm)
         {
-            Translation translation = context.Translations.FirstOrDefault(p => p.Key == etvm.Key);
-            if (translation == null)
-            {
-
-            }
+            StringResource translation = context.Translations.FirstOrDefault(p => p.Key == etvm.Key);
+            
             if (ModelState.IsValid)
             {
+                translation.Key = etvm.StringResource.Key;
+                translation.Comment = etvm.StringResource.Comment;
+                translation.Type = etvm.StringResource.Type;
 
+                foreach (var lstr in translation.LocalizedStrings)
+                {
+                    var modifiedLstr = etvm.StringResource.LocalizedStrings.FirstOrDefault(p => p.ID == lstr.ID);
+                    if (lstr.Translation != modifiedLstr.Translation)
+                    {
+                        lstr.Status = TranslationStatus.Translated;
+                        lstr.Translation = modifiedLstr.Translation;
+                    }
+                }
+                context.SaveChanges();
             }
 
-            return View();
+            return View(etvm);
         }
 
         [RequiredParameters("ntvm")]
         [PreserveModelState]
         [HttpPost]
-        public ActionResult AddTranslation(NewTranslationViewModel ntvm) // Not binding to Key correctly
+        public ActionResult AddTranslation(NewTranslationViewModel ntvm) 
         {
             if (ModelState.IsValid)
             {
-                Translation transl = ntvm.Parse();
+                StringResource transl = ntvm.Parse();
                 context.Translations.Add(transl);
                 context.SaveChanges();
             }
