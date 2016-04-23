@@ -24,7 +24,7 @@ namespace BLOBLocker.Code.Resources
                 culture = CultureInfo.CurrentUICulture;
             }
 
-            var translation = context.Translations.FirstOrDefault(p => p.Key == resourceKey);
+            var translation = context.StringResources.FirstOrDefault(p => p.Key == resourceKey);
             if (translation == null)
             {
                 return "unknown";

@@ -133,6 +133,10 @@
     <Compile Include="Migrations\201604232154520_WARenamedTranslation.Designer.cs">
       <DependentUpon>201604232154520_WARenamedTranslation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604232210143_WARenamed.cs" />
+    <Compile Include="Migrations\201604232210143_WARenamed.Designer.cs">
+      <DependentUpon>201604232210143_WARenamed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -229,6 +233,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604232154520_WARenamedTranslation.resx">
       <DependentUpon>201604232154520_WARenamedTranslation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604232210143_WARenamed.resx">
+      <DependentUpon>201604232210143_WARenamed.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

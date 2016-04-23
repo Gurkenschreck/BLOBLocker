@@ -25,7 +25,7 @@ namespace BLOBLocker.Entities.Models.WebApp
         public DbSet<Contact> ContactLinks { get; set; }
         public DbSet<Message> Messages { get; set; }
 
-        public DbSet<StringResource> Translations { get; set; }
+        public DbSet<StringResource> StringResources { get; set; }
 
         public BLWAContext()
 #if DEBUG

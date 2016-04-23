@@ -1,0 +1,24 @@
+﻿@model IEnumerable<BLOBLocker.Entities.Models.AdminTool.Role>
+
+@{
+    ViewBag.Title = "Home";
+}
+
+<h2>Home</h2>
+
+@if (Model.Any(p => p.Definition == "Administrator"))
+{
+    <p>@Html.ActionLink("Admin area", "Overview", "Admin")</p>
+}
+
+@if (Model.Any(p => p.Definition == "Moderator"))
+{
+    <p>@Html.ActionLink("Moderator area", "Moderate", "Moderator")</p>
+}
+
+@if (Model.Any(p => p.Definition == "Translator"))
+{
+    <p>@Html.ActionLink("Translation tool", "Index", "Translation")</p>
+}
+
+News page!!!

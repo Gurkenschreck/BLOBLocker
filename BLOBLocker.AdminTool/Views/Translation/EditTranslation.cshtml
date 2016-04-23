@@ -10,35 +10,49 @@
 
 <hr />
 
-@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Post)) { 
-    <table>
-        <tr>
-            <td>
-                @Html.LabelFor(p => p.StringResource.Key)
-            </td>
-            <td>
-                @Html.EditorFor(p => p.StringResource.Key)
-            </td>
-            <td>
-                @Html.LabelFor(p => p.StringResource.Type)
-            </td>
-            <td>
-                @Html.EnumDropDownListFor(p => p.StringResource.Type)
-            </td>
-            <td>
-                @Html.LabelFor(p => p.StringResource.Comment)
-            </td>
-            <td>
-                @Html.TextAreaFor(p => p.StringResource.Comment)
-            </td>
-        </tr>
-    </table>
-    
+@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Post)) {
+    if (Model.IsModerator) { 
+        <table>
+            <tr>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Key)
+                </td>
+                <td>
+                    @Html.EditorFor(p => p.StringResource.Key)
+                </td>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Type)
+                </td>
+                <td>
+                    @Html.EnumDropDownListFor(p => p.StringResource.Type)
+                </td>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Base)
+                </td>
+                <td>
+                    @Html.EditorFor(p => p.StringResource.Base)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(p => p.MajorBaseChange) @Html.LabelFor(p => p.MajorBaseChange)
+                </td>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Comment)
+                </td>
+                <td>
+                    @Html.TextAreaFor(p => p.StringResource.Comment)
+                </td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        @Html.HiddenFor(p => p.StringResource.Key)
+    }
     <hr />
     
-    @Html.EditorFor(p => p.StringResource.Translations)
+    @Html.EditorFor(p => p.StringResource.LocalizedStrings)
     
     <br />
-    @Html.HiddenFor(p => p.Key)
+    @Html.HiddenFor(p => p.Key) @Html.HiddenFor(p => p.IsModerator)
     <button type="submit">Translate</button>
 }

@@ -28,7 +28,7 @@ namespace BLOBLocker.AdminTool.Controllers
             var curAcc = atcontext.Accounts.FirstOrDefault(p => User.Identity.Name == p.Alias);
             translationViewModel.IsModerator = curAcc.Roles.Any(p => p.Role.Definition == "Moderator");
             translationViewModel.IsTranslator = curAcc.Roles.Any(p => p.Role.Definition == "Translator");
-            translationViewModel.Translations = context.Translations.ToList();
+            translationViewModel.StringResources = context.StringResources.ToList();
             return View(translationViewModel);
         }
 
@@ -39,7 +39,7 @@ namespace BLOBLocker.AdminTool.Controllers
             if (string.IsNullOrWhiteSpace(key))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var translation = context.Translations.FirstOrDefault(p => p.Key == key);
+            var translation = context.StringResources.FirstOrDefault(p => p.Key == key);
             if (translation == null)
             {
                 ModelState.AddModelError("key", "StringResource with key " + key + " not found.");
@@ -50,6 +50,10 @@ namespace BLOBLocker.AdminTool.Controllers
                 var etvm = new EditTranslationViewModel();
                 etvm.Key = key;
                 etvm.StringResource = translation;
+
+                var curAcc = atcontext.Accounts.FirstOrDefault(p => User.Identity.Name == p.Alias);
+                etvm.IsModerator = curAcc.Roles.Any(p => p.Role.Definition == "Moderator");
+
                 return View(etvm);
             }
             return Redirect(Request.UrlReferrer.AbsoluteUri);
@@ -59,13 +63,28 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpPost]
         public ActionResult EditTranslation(EditTranslationViewModel etvm)
         {
-            StringResource translation = context.Translations.FirstOrDefault(p => p.Key == etvm.Key);
+            StringResource translation = context.StringResources.FirstOrDefault(p => p.Key == etvm.Key);
             
             if (ModelState.IsValid)
             {
-                translation.Key = etvm.StringResource.Key;
-                translation.Comment = etvm.StringResource.Comment;
-                translation.Type = etvm.StringResource.Type;
+                if (etvm.IsModerator)
+                {
+                    translation.Key = etvm.StringResource.Key;
+                    translation.Comment = etvm.StringResource.Comment;
+                    translation.Type = etvm.StringResource.Type;
+                    if (translation.Base != etvm.StringResource.Base)
+                    {
+                        translation.Base = etvm.StringResource.Base;
+                        if (etvm.MajorBaseChange)
+                        {
+                            foreach (var lstr in translation.LocalizedStrings)
+                            {
+                                if(lstr.Translation != "nt")
+                                    lstr.Status = TranslationStatus.BaseModified;
+                            }
+                        }
+                    }
+                }
 
                 foreach (var lstr in translation.LocalizedStrings)
                 {
@@ -90,7 +109,7 @@ namespace BLOBLocker.AdminTool.Controllers
             if (ModelState.IsValid)
             {
                 StringResource transl = ntvm.Parse();
-                context.Translations.Add(transl);
+                context.StringResources.Add(transl);
                 context.SaveChanges();
             }
             return Redirect(Request.UrlReferrer.AbsoluteUri);

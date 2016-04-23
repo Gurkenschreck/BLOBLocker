@@ -50,7 +50,7 @@ namespace BLOBLocker.AdminTool.Controllers
                         atContext.SaveChangesAsync();
                         FormsAuthentication.SetAuthCookie(dbAccount.Alias, false);
                         if (Request.QueryString["ReturnUrl"] == null)
-                            return RedirectToAction("Index", "Manage");
+                            return RedirectToAction("Home");
                         else
                             Response.Redirect(Request.QueryString["ReturnUrl"]);
                     }
@@ -69,6 +69,15 @@ namespace BLOBLocker.AdminTool.Controllers
             Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
             Session.Abandon();
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult Home()
+        {
+            var roles = atContext.Accounts
+                .FirstOrDefault(p => p.Alias == User.Identity.Name)
+                .Roles.Select(p => p.Role);
+            return View(roles);
         }
     }
 }

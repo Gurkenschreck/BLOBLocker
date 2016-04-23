@@ -10,17 +10,19 @@
     @Html.Partial("_AddTranslation", new BLOBLocker.Code.ViewModels.AdminTool.NewTranslationViewModel())
 }
 
+<hr />
+
 @using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Get)) { 
     <table border="1">
         <tr>
             <td colspan="2">Roles @(Model.IsModerator?"Moderator,":"") @(Model.IsTranslator?"Translator":"")</td>
         </tr>
         <tr>
-            <td>@Html.Label("Translations")</td>
+            <td>@Html.Label("Basic Resources")</td>
             <td>@Html.Label("Localized Strings")</td>
         </tr>
 
-        @foreach (var trans in Model.Translations)
+        @foreach (var trans in Model.StringResources)
         {
             <tr>
                 <td>
