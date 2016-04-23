@@ -17,6 +17,5 @@ namespace BLOBLocker.Entities.Models
         T Get(int id);
         T GetByKey(string key);
         int Count();
-
     }
 }
