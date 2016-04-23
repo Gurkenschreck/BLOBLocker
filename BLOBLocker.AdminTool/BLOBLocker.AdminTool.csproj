@@ -147,6 +147,9 @@
     <Content Include="Views\Shared\EditorTemplates\NewTranslationViewModel.cshtml" />
     <Content Include="Views\Translation\Partial\_AddTranslation.cshtml" />
     <Content Include="Views\Admin\Partial\_CreateAccount.cshtml" />
+    <Content Include="Views\Translation\EditTranslation.cshtml" />
+    <Content Include="Views\Translation\Partial\_EditLocalizedString.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\LocalizedString.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

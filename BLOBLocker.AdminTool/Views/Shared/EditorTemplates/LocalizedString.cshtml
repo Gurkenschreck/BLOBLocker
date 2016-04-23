@@ -1,0 +1,20 @@
+﻿@model BLOBLocker.Entities.Models.Models.WebApp.LocalizedString
+
+<table style="float:right;">
+    <tr>
+        <th>@Html.LabelFor(p => p.UICulture)</th>
+        <td>@Html.DisplayFor(p => p.UICulture)</td>
+    </tr>
+    <tr>
+        <th>@Html.LabelFor(p => p.Translation)</th>
+        <td>@Html.TextAreaFor(p => p.Translation)</td>
+    </tr>
+    <tr>
+        <th>@Html.LabelFor(p => p.Status)</th>
+        <td>@Html.DisplayFor(p => p.Status)</td>
+    </tr>
+    <tr>
+        <th>@Html.LabelFor(p => p.LiveTranslation)</th>
+        <td>@Html.DisplayFor(p => p.LiveTranslation)</td>
+    </tr>
+</table>

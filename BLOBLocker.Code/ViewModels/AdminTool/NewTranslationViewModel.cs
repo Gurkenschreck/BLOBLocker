@@ -41,6 +41,7 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
                 LocalizedString lstr = new LocalizedString();
                 lstr.TranslationOf = translation;
                 lstr.UICulture = lang;
+                translation.Translations.Add(lstr);
             }
 
             return translation;

@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Cipha.Security.Cryptography;
 using BLOBLocker.Code;
+using System.Web.Security;
 
 namespace BLOBLocker.AdminTool
 {
@@ -22,6 +23,16 @@ namespace BLOBLocker.AdminTool
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             CreateAdminIfNotExistent();
+        }
+
+        protected void Session_Start(object sender, EventArgs args)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies["Secret"].Expires = DateTime.Now.AddDays(-1);
+                Response.Redirect("/Account/Login");
+            }
         }
 
         void CreateAdminIfNotExistent()

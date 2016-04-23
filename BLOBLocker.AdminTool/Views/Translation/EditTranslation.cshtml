@@ -1,0 +1,25 @@
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.EditTranslationViewModel
+
+@{
+    ViewBag.Title = "EditTranslation";
+}
+
+<h2>EditTranslation</h2>
+
+
+@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Post)) { 
+    <table>
+        <tr>
+            <td>
+                @Html.LabelFor(p => p.Translation.Key)
+            </td>
+            <td>
+                @Html.EditorFor(p => p.Translation.Key)
+            </td>
+        </tr>
+    </table>
+    
+    @Html.EditorFor(p => p.Translation.Translations)
+    
+    <button type="submit">Translate</button>
+}

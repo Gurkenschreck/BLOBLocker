@@ -10,44 +10,47 @@
     @Html.Partial("_AddTranslation", new BLOBLocker.Code.ViewModels.AdminTool.NewTranslationViewModel())
 }
 
-<table border="1">
-    <tr>
-        <td colspan="2">Roles @(Model.IsModerator?"Moderator,":"") @(Model.IsTranslator?"Translator":"")</td>
-    </tr>
-    <tr>
-        <td>@Html.Label("Translations")</td>
-        <td>@Html.Label("Localized Strings")</td>
-    </tr>
-
-    @foreach (var trans in Model.Translations)
-    {
+@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Get)) { 
+    <table border="1">
         <tr>
-            <td>
-                <table border="1">
-                    <tr>
-                        <td>@trans.Key</td>
-                        <td>@trans.Base</td>
-                        <td>@trans.Type</td>
-                        <td>@trans.Comment</td>
-                        <td>@Convert.ToBase64String(trans.Version)</td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <table border="1">
-                    @foreach (var locStr in trans.Translations)
-                    {
-                        <tr>
-                            <td>@locStr.UICulture</td>
-                            <td>@locStr.Translation</td>
-                            <td>@locStr.LiveTranslation</td>
-                            <td>@locStr.Status</td>
-                            <td>@Convert.ToBase64String(locStr.Version)</td>
-                        </tr>
-                    }
-                </table>
-            </td>
+            <td colspan="2">Roles @(Model.IsModerator?"Moderator,":"") @(Model.IsTranslator?"Translator":"")</td>
         </tr>
-    }
+        <tr>
+            <td>@Html.Label("Translations")</td>
+            <td>@Html.Label("Localized Strings")</td>
+        </tr>
+
+        @foreach (var trans in Model.Translations)
+        {
+            <tr>
+                <td>
+                    <table border="1">
+                        <tr>
+                            <td><button type="submit" value="@trans.Key" name="key">Edit</button></td>
+                            <td>@trans.Key</td>
+                            <td>@trans.Base</td>
+                            <td>@trans.Type</td>
+                            <td>@trans.Comment</td>
+                            <td>@Convert.ToBase64String(trans.Version)</td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table border="1">
+                        @foreach (var locStr in trans.Translations)
+                        {
+                            <tr>
+                                <td>@locStr.UICulture</td>
+                                <td>@locStr.Translation</td>
+                                <td>@locStr.LiveTranslation</td>
+                                <td>@locStr.Status</td>
+                                <td>@Convert.ToBase64String(locStr.Version)</td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
     
-</table>
+    </table>
+}
