@@ -18,6 +18,5 @@ namespace BLOBLocker.Entities.Models
         T GetByKey(string key);
         int Count();
 
-        private void Dispose(bool disposing);
     }
 }
