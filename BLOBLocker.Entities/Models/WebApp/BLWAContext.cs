@@ -73,7 +73,7 @@ namespace BLOBLocker.Entities.Models.WebApp
                 .HasRequired(p => p.BaseResource)
                 .WithMany()
                 .HasForeignKey(p => p.BaseResourceKey)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete();
         }
     }
 }

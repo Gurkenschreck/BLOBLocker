@@ -132,12 +132,9 @@ namespace BLOBLocker.AdminTool.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult DeleteResource(string removeID)
+        public ActionResult DeleteResource(int removeID)
         {
-            if (string.IsNullOrWhiteSpace(removeID))
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            var resource = context.StringResources.FirstOrDefault(p => p.Key == removeID);
+            var resource = context.StringResources.FirstOrDefault(p => p.ID == removeID);
 
             if (resource == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
