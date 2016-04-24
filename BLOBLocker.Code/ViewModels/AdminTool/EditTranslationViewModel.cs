@@ -10,7 +10,7 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
 {
     public class EditResourceViewModel
     {
-        public int ID { get; set; }
+        public int ResourceID { get; set; }
         public bool IsModerator { get; set; }
         public StringResource StringResource { get; set; }
         public bool MajorBaseChange { get; set; }

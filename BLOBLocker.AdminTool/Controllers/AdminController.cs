@@ -85,7 +85,7 @@ namespace BLOBLocker.AdminTool.Controllers
             return View(accs);
         }
 
-        [RequiredParameters("id")]
+        [RequiredParameters("resourceID")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult EditAccount(int id)

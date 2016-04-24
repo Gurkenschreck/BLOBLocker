@@ -47,15 +47,15 @@ namespace BLOBLocker.AdminTool.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var resource = context.StringResources.FirstOrDefault(p => p.Key == key);
+
             if (resource == null)
-            {
                 ModelState.AddModelError("key", "StringResource with key " + key + " not found.");
-            }
+            
 
             if (ModelState.IsValid)
             {
                 var etvm = new EditResourceViewModel();
-                etvm.ID = resource.ID;
+                etvm.ResourceID = resource.ID;
                 etvm.StringResource = resource;
 
                 var curAcc = atcontext.Accounts.FirstOrDefault(p => User.Identity.Name == p.Alias);
@@ -70,7 +70,7 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpPost]
         public ActionResult EditResource(EditResourceViewModel etvm)
         {
-            StringResource resource = context.StringResources.FirstOrDefault(p => p.ID == etvm.ID);
+            StringResource resource = context.StringResources.FirstOrDefault(p => p.ID == etvm.ResourceID);
             
             if (ModelState.IsValid)
             {
@@ -114,41 +114,68 @@ namespace BLOBLocker.AdminTool.Controllers
         public ActionResult AddResource(NewResourceViewModel ntvm) 
         {
             StringResource sres = context.StringResources.FirstOrDefault(p => p.Key == ntvm.Key);
+
             if (sres != null)
-            {
                 ModelState.AddModelError("Key", "Key already registered.");
-            }
+            
+
             if (ModelState.IsValid)
             {
                 sres = ntvm.Parse();
                 context.StringResources.Add(sres);
                 context.SaveChanges();
             }
+
             return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
+
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult DeleteResource(string removeKey)
+        public ActionResult DeleteResource(string removeID)
         {
-            if (string.IsNullOrWhiteSpace(removeKey))
+            if (string.IsNullOrWhiteSpace(removeID))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var resource = context.StringResources.FirstOrDefault(p => p.Key == removeKey);
+            var resource = context.StringResources.FirstOrDefault(p => p.Key == removeID);
 
-            if (resource != null)
-            {
-                context.StringResources.Remove(resource);
-                context.SaveChanges();
-            }
+            if (resource == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            context.StringResources.Remove(resource);
+            context.SaveChanges();
 
             return RedirectToAction("Index");
         }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult ModifyUICultures(int id, string addCultures, string removeCultures)
+        public ActionResult SetTranslationLive(int resourceID, string cultures)
         {
-            StringResource sres = context.StringResources.FirstOrDefault(p => p.ID == id);
+            var resource = context.StringResources.FirstOrDefault(p => p.ID == resourceID);
+
+            if (resource == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            foreach (var cult in cultures.Split(','))
+            {
+                if (resource.LocalizedStrings.Any(p => p.UICulture == cult))
+                {
+                    LocalizedString remLocStr = resource.LocalizedStrings.First(p => p.UICulture == cult);
+                    remLocStr.LiveTranslation = remLocStr.Translation;
+                    remLocStr.Status = TranslationStatus.Live;
+                }
+            }
+            context.SaveChanges();
+
+            return RedirectToAction("EditResource", new { key = resource.Key });
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult ModifyUICultures(int resourceID, string addCultures, string removeCultures)
+        {
+            StringResource sres = context.StringResources.FirstOrDefault(p => p.ID == resourceID);
 
             if (sres == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);

@@ -46,34 +46,75 @@
     }
     else
     {
-        @Html.HiddenFor(p => p.StringResource.Key)
+        <table style="width:100%;" border="1">
+            <tr>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Key)
+                </td>
+                <td>
+                    @Html.ValueFor(p => p.StringResource.Key) @Html.HiddenFor(p => p.StringResource.Key)
+                </td>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Type)
+                </td>
+                <td>
+                    @Html.ValueFor(p => p.StringResource.Type) @Html.HiddenFor(p => p.StringResource.Type)
+                </td>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Base)
+                </td>
+                <td>
+                    @Html.ValueFor(p => p.StringResource.Base) @Html.HiddenFor(p => p.StringResource.Base)
+                </td>
+                <td>
+                    @Html.LabelFor(p => p.StringResource.Comment)
+                </td>
+                <td>
+                    @Html.ValueFor(p => p.StringResource.Comment) @Html.HiddenFor(p => p.StringResource.Comment)
+                </td>
+            </tr>
+        </table>
     }
     <hr />
     
     @Html.EditorFor(p => p.StringResource.LocalizedStrings)
     
     <br />
-    @Html.HiddenFor(p => p.ID) @Html.HiddenFor(p => p.IsModerator)
+    @Html.HiddenFor(p => p.ResourceID) @Html.HiddenFor(p => p.IsModerator)
     <button type="submit">Apply</button>
 }
 
-@using (Html.BeginForm("ModifyUICultures", "Translation", FormMethod.Post))
-{
-    <table>
-        <tr>
-            <th>Add cultures:</th>
-            <td>@Html.TextBox("addCultures")</td>
-            <th>Remove cultures:</th>
-            <td>@Html.TextBox("removeCultures")</td>
-            <td><button type="submit">Add or remove cultures</button> @Html.AntiForgeryToken() @Html.HiddenFor(p => p.ID)</td>
-        </tr>
-    </table>
-}
-<br /><br />
-<hr />
+@if (Model.IsModerator) { 
+    using (Html.BeginForm("ModifyUICultures", "Translation", FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <th>Add cultures:</th>
+                <td>@Html.TextBox("addCultures")</td>
+                <th>Remove cultures:</th>
+                <td>@Html.TextBox("removeCultures")</td>
+                <td><button type="submit">Add or remove cultures</button> @Html.AntiForgeryToken() @Html.HiddenFor(p => p.ResourceID)</td>
+            </tr>
+        </table>
+    }
 
-@using (Html.BeginForm("DeleteResource", "Translation", FormMethod.Post))
-{
-    <button type="submit" value="@Model.StringResource.Key" name="removeKey" style="background-color:#ff4343; border:1px solid black;">Delete</button>
-    @Html.AntiForgeryToken()
+    using (Html.BeginForm("SetTranslationLive", "Translation", FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <th>Cultures to set live:</th>
+                <td>@Html.TextBox("cultures")</td>
+                <td><button type="submit">Set live</button> @Html.AntiForgeryToken() @Html.HiddenFor(p => p.ResourceID)</td>
+            </tr>
+        </table>
+    }
+
+    <br /><br />
+    <hr />
+
+    using (Html.BeginForm("DeleteResource", "Translation", FormMethod.Post))
+    {
+        <button type="submit" value="@Model.ResourceID" name="removeID" style="background-color:#ff4343; border:1px solid black;">Delete</button>
+        @Html.AntiForgeryToken()
+    }
 }
