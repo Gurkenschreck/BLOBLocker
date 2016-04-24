@@ -24,6 +24,9 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpGet]
         public ActionResult Index(TranslationFilter tivm)
         {
+            if (tivm == null)
+                tivm = new TranslationFilter();
+
             var translationViewModel = new TranslationIndexViewModel();
 
             var curAcc = atcontext.Accounts.FirstOrDefault(p => User.Identity.Name == p.Alias);
@@ -31,11 +34,9 @@ namespace BLOBLocker.AdminTool.Controllers
             translationViewModel.IsModerator = curAcc.Roles.Any(p => p.Role.Definition == "Moderator");
             translationViewModel.IsTranslator = curAcc.Roles.Any(p => p.Role.Definition == "Translator");
 
-            if (tivm != null)
-                translationViewModel.StringResources = tivm.ApplyFilter(context.StringResources.ToList());
-            else
-                translationViewModel.StringResources = context.StringResources.ToList();
-            
+            translationViewModel.StringResources = tivm.ApplyFilter(context.StringResources.OrderBy(p => p.Key)
+                                                                                           .ToList());
+
             return View(translationViewModel);
         }
 
