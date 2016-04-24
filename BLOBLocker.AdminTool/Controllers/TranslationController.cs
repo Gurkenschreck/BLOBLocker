@@ -21,14 +21,17 @@ namespace BLOBLocker.AdminTool.Controllers
         // GET: StringResource
         [RestoreModelState]
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(TranslationFilter tivm)
         {
             var translationViewModel = new TranslationIndexViewModel();
 
             var curAcc = atcontext.Accounts.FirstOrDefault(p => User.Identity.Name == p.Alias);
+
             translationViewModel.IsModerator = curAcc.Roles.Any(p => p.Role.Definition == "Moderator");
             translationViewModel.IsTranslator = curAcc.Roles.Any(p => p.Role.Definition == "Translator");
-            translationViewModel.StringResources = context.StringResources.ToList();
+
+            translationViewModel.StringResources = tivm.ApplyFilter(context.StringResources.ToList());
+            
             return View(translationViewModel);
         }
 
@@ -114,6 +117,5 @@ namespace BLOBLocker.AdminTool.Controllers
             }
             return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
-
     }
 }

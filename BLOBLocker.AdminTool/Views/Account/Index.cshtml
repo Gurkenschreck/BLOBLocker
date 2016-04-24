@@ -1,22 +1,22 @@
-﻿@model BLOBLocker.Entities.Models.AdminTool.Account
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.LoginViewModel
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Log in</h2>
 
 
-@using(Html.BeginForm())
+@using(Html.BeginForm("Index", "Account", FormMethod.Post))
 {
     <text>@Html.ValidationSummary()</text>
     <table>
         <tr>
-            <td>Alias*:</td>
+            <td>@Html.LabelFor(p => p.Alias)</td>
             <td>@Html.EditorFor(p => p.Alias)</td>
         </tr>
         <tr>
-            <td>Password*:</td>
-            <td>@Html.Password("pw")</td>
+            <td>@Html.LabelFor(p => p.Password)</td>
+            <td>@Html.PasswordFor(p => p.Password)</td>
         </tr>
         <tr>
             <td>@Html.AntiForgeryToken()</td>

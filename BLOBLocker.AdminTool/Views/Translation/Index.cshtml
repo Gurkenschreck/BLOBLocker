@@ -12,8 +12,13 @@
 
 <hr />
 
-@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Get)) { 
-    <table border="1">
+@Html.Partial("_FilterTranslations", Model.Filter)
+
+<hr />
+
+@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Get)) 
+{ 
+    <table border="1" style="width:100%;">
         <tr>
             <td colspan="2">Roles @(Model.IsModerator?"Moderator,":"") @(Model.IsTranslator?"Translator":"")</td>
         </tr>
@@ -26,7 +31,7 @@
         {
             <tr>
                 <td>
-                    <table border="1">
+                    <table border="1" style="width:100%;">
                         <tr>
                             <td><button type="submit" value="@trans.Key" name="key">Edit</button></td>
                             <td>@trans.Key</td>
@@ -38,7 +43,7 @@
                     </table>
                 </td>
                 <td>
-                    <table border="1">
+                    <table border="1" style="width:100%";>
                         @foreach (var locStr in trans.LocalizedStrings)
                         {
                             <tr>

@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using Cipha.Security.Cryptography;
+using BLOBLocker.Code.ViewModels.AdminTool;
 
 namespace BLOBLocker.AdminTool.Controllers
 {
@@ -21,14 +22,16 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            return View();
+            LoginViewModel lvm = new LoginViewModel();
+            return View(lvm);
         }
+
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult Index([Bind(Include="Alias")]Account acc, string pw)
+        public ActionResult Index(LoginViewModel lvm)
         {
-            var dbAccount = atContext.Accounts.FirstOrDefault(p => p.Alias == acc.Alias);
+            var dbAccount = atContext.Accounts.FirstOrDefault(p => p.Alias == lvm.Alias);
             if(dbAccount == null)
             {
                 ModelState.AddModelError("AliasOrPasswordWrong", "Alias and/or password wrong.");
@@ -41,7 +44,7 @@ namespace BLOBLocker.AdminTool.Controllers
             
             if (ModelState.IsValid)
             {
-                using(var deriver = new Rfc2898DeriveBytes(pw, dbAccount.Salt, 21423))
+                using(var deriver = new Rfc2898DeriveBytes(lvm.Password, dbAccount.Salt, 21423))
                 {
                     byte[] derived = deriver.GetBytes(dbAccount.Salt.Length);
                     if (Utilities.SlowEquals(dbAccount.DerivedPassword, derived))
@@ -60,7 +63,7 @@ namespace BLOBLocker.AdminTool.Controllers
                     }
                 }
             }
-            return View(acc);
+            return View(lvm);
         }
 
         [HttpGet]

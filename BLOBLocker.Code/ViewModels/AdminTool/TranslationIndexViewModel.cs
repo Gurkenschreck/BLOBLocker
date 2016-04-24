@@ -13,9 +13,12 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
         {
             IsModerator = false;
             IsTranslator = false;
+            Filter = new TranslationFilter();
         }
+
         public bool IsModerator { get; set; }
         public bool IsTranslator { get; set; }
         public ICollection<StringResource> StringResources { get; set; }
+        public TranslationFilter Filter { get; set; }
     }
 }

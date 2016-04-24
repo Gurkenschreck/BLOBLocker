@@ -90,7 +90,9 @@
     <Compile Include="ViewModels\AdminTool\AdminEditAccountModel.cs" />
     <Compile Include="ViewModels\AdminTool\AdminOverviewViewModel.cs" />
     <Compile Include="ViewModels\AdminTool\EditTranslationViewModel.cs" />
+    <Compile Include="ViewModels\AdminTool\LoginViewModel.cs" />
     <Compile Include="ViewModels\AdminTool\NewTranslationViewModel.cs" />
+    <Compile Include="ViewModels\AdminTool\TranslationFilter.cs" />
     <Compile Include="ViewModels\AdminTool\TranslationIndexViewModel.cs" />
     <Compile Include="ViewModels\PoolRightViewModel.cs" />
     <Compile Include="ViewModels\Validation\AccountViewModelValidation.cs" />

@@ -1,0 +1,29 @@
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.TranslationFilter
+
+@using (Html.BeginForm("Index", "Translation", FormMethod.Get))
+{
+    <table>
+        <tr>
+            <th>
+                @Html.LabelFor(p => p.SearchKey)
+            </th>
+            <td>
+                @Html.EditorFor(p => p.SearchKey)
+            </td>
+            <th>
+                @Html.LabelFor(p => p.TranslationType)
+            </th>
+            <td>
+                @Html.EnumDropDownListFor(p => p.TranslationType)
+            </td>
+            <th>
+                @Html.LabelFor(p => p.TranslationStatus)
+            </th>
+            <td>
+                @Html.EnumDropDownListFor(p => p.TranslationStatus)
+            </td>
+
+            <td><button type="submit">Filter</button></td>
+        </tr>
+    </table>
+}
