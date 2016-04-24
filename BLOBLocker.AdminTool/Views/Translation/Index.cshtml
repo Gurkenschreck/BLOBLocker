@@ -8,6 +8,8 @@
 
 @if (Model.IsModerator) { 
     @Html.Partial("_AddResource", new BLOBLocker.Code.ViewModels.AdminTool.NewResourceViewModel())
+
+    @Html.Partial("_PutLiveOptions")
 }
 
 <hr />

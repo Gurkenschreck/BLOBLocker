@@ -154,7 +154,7 @@ namespace BLOBLocker.AdminTool.Controllers
             if (resource == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            foreach (var cult in cultures.Split(','))
+            foreach (var cult in cultures.Trim().Split(','))
             {
                 if (resource.LocalizedStrings.Any(p => p.UICulture == cult))
                 {
@@ -179,7 +179,7 @@ namespace BLOBLocker.AdminTool.Controllers
 
             if (!string.IsNullOrWhiteSpace(addCultures))
             {
-                foreach (var addCult in addCultures.Split(','))
+                foreach (var addCult in addCultures.Trim().Split(','))
                 {
                     if (sres.LocalizedStrings.All(p => p.UICulture != addCult))
                     {
@@ -193,7 +193,7 @@ namespace BLOBLocker.AdminTool.Controllers
 
             if (!string.IsNullOrWhiteSpace(removeCultures))
             {
-                foreach (var removeCult in removeCultures.Split(','))
+                foreach (var removeCult in removeCultures.Trim().Split(','))
                 {
                     if (sres.LocalizedStrings.Any(p => p.UICulture == removeCultures))
                     {
@@ -205,6 +205,48 @@ namespace BLOBLocker.AdminTool.Controllers
             context.SaveChanges();
 
             return RedirectToAction("EditResource", new { key = sres.Key });
+        }
+
+        [PreserveModelState]
+        [HttpPost]
+        public ActionResult PutLive(string cultures)
+        {
+            if (string.IsNullOrWhiteSpace(cultures))
+                ModelState.AddModelError("cultures", "No cultures have been specified.");
+
+
+            List<LocalizedString> locStrings = new List<LocalizedString>();
+
+            var locStringCollections = context.StringResources.Select(p => p.LocalizedStrings);
+            foreach (var collection in locStringCollections)
+            {
+                foreach (var locStr in collection)
+                {
+                    locStrings.Add(locStr);
+                }
+            }
+
+            List<LocalizedString> filteredLocStrings = new List<LocalizedString>();
+            foreach (var c in cultures.Trim().Split(','))
+            {
+                foreach (var locStr in locStrings)
+                {
+                    if (locStr.UICulture == c && locStr.Status == TranslationStatus.Translated)
+                    {
+                        filteredLocStrings.Add(locStr);
+                    }
+                }
+            }
+
+            filteredLocStrings.ForEach(p =>
+            {
+                p.Status = TranslationStatus.Live;
+                p.LiveTranslation = p.Translation;
+            });
+
+            context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }

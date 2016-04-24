@@ -151,6 +151,7 @@
     <Content Include="Views\Shared\EditorTemplates\LocalizedString.cshtml" />
     <Content Include="Views\Account\Home.cshtml" />
     <Content Include="Views\Translation\Partial\_FilterResources.cshtml" />
+    <Content Include="Views\Translation\Partial\_PutLiveOptions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

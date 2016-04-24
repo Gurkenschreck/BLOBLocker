@@ -1,0 +1,12 @@
+﻿
+@using (Html.BeginForm("PutLive", "Translation", FormMethod.Post))
+{
+    <text>Set localized strings to Live</text>
+    <table>
+        <tr>
+            <th>@Html.Label("Set Live for these cultures:")</th>
+            <td>@Html.TextBox("cultures")</td>
+            <td><button type="submit">Set</button></td>
+        </tr>
+    </table>
+}
