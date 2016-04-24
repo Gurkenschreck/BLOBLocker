@@ -3,6 +3,7 @@ using BLOBLocker.Code.Controllers;
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Code.ViewModels.AdminTool;
 using BLOBLocker.Entities.Models.AdminTool;
+using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
@@ -30,29 +31,32 @@ namespace BLOBLocker.AdminTool.Controllers
             translationViewModel.IsModerator = curAcc.Roles.Any(p => p.Role.Definition == "Moderator");
             translationViewModel.IsTranslator = curAcc.Roles.Any(p => p.Role.Definition == "Translator");
 
-            translationViewModel.StringResources = tivm.ApplyFilter(context.StringResources.ToList());
+            if (tivm != null)
+                translationViewModel.StringResources = tivm.ApplyFilter(context.StringResources.ToList());
+            else
+                translationViewModel.StringResources = context.StringResources.ToList();
             
             return View(translationViewModel);
         }
 
         [PreserveModelState]
         [HttpGet]
-        public ActionResult EditTranslation(string key)
+        public ActionResult EditResource(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var translation = context.StringResources.FirstOrDefault(p => p.Key == key);
-            if (translation == null)
+            var resource = context.StringResources.FirstOrDefault(p => p.Key == key);
+            if (resource == null)
             {
                 ModelState.AddModelError("key", "StringResource with key " + key + " not found.");
             }
 
             if (ModelState.IsValid)
             {
-                var etvm = new EditTranslationViewModel();
-                etvm.Key = key;
-                etvm.StringResource = translation;
+                var etvm = new EditResourceViewModel();
+                etvm.ID = resource.ID;
+                etvm.StringResource = resource;
 
                 var curAcc = atcontext.Accounts.FirstOrDefault(p => User.Identity.Name == p.Alias);
                 etvm.IsModerator = curAcc.Roles.Any(p => p.Role.Definition == "Moderator");
@@ -64,32 +68,32 @@ namespace BLOBLocker.AdminTool.Controllers
 
         [RequiredParameters("etvm")]
         [HttpPost]
-        public ActionResult EditTranslation(EditTranslationViewModel etvm)
+        public ActionResult EditResource(EditResourceViewModel etvm)
         {
-            StringResource translation = context.StringResources.FirstOrDefault(p => p.Key == etvm.Key);
+            StringResource resource = context.StringResources.FirstOrDefault(p => p.ID == etvm.ID);
             
             if (ModelState.IsValid)
             {
                 if (etvm.IsModerator)
                 {
-                    translation.Key = etvm.StringResource.Key;
-                    translation.Comment = etvm.StringResource.Comment;
-                    translation.Type = etvm.StringResource.Type;
-                    if (translation.Base != etvm.StringResource.Base)
+                    resource.Key = etvm.StringResource.Key;
+                    resource.Comment = etvm.StringResource.Comment;
+                    resource.Type = etvm.StringResource.Type;
+                    if (resource.Base != etvm.StringResource.Base)
                     {
-                        translation.Base = etvm.StringResource.Base;
+                        resource.Base = etvm.StringResource.Base;
                         if (etvm.MajorBaseChange)
                         {
-                            foreach (var lstr in translation.LocalizedStrings)
+                            foreach (var lstr in resource.LocalizedStrings)
                             {
-                                if(lstr.Translation != "nt")
+                                if(lstr.Status != TranslationStatus.New)
                                     lstr.Status = TranslationStatus.BaseModified;
                             }
                         }
                     }
                 }
 
-                foreach (var lstr in translation.LocalizedStrings)
+                foreach (var lstr in resource.LocalizedStrings)
                 {
                     var modifiedLstr = etvm.StringResource.LocalizedStrings.FirstOrDefault(p => p.ID == lstr.ID);
                     if (lstr.Translation != modifiedLstr.Translation)
@@ -101,21 +105,82 @@ namespace BLOBLocker.AdminTool.Controllers
                 context.SaveChanges();
             }
 
-            return View(etvm);
+            return RedirectToAction("EditResource", new { key = resource.Key });
         }
 
         [RequiredParameters("ntvm")]
         [PreserveModelState]
         [HttpPost]
-        public ActionResult AddTranslation(NewTranslationViewModel ntvm) 
+        public ActionResult AddResource(NewResourceViewModel ntvm) 
         {
+            StringResource sres = context.StringResources.FirstOrDefault(p => p.Key == ntvm.Key);
+            if (sres != null)
+            {
+                ModelState.AddModelError("Key", "Key already registered.");
+            }
             if (ModelState.IsValid)
             {
-                StringResource transl = ntvm.Parse();
-                context.StringResources.Add(transl);
+                sres = ntvm.Parse();
+                context.StringResources.Add(sres);
                 context.SaveChanges();
             }
             return Redirect(Request.UrlReferrer.AbsoluteUri);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult DeleteResource(string removeKey)
+        {
+            if (string.IsNullOrWhiteSpace(removeKey))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var resource = context.StringResources.FirstOrDefault(p => p.Key == removeKey);
+
+            if (resource != null)
+            {
+                context.StringResources.Remove(resource);
+                context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult ModifyUICultures(int id, string addCultures, string removeCultures)
+        {
+            StringResource sres = context.StringResources.FirstOrDefault(p => p.ID == id);
+
+            if (sres == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (!string.IsNullOrWhiteSpace(addCultures))
+            {
+                foreach (var addCult in addCultures.Split(','))
+                {
+                    if (sres.LocalizedStrings.All(p => p.UICulture != addCult))
+                    {
+                        var addLocStr = new LocalizedString();
+                        addLocStr.BaseResource = sres;
+                        addLocStr.UICulture = addCult;
+                        sres.LocalizedStrings.Add(addLocStr);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(removeCultures))
+            {
+                foreach (var removeCult in removeCultures.Split(','))
+                {
+                    if (sres.LocalizedStrings.Any(p => p.UICulture == removeCultures))
+                    {
+                        LocalizedString remLocStr = sres.LocalizedStrings.First(p => p.UICulture == removeCult);
+                        sres.LocalizedStrings.Remove(remLocStr);
+                    }
+                }
+            }
+            context.SaveChanges();
+
+            return RedirectToAction("EditResource", new { key = sres.Key });
         }
     }
 }

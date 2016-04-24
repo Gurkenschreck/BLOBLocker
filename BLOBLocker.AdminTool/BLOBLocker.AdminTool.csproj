@@ -144,13 +144,13 @@
     <Content Include="Views\Admin\EditAccount.cshtml" />
     <Content Include="Views\Shared\_NavigationMenu.cshtml" />
     <Content Include="Views\Translation\Index.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\NewTranslationViewModel.cshtml" />
-    <Content Include="Views\Translation\Partial\_AddTranslation.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\NewResourceViewModel.cshtml" />
+    <Content Include="Views\Translation\Partial\_AddResource.cshtml" />
     <Content Include="Views\Admin\Partial\_CreateAccount.cshtml" />
-    <Content Include="Views\Translation\EditTranslation.cshtml" />
+    <Content Include="Views\Translation\EditResource.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\LocalizedString.cshtml" />
     <Content Include="Views\Account\Home.cshtml" />
-    <Content Include="Views\Translation\Partial\_FilterTranslations.cshtml" />
+    <Content Include="Views\Translation\Partial\_FilterResources.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

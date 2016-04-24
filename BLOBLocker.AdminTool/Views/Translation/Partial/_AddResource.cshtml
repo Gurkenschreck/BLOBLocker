@@ -1,0 +1,7 @@
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.NewResourceViewModel
+
+@using (Html.BeginForm("AddResource", "Translation", FormMethod.Post))
+{
+    @Html.EditorFor(p => p)
+    <button type="submit">Add</button>
+}

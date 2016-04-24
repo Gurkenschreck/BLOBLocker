@@ -20,7 +20,7 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         [Key]
         public int ID { get; set; }
         [ForeignKey("BaseResource")]
-        public string BaseResourceKey { get; set; }
+        public int BaseResourceKey { get; set; }
         public virtual StringResource BaseResource { get; set; }
         public string UICulture { get; set; }
         public string Translation { get; set; }

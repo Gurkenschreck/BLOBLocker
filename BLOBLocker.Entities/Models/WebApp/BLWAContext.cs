@@ -69,7 +69,11 @@ namespace BLOBLocker.Entities.Models.WebApp
                 .WithRequiredPrincipal(t => t.Owner)
                 .WillCascadeOnDelete(false);
 
-
+            modelBuilder.Entity<LocalizedString>()
+                .HasRequired(p => p.BaseResource)
+                .WithMany()
+                .HasForeignKey(p => p.BaseResourceKey)
+                .WillCascadeOnDelete(false);
         }
     }
 }

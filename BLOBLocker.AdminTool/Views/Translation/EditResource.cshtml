@@ -1,16 +1,16 @@
-﻿@model BLOBLocker.Code.ViewModels.AdminTool.EditTranslationViewModel
+﻿@model BLOBLocker.Code.ViewModels.AdminTool.EditResourceViewModel
 
 @{
-    ViewBag.Title = "EditTranslation";
+    ViewBag.Title = "Edit Resource";
 }
 
-<h2>EditTranslation</h2>
+<h2>Edit Resource</h2>
 
-@Html.ActionLink("Back to translation table", "Index")
+@Html.ActionLink("Back to resource table", "Index")
 
 <hr />
 
-@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Post)) {
+@using (Html.BeginForm("EditResource", "Translation", FormMethod.Post)) {
     if (Model.IsModerator) { 
         <table>
             <tr>
@@ -53,6 +53,27 @@
     @Html.EditorFor(p => p.StringResource.LocalizedStrings)
     
     <br />
-    @Html.HiddenFor(p => p.Key) @Html.HiddenFor(p => p.IsModerator)
-    <button type="submit">Translate</button>
+    @Html.HiddenFor(p => p.ID) @Html.HiddenFor(p => p.IsModerator)
+    <button type="submit">Apply</button>
+}
+
+@using (Html.BeginForm("ModifyUICultures", "Translation", FormMethod.Post))
+{
+    <table>
+        <tr>
+            <th>Add cultures:</th>
+            <td>@Html.TextBox("addCultures")</td>
+            <th>Remove cultures:</th>
+            <td>@Html.TextBox("removeCultures")</td>
+            <td><button type="submit">Add or remove cultures</button> @Html.AntiForgeryToken() @Html.HiddenFor(p => p.ID)</td>
+        </tr>
+    </table>
+}
+<br /><br />
+<hr />
+
+@using (Html.BeginForm("DeleteResource", "Translation", FormMethod.Post))
+{
+    <button type="submit" value="@Model.StringResource.Key" name="removeKey" style="background-color:#ff4343; border:1px solid black;">Delete</button>
+    @Html.AntiForgeryToken()
 }

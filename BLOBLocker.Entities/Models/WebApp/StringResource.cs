@@ -18,6 +18,7 @@ namespace BLOBLocker.Entities.Models.WebApp
         }
 
         [Key]
+        public int ID { get; set; }
         [Required]
         public string Key { get; set; }
         public TranslationType Type { get; set; }

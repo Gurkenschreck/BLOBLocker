@@ -7,44 +7,44 @@
 @Html.ValidationSummary()
 
 @if (Model.IsModerator) { 
-    @Html.Partial("_AddTranslation", new BLOBLocker.Code.ViewModels.AdminTool.NewTranslationViewModel())
+    @Html.Partial("_AddResource", new BLOBLocker.Code.ViewModels.AdminTool.NewResourceViewModel())
 }
 
 <hr />
 
-@Html.Partial("_FilterTranslations", Model.Filter)
+@Html.Partial("_FilterResources", Model.Filter)
 
 <hr />
 
-@using (Html.BeginForm("EditTranslation", "Translation", FormMethod.Get)) 
+@using (Html.BeginForm("EditResource", "Translation", FormMethod.Get)) 
 { 
     <table border="1" style="width:100%;">
         <tr>
-            <td colspan="2">Roles @(Model.IsModerator?"Moderator,":"") @(Model.IsTranslator?"Translator":"")</td>
+            <td colspan="2">Roles @(Model.IsModerator ? "Moderator," : "") @(Model.IsTranslator ? "Translator" : "")</td>
         </tr>
         <tr>
             <td>@Html.Label("Basic Resources")</td>
             <td>@Html.Label("Localized Strings")</td>
         </tr>
 
-        @foreach (var trans in Model.StringResources)
+        @foreach (var resource in Model.StringResources)
         {
             <tr>
                 <td>
                     <table border="1" style="width:100%;">
                         <tr>
-                            <td><button type="submit" value="@trans.Key" name="key">Edit</button></td>
-                            <td>@trans.Key</td>
-                            <td>@trans.Base</td>
-                            <td>@trans.Type</td>
-                            <td>@trans.Comment</td>
-                            <td>@Convert.ToBase64String(trans.Version)</td>
+                            <td><button type="submit" value="@resource.Key" name="key">Edit</button></td>
+                            <td>@resource.Key</td>
+                            <td>@resource.Base</td>
+                            <td>@resource.Type</td>
+                            <td>@resource.Comment</td>
+                            <td>@Convert.ToBase64String(resource.Version)</td>
                         </tr>
                     </table>
                 </td>
                 <td>
                     <table border="1" style="width:100%";>
-                        @foreach (var locStr in trans.LocalizedStrings)
+                        @foreach (var locStr in resource.LocalizedStrings)
                         {
                             <tr>
                                 <td>@locStr.UICulture</td>

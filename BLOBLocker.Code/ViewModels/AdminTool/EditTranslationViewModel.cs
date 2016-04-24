@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace BLOBLocker.Code.ViewModels.AdminTool
 {
-    public class EditTranslationViewModel
+    public class EditResourceViewModel
     {
-        public string Key { get; set; }
+        public int ID { get; set; }
         public bool IsModerator { get; set; }
         public StringResource StringResource { get; set; }
         public bool MajorBaseChange { get; set; }

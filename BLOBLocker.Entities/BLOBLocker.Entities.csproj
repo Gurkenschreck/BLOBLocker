@@ -57,6 +57,14 @@
     <Compile Include="Migrations\201604232304324_ATInitial.Designer.cs">
       <DependentUpon>201604232304324_ATInitial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604240148012_WAChangeResourceKey.cs" />
+    <Compile Include="Migrations\201604240148012_WAChangeResourceKey.Designer.cs">
+      <DependentUpon>201604240148012_WAChangeResourceKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604240245064_WARenamedBaseResourceKey.cs" />
+    <Compile Include="Migrations\201604240245064_WARenamedBaseResourceKey.Designer.cs">
+      <DependentUpon>201604240245064_WARenamedBaseResourceKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -96,6 +104,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604232304324_ATInitial.resx">
       <DependentUpon>201604232304324_ATInitial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604240148012_WAChangeResourceKey.resx">
+      <DependentUpon>201604240148012_WAChangeResourceKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604240245064_WARenamedBaseResourceKey.resx">
+      <DependentUpon>201604240245064_WARenamedBaseResourceKey.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

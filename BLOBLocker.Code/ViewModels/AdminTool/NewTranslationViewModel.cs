@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace BLOBLocker.Code.ViewModels.AdminTool
 {
-    public class NewTranslationViewModel
+    public class NewResourceViewModel
     {
-        public NewTranslationViewModel()
+        public NewResourceViewModel()
         {
             Base = "nt";
             Comment = "-";
             Type = TranslationType.Global;
-            Languages = "de,pl,es";
+            Languages = "en,de,pl,es";
         }
 
         [Required]
@@ -38,10 +38,13 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
 
             foreach (var lang in langs)
             {
-                LocalizedString lstr = new LocalizedString();
-                lstr.BaseResource = translation;
-                lstr.UICulture = lang;
-                translation.LocalizedStrings.Add(lstr);
+                if (translation.LocalizedStrings.All(p => p.UICulture != lang))
+                {
+                    LocalizedString lstr = new LocalizedString();
+                    lstr.BaseResource = translation;
+                    lstr.UICulture = lang;
+                    translation.LocalizedStrings.Add(lstr);
+                }
             }
 
             return translation;
