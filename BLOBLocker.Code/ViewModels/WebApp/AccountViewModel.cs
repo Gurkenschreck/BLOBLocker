@@ -4,32 +4,31 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using BLOBLocker.Code.Extention;
 
 namespace BLOBLocker.Code.ViewModels.WebApp
 {
     public class AccountViewModel : IValidatableObject
     {
         [Required]
-        [Display(Name="Account_Alias",
-            ResourceType=typeof(BLOBLocker.Entities.Models.Resources.Models))]
+        [LocalizedDisplayName("Account.Alias")]
         public string Alias { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        [LocalizedDisplayName("Account_Password")]
+        [LocalizedDisplayName("Account.Password")]
         public string Password { get; set; }
-        [Display(Name = "AccountAddition_ContactEmail",
-            ResourceType = typeof(BLOBLocker.Entities.Models.Resources.Models))]
+        [LocalizedDisplayName("Account.Email")]
         public string ContactEmail { get; set; }
-
+        [LocalizedDisplayName("Account.RegistrationCode")]
         public string RegistrationCode { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (string.IsNullOrWhiteSpace(Alias))
-                yield return new ValidationResult("Alias cannot be empty or white string", new[] { "Alias" });
+                yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.EmptyAliasError").As<string>(), new[] { "Alias" });
             
             if(string.IsNullOrEmpty(Password))
-                yield return new ValidationResult("Password cannot be empty", new[] { "Password" });
+                yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.EmptyPasswordError").As<string>(), new[] { "Password" });
         }
     }
 }

@@ -15,11 +15,7 @@ namespace BLOBLocker.Entities.Models.WebApp
         }
 
         public int ID { get; set; }
-        [Display(Name = "Notification_Description",
-            ResourceType = typeof(Resources.Models))]
         public string Description { get; set; }
-        [Display(Name = "Notification_CreatedOn",
-            ResourceType = typeof(Resources.Models))]
         public Nullable<DateTime> CreatedOn { get; set; }
         public bool IsVisible { get; set; }
     }

@@ -16,24 +16,12 @@ namespace BLOBLocker.Entities.Models.WebApp
         }
         [Key]
         public int ID { get; set; }
-        [Display(Name = "AccountAddition_Contacts",
-            ResourceType = typeof(Resources.Models))]
         public virtual ICollection<Contact> Contacts { get; set; }
-        [Display(Name = "AccountAddition_Notifications",
-            ResourceType = typeof(Resources.Models))]
         public virtual ICollection<Notification> Notifications { get; set; }
-        [Display(Name = "AccountAddition_ContactEmail",
-            ResourceType = typeof(Resources.Models))]
         public string ContactEmail { get; set; }
 
-        [Display(Name = "AccountAddition_LastLogin",
-            ResourceType = typeof(Resources.Models))]
         public Nullable<DateTime> LastLogin { get; set; }
-        [Display(Name = "AccountAddition_LastFailedLogin",
-            ResourceType = typeof(Resources.Models))]
         public Nullable<DateTime> LastFailedLogin { get; set; }
-        [Display(Name = "AccountAddition_CreatedOn",
-            ResourceType = typeof(Resources.Models))]
         public Nullable<DateTime> CreatedOn { get; set; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.AccountViewModel
 @{
-    ViewBag.Title = BLOBLocker.WebApp.Resources.Account.Strings.PageRegisterTitle;
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.Registration");
 }
 
-<h2>SignUp</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>
     @Html.ValidationSummary()
@@ -13,11 +13,11 @@
 {
     <table>
         <tr>
-            <th>@Html.LabelFor(model => model.Alias) *:</th>
+            <th>@Html.LabelFor(model => model.Alias)</th>
             <td>@Html.EditorFor(model => model.Alias)</td>
         </tr>
         <tr>
-            <th>@Html.LabelFor(model => model.Password) *:</th>
+            <th>@Html.LabelFor(model => model.Password)</th>
             <td>@Html.PasswordFor(model => model.Password)</td>
         </tr>
         <tr>
@@ -27,7 +27,7 @@
         @if (ViewBag.IsRegistrationRestricted)
         {
             <tr>
-                <th>@BLOBLocker.WebApp.Resources.Account.Strings.RegistrationCodeLabel *:</th>
+                <th>@HttpContext.GetGlobalResourceObject(null, "Account.RegistrationCode")</th>
                 <td>@Html.TextBox("registrationCode", "")</td>
             </tr>
         }

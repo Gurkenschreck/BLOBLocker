@@ -11,6 +11,6 @@ namespace BLOBLocker.Entities.Models.WebApp
         New = 0,        // New string
         Translated,     // Finished with translating
         BaseModified,   // Base has been changed, translations have to be checked
-        Live            // Currently on production
+        Live            // Currently displayed
     }
 }

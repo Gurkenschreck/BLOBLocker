@@ -18,48 +18,29 @@
 
 <hr />
 
-@using (Html.BeginForm("EditResource", "Translation", FormMethod.Get)) 
-{ 
-    <table border="1" style="width:100%;">
-        <tr>
-            <td colspan="2">Roles @(Model.IsModerator ? "Moderator," : "") @(Model.IsTranslator ? "Translator" : "")</td>
-        </tr>
-        <tr>
-            <td>@Html.Label("Basic Resources")</td>
-            <td>@Html.Label("Localized Strings")</td>
-        </tr>
-
+@using (Html.BeginForm("EditResource", "Translation", FormMethod.Get))
+{
+    <table border="1" style="width: 100%; padding:5px;">
         @foreach (var resource in Model.StringResources)
         {
             <tr>
-                <td>
-                    <table border="1" style="width:100%;">
-                        <tr>
-                            <td><button type="submit" value="@resource.Key" name="key">Edit</button></td>
-                            <td>@resource.Key</td>
-                            <td>@resource.Base</td>
-                            <td>@resource.Type</td>
-                            <td>@resource.Comment</td>
-                            <td>@Convert.ToBase64String(resource.Version)</td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table border="1" style="width:100%";>
-                        @foreach (var locStr in resource.LocalizedStrings)
-                        {
-                            <tr>
-                                <td>@locStr.UICulture</td>
-                                <td>@locStr.Translation</td>
-                                <td>@locStr.LiveTranslation</td>
-                                <td>@locStr.Status</td>
-                                <td>@Convert.ToBase64String(locStr.Version)</td>
-                            </tr>
-                        }
-                    </table>
-                </td>
+                <td><button type="submit" value="@resource.Key" name="key">Edit</button></td>
+                <th>@resource.Key</th>
+                <th>@resource.Base</th>
+                <th>@resource.Type</th>
+                <th>@resource.Comment</th>
+                <th>@Convert.ToBase64String(resource.Version)</th>
             </tr>
+            foreach (var locStr in resource.LocalizedStrings)
+            {
+                <tr>
+                    <td>@locStr.UICulture</td>
+                    <td>@locStr.Translation</td>
+                    <td>@locStr.LiveTranslation</td>
+                    <td>@locStr.Status</td>
+                    <td>@Convert.ToBase64String(locStr.Version)</td>
+                </tr>
+            }
         }
-    
     </table>
 }

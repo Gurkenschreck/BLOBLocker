@@ -10,8 +10,6 @@ namespace BLOBLocker.Entities.Models.WebApp
     public class AccountRole
     {
         public int ID { get; set; }
-        [Display(Name = "AccountRole_RoleDefinition",
-            ResourceType = typeof(Resources.Models))]
         public string Definition { get; set; }
     }
 }
