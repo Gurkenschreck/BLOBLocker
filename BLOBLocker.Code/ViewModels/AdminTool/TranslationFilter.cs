@@ -10,6 +10,7 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
     public class TranslationFilter
     {
         public string SearchKey { get; set; }
+        public string SearchCultures { get; set; }
         public TranslationType? TranslationType { get; set; }
         public TranslationStatus? TranslationStatus { get; set; }
 
@@ -29,8 +30,28 @@ namespace BLOBLocker.Code.ViewModels.AdminTool
 
             if (TranslationStatus != null)
             {
-                leftOver = leftOver.Where(p => p.LocalizedStrings
+                if (SearchCultures != null)
+                {
+                    foreach (var culture in SearchCultures.Replace(" ", "").Split(','))
+                    {
+                        leftOver = leftOver.Where(p => p.LocalizedStrings.Any(q => q.UICulture == culture && q.Status == TranslationStatus));
+                    }
+                }
+                else
+                {
+                    leftOver = leftOver.Where(p => p.LocalizedStrings
                                                 .Any(q => q.Status == TranslationStatus));
+                }
+            }
+            else
+            {
+                if (SearchCultures != null)
+                {
+                    foreach (var culture in SearchCultures.Replace(" ", "").Split(','))
+                    {
+                        leftOver = leftOver.Where(p => p.LocalizedStrings.Any(q => q.UICulture == SearchCultures));
+                    }
+                }
             }
 
             return leftOver.ToList();

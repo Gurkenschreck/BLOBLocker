@@ -17,6 +17,12 @@
                 @Html.EnumDropDownListFor(p => p.TranslationType)
             </td>
             <th>
+                @Html.LabelFor(p => p.SearchCultures)
+            </th>
+            <td>
+                @Html.EditorFor(p => p.SearchCultures)
+            </td>
+            <th>
                 @Html.LabelFor(p => p.TranslationStatus)
             </th>
             <td>
