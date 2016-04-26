@@ -25,10 +25,10 @@
         {
             <tr>
                 <td><button type="submit" value="@resource.Key" name="key">Edit</button></td>
-                <th>@resource.Key</th>
-                <th>@resource.Base</th>
-                <th>@resource.Type</th>
-                <th>@resource.Comment</th>
+                <th>Key: @resource.Key</th>
+                <th>Base: @resource.Base</th>
+                <th>Type: @resource.Type</th>
+                <th>Comment: @resource.Comment</th>
             </tr>
             foreach (var locStr in resource.LocalizedStrings)
             {
@@ -37,7 +37,7 @@
                     <td>@locStr.Translation</td>
                     <td>@locStr.LiveTranslation</td>
                     <td>@locStr.Status</td>
-                    <td>@Convert.ToBase64String(locStr.Version)</td>
+                    <td>Version: @Convert.ToBase64String(locStr.Version)</td>
                 </tr>
             }
         }

@@ -11,18 +11,16 @@
         selectedItem.Selected = true;
     }
 }
+@using BLOBLocker.Code.Extention;
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewBag.Title - BLOBLocker</title>
-        @Styles.Render("~/Content/css")
-        @Scripts.Render("~/bundles/modernizr")
-        @Scripts.Render("~/bundles/jquery")
         <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
         <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        <script src="~/Scripts/modernizr-2.6.2.js"></script>
     </head>
 
     <body>
@@ -49,19 +47,18 @@
                 </div>
             </div>
         </div>
-        IP: @Request.UserHostAddress UA: @Request.UserAgent @Request.Browser.Browser
         <noscript>
-            @BLOBLocker.WebApp.Resources.Global.NoScriptDisclaimer
+            @HttpContext.GetGlobalResourceObject(null, "Label.NoScriptDisclaimer")
             <hr />
         </noscript>
         <p>
         @if(HttpContext.Current.User.Identity.IsAuthenticated)
         {
-            <span>@Html.ActionLink("Panel Overview", "Index", "Panel") - @HttpContext.Current.User.Identity.Name - @Html.ActionLink("Settings", "Overview", "Account") - @Html.ActionLink("logout", "SignOut", "Account")</span>
+            <span>@Html.ActionLink("Panel Overview", "Index", "Panel") - @HttpContext.Current.User.Identity.Name - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.AccountSettings").As<string>(), "Overview", "Account") - @Html.ActionLink("logout", "SignOut", "Account")</span>
         }
         else{
-            <span>@BLOBLocker.WebApp.Resources.Global.NotLoggedIn @Html.ActionLink(BLOBLocker.WebApp.Resources.Global.LoginText, "Login", "Account") 
-            - @Html.ActionLink(BLOBLocker.WebApp.Resources.Global.SignUpText, "SignUp", "Account")</span>
+            <span>@HttpContext.GetGlobalResourceObject(null, "Label.NotLoggedIn") @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignIn").As<string>(), "SignIn", "Account") 
+            - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignUp").As<string>(), "SignUp", "Account")</span>
         }
         </p>
         <p><span style="float:right;" id="counter">

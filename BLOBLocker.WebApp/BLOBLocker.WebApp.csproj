@@ -298,7 +298,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\SignUp.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\SignIn.cshtml" />
     <Content Include="Views\Account\SignOut.cshtml" />
     <Content Include="Views\Account\Overview.cshtml" />
     <Content Include="Views\Panel\Index.cshtml" />

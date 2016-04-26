@@ -1,9 +1,9 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.AccountViewModel
 @{
-    ViewBag.Title = BLOBLocker.WebApp.Resources.Account.Strings.PageLoginTitle;
+    ViewBag.Title = @HttpContext.GetGlobalResourceObject(null, "PageTitle.SignIn");
 }
 
-<h2>SignIn</h2>
+<h2>@ViewBag.Title</h2>
 
 @using (Html.BeginForm())
 {
@@ -21,7 +21,7 @@
         </tr>
         <tr>
             <td>@Html.AntiForgeryToken()</td>
-            <td><input type="submit" value="@BLOBLocker.WebApp.Resources.Account.Strings.btn_SignIn" /></td>
+            <td><button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.SignIn")</button></td>
         </tr>
     </table>
 }

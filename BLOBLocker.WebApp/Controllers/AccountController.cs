@@ -106,14 +106,14 @@ namespace BLOBLocker.WebApp.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult Login()
+        public ActionResult SignIn()
         {
             return View();
         }
 
         [RequiredParameters("acc")]
         [ValidateAntiForgeryToken, AllowAnonymous, HttpPost]
-        public ActionResult Login(AccountViewModel acc)
+        public ActionResult SignIn(AccountViewModel acc)
         {
             bool loginEnabled = HttpContext.Application["system.EnableLogin"].As<bool>();
             if (!loginEnabled)

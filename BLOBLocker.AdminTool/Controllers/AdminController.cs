@@ -85,7 +85,7 @@ namespace BLOBLocker.AdminTool.Controllers
             return View(accs);
         }
 
-        [RequiredParameters("resourceID")]
+        [RequiredParameters("id")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult EditAccount(int id)
@@ -104,6 +104,7 @@ namespace BLOBLocker.AdminTool.Controllers
             return View(aeam);
         }
 
+        [RequiredParameters("aeam")]
         [HttpPost]
         public ActionResult AddOrChangeAccount(AdminEditAccountModel aeam, bool add)
         {

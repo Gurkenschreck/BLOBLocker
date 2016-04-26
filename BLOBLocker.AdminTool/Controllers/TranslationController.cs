@@ -155,7 +155,7 @@ namespace BLOBLocker.AdminTool.Controllers
             if (resource == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            foreach (var cult in cultures.Trim().Split(','))
+            foreach (var cult in cultures.Replace(" ", "").Split(','))
             {
                 if (resource.LocalizedStrings.Any(p => p.UICulture == cult))
                 {
@@ -180,7 +180,7 @@ namespace BLOBLocker.AdminTool.Controllers
 
             if (!string.IsNullOrWhiteSpace(addCultures))
             {
-                foreach (var addCult in addCultures.Trim().Split(','))
+                foreach (var addCult in addCultures.Replace(" ", "").Split(','))
                 {
                     if (sres.LocalizedStrings.All(p => p.UICulture != addCult))
                     {
@@ -194,7 +194,7 @@ namespace BLOBLocker.AdminTool.Controllers
 
             if (!string.IsNullOrWhiteSpace(removeCultures))
             {
-                foreach (var removeCult in removeCultures.Trim().Split(','))
+                foreach (var removeCult in removeCultures.Replace(" ", "").Split(','))
                 {
                     if (sres.LocalizedStrings.Any(p => p.UICulture == removeCultures))
                     {
@@ -228,7 +228,7 @@ namespace BLOBLocker.AdminTool.Controllers
             }
 
             List<LocalizedString> filteredLocStrings = new List<LocalizedString>();
-            foreach (var c in cultures.Trim().Split(','))
+            foreach (var c in cultures.Replace(" ", "").Split(','))
             {
                 foreach (var locStr in locStrings)
                 {
