@@ -21,6 +21,7 @@
         <title>@ViewBag.Title - BLOBLocker</title>
         <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
         <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        @Scripts.Render("~/bundles/jquery")
     </head>
 
     <body>
@@ -64,7 +65,7 @@
         <p><span style="float:right;" id="counter">
             @using (Html.BeginForm("SetSessionCulture", "Globalization", FormMethod.Get))
             {
-                @Html.DropDownList("culture", cultures)
+                @Html.DropDownList("culture", cultures, new { onchange="this.form.submit();" })
                 <input type="submit" value="Ok" />
             }
             </span>
