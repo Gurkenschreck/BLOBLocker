@@ -11,7 +11,7 @@
             <th>@Html.Label("Assigned memory (MB)")</th>
             <th>@Html.Label("Participants")</th>
         </tr>
-        @foreach (var fp in Model.Where(p => p.IsActive))
+        @foreach (var fp in Model)
         {
             <tr style="text-align:center;">
                 <td>@fp.Pool.Title</td>

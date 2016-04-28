@@ -18,28 +18,25 @@
 
 <hr />
 
-@using (Html.BeginForm("EditResource", "Translation", FormMethod.Get))
-{
-    <table border="1" style="width: 100%; padding:5px;">
-        @foreach (var resource in Model.StringResources)
+<table border="1" style="width: 100%; padding:5px;">
+    @foreach (var resource in Model.StringResources)
+    {
+        <tr>
+            <td>@Html.ActionLink("Edit", "EditResource", new { key=resource.Key }) | @Html.ActionLink("Δ", "EditResource", new { key = resource.Key }, new { target = "_blank" })</td>
+            <th>Key: @resource.Key</th>
+            <th>Base: @resource.Base</th>
+            <th>Type: @resource.Type</th>
+            <th>Comment: @resource.Comment</th>
+        </tr>
+        foreach (var locStr in resource.LocalizedStrings)
         {
             <tr>
-                <td><button type="submit" value="@resource.Key" name="key">Edit</button></td>
-                <th>Key: @resource.Key</th>
-                <th>Base: @resource.Base</th>
-                <th>Type: @resource.Type</th>
-                <th>Comment: @resource.Comment</th>
+                <td>@locStr.UICulture</td>
+                <td>@locStr.Translation</td>
+                <td>@locStr.LiveTranslation</td>
+                <td>@locStr.Status</td>
+                <td>Version: @Convert.ToBase64String(locStr.Version)</td>
             </tr>
-            foreach (var locStr in resource.LocalizedStrings)
-            {
-                <tr>
-                    <td>@locStr.UICulture</td>
-                    <td>@locStr.Translation</td>
-                    <td>@locStr.LiveTranslation</td>
-                    <td>@locStr.Status</td>
-                    <td>Version: @Convert.ToBase64String(locStr.Version)</td>
-                </tr>
-            }
         }
-    </table>
-}
+    }
+</table>

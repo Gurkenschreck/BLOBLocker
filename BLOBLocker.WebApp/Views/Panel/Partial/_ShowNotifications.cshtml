@@ -6,14 +6,11 @@
 
         @foreach (BLOBLocker.Entities.Models.WebApp.Notification not in Model)
         {
-            if (not.IsVisible)
-            {
-                <tr>
-                    <td>@not.Description</td>
-                    <td>@not.CreatedOn</td>
-                    <td><button type="submit" name="id" value="@not.ID">X</button></td>
-                </tr>
-            }
+            <tr>
+                <td>@not.Description</td>
+                <td>@not.CreatedOn</td>
+                <td><button type="submit" name="id" value="@not.ID">X</button></td>
+            </tr>
         }
     </table>
 

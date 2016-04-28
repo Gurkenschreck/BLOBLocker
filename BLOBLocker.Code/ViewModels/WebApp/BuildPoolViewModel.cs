@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Code.Membership;
+﻿using BLOBLocker.Code.Attributes;
+using BLOBLocker.Code.Membership;
 using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,17 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [Required]
         [MinLength(1, ErrorMessage="Title cannot be empty.")]
         [MaxLength(64, ErrorMessage="Title too long.")]
+        [LocalizedDisplayName("Pool.Title")]
         public string Title { get; set; }
+        [LocalizedDisplayName("Pool.Description")]
         public string Description { get; set; }
-        [Display(Name="Is filestorage enabled")]
+        [LocalizedDisplayName("Pool.IsStorageEnabled")]
         public bool IsFileStorageEnabled { get; set; }
-        [Display(Name = "Is chat enabled")]
+        [LocalizedDisplayName("Pool.IsChatEnabled")]
         public bool IsChatEnabled { get; set; }
-        [Display(Name = "Is Linkrepo enabled")]
+        [LocalizedDisplayName("Pool.IsLinkRepositoryEnabled")]
         public bool IsLinkRepositoryEnabled { get; set; }
+        [LocalizedDisplayName("Pool.PoolRights")]
         public ICollection<PoolRightViewModel> Rights { get; set; }
 
         public Pool Generate()

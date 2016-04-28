@@ -1,12 +1,12 @@
-﻿@model BLOBLocker.Entities.Models.WebApp.Account
+﻿@model BLOBLocker.Code.ViewModels.WebApp.PanelIndexViewModel
 @{
-    ViewBag.Title = BLOBLocker.WebApp.Resources.Panel.Strings.PageTitle;
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.PanelIndex");
 }
 
-<h2>Control Panel</h2>
+<h2>@ViewBag.Title</h2>
 
 
-@BLOBLocker.WebApp.Resources.Panel.Strings.AddAccount
+@HttpContext.GetGlobalResourceObject(null, "Label.AddAccountToContacts")
 <p>
     @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
     {
@@ -17,12 +17,12 @@
         <input type="submit" value="@BLOBLocker.WebApp.Resources.Panel.Strings.btn_AddAccount" />
     }
 </p>
-@BLOBLocker.WebApp.Resources.Panel.Strings.ShareWith
+@HttpContext.GetGlobalResourceObject(null, "Label.ShareContacts")
 <p>
     @using (Html.BeginForm("ShareContacts", "Panel", FormMethod.Post))
     {
         Html.ValidationSummary();
-        <text>@BLOBLocker.WebApp.Resources.Panel.Strings.lbl_ShareWith @Html.TextBox("shareWithAlias")</text>
+        <text>@HttpContext.GetGlobalResourceObject(null, "Label.ShareWith") @Html.TextBox("shareWithAlias")</text>
         @Html.AntiForgeryToken()
         <input type="submit" value="@BLOBLocker.WebApp.Resources.Panel.Strings.btn_ShareWith" />
     }
@@ -35,7 +35,7 @@
 <hr />
 @BLOBLocker.WebApp.Resources.Panel.Strings.Notifications
 <p>
-    @Html.Partial("_ShowNotifications", Model.Addition.Notifications)
+    @Html.Partial("_ShowNotifications", Model.Notifications)
 </p>
 <hr />
 <p>

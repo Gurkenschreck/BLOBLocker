@@ -1,11 +1,12 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.PoolOverviewViewModel
 @using BLOBLocker.Code.Membership
+@using BLOBLocker.Code.Extention
 @{
-    ViewBag.Title = "Pool";
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolMain");
     int rights = ViewBag.Rights;
 }
 
-<h2>Pool - @Model.Title - @Model.OverallAssignedPoolSpace MB<small> - @Html.ActionLink("Settings", "PoolConfig", new { puid = Model.PUID })</small></h2>
+<h2>Pool - @Model.Title - @Model.OverallAssignedPoolSpace MB<small> - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.PoolSettings").As<string>(), "PoolConfig", new { puid = Model.PUID })</small></h2>
 <div style="background-color:#9cf3ff;">
     @Html.Raw(Model.Description)
 </div>
@@ -28,7 +29,7 @@
 
 @if (PoolRightHelper.HasRight(rights, PoolRight.ViewParticipants)) { 
     <ul>
-        @foreach(var usr in Model.Participants.Where(p => p.IsActive))
+        @foreach(var usr in Model.Participants)
         {
             <li>@usr.SharedWith.Alias</li>
         }

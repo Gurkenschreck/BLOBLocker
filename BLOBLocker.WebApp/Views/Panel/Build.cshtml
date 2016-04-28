@@ -1,9 +1,10 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.BuildPoolViewModel
 @{
-    ViewBag.Title = "Build pool";
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.BuildPool");
 }
 
-<h2>Build your very own pool!</h2>
+<h2>@HttpContext.GetGlobalResourceObject(null, "Label.BuildPoolHead")</h2>
+
 
 
 @using(Html.BeginForm())
@@ -31,7 +32,7 @@
 
         <tr>
             <td>@Html.AntiForgeryToken()</td>
-            <td><button type="submit">Start building!</button></td>
+            <td><button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.BuildPool")</button></td>
         </tr>
     </table>
 }

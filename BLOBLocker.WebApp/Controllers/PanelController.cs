@@ -36,7 +36,12 @@ namespace BLOBLocker.WebApp.Controllers
         {
             accRepo = new AccountRepository(context);
             var acc = accRepo.GetAccount(HttpContext.User.Identity.Name);
-            return View(acc);
+
+            PanelIndexViewModel pivm = new PanelIndexViewModel();
+            pivm.Pools = acc.Pools.Where(p => p.IsActive);
+            pivm.PoolShares = acc.PoolShares.Where(p => p.IsActive);
+            pivm.Notifications = acc.Addition.Notifications.Where(p => p.IsVisible);
+            return View(pivm);
         }
 
         [RequiredParameters("revm")]
