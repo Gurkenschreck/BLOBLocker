@@ -103,6 +103,7 @@
     <Compile Include="ViewModels\WebApp\InvitationViewModel.cs" />
     <Compile Include="ViewModels\WebApp\MemoryViewModel.cs" />
     <Compile Include="ViewModels\WebApp\MessageViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\PanelIndexViewModel.cs" />
     <Compile Include="ViewModels\WebApp\PoolConfigModel.cs" />
     <Compile Include="ViewModels\WebApp\PoolOverviewViewModel.cs" />
     <Compile Include="ViewModels\WebApp\RightsEditViewModel.cs" />

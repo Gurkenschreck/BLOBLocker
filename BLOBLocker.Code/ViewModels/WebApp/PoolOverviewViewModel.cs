@@ -38,7 +38,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
             IsChatEnabled = corPool.ChatEnabled;
             IsFileStorageEnabled = corPool.FileStorageEnabled;
             IsLinkRepoEnabled = corPool.LinkRepositoryEnabled;
-            Participants = corPool.Participants.Where(p => p.IsActive);
+            Participants = corPool.Participants.Where(p => p.IsActive).ToList();
             PUID = corPool.UniqueIdentifier;
         }
     }
