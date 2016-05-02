@@ -1,7 +1,7 @@
-﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.PoolShare>
+﻿@model IEnumerable<BLOBLocker.Entities.Models.WebApp.PoolShare>
 
 <h4>All pools</h4>
-@if (Model.Count > 0)
+@if (Model.Count() > 0)
 {
     <table border="1">
         <tr>
@@ -27,5 +27,5 @@
 }
 else
 {
-    <text>You don't have access to any pools.</text>
+    @HttpContext.GetGlobalResourceObject(null, "Label.NoPoolShares")
 }

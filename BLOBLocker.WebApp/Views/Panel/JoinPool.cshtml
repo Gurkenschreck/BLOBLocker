@@ -1,21 +1,18 @@
-﻿@model BLOBLocker.Entities.Models.WebApp.Pool
+﻿
 @{
-    ViewBag.Title = "JoinPool";
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.JoinPool");
 }
 
-<h2>JoinPool</h2>
+<h2>@ViewBag.Title</h2>
 
-<h2>Insufficient Permissions</h2>
+<h3>@HttpContext.GetGlobalResourceObject(null, "Label.JoinPoolHeader")</h3>
 
 <p>
-    You are not invited to this party....
+    @HttpContext.GetGlobalResourceObject(null, "Label.CannotOpenPool")
 </p>
-<p>
-    ... however, you could ask for an invitation!
-</p>
-<p>
-    But I don't want to tell you how, yet.
-</p>
-<p>
-    @Html.ValidationSummary()
-</p>
+
+Possible future features here:
+<ul>
+    <li>Join per passphrase/code</li>
+    <li>Don't join at all</li>
+</ul>

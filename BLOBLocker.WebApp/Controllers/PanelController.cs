@@ -38,6 +38,7 @@ namespace BLOBLocker.WebApp.Controllers
             var acc = accRepo.GetAccount(HttpContext.User.Identity.Name);
 
             PanelIndexViewModel pivm = new PanelIndexViewModel();
+            pivm.Addition = acc.Addition;
             pivm.Pools = acc.Pools.Where(p => p.IsActive);
             pivm.PoolShares = acc.PoolShares.Where(p => p.IsActive);
             pivm.Notifications = acc.Addition.Notifications.Where(p => p.IsVisible);
@@ -198,9 +199,6 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpPost]
         public ActionResult RemoveAssigned(int assid, string puid)
         {
-            if (assid < 0)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
             var not = context.AssignedMemory.FirstOrDefault(p => p.ID == assid);
             if(not !=  null)
             {
@@ -289,7 +287,8 @@ namespace BLOBLocker.WebApp.Controllers
             Account curAcc = accRepo.GetAccount(User.Identity.Name);
             MemoryViewModel mvm = new MemoryViewModel();
             mvm.TotalPoolMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum();
-            mvm.AssignedMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).ToList();
+            mvm.MemoryOverviewModel.PUID = puid;
+            mvm.MemoryOverviewModel.Memory = curPool.AssignedMemory.Where(p => p.IsEnabled).ToList();
             mvm.FreeBasicMemory = curAcc.MemoryPool.BasicSpace - curAcc
                 .MemoryPool.AssignedMemory
                 .Where(p => p.IsBasic && p.IsEnabled)
@@ -358,15 +357,13 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpGet]
         public ActionResult JoinPool(string puid)
         {
-            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
-            return View(corPool);
+            return View();
         }
 
+        [RequiredParameters("puid")]
         [HttpGet]
         public ActionResult Pool(string puid)
         {
-            if (string.IsNullOrWhiteSpace(puid))
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
             if (corPool == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
@@ -410,17 +407,15 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("JoinPool", new { puid = corPool.UniqueIdentifier });
         }
 
+        [RequiredParameters("puid")]
         [RestoreModelState]
         [HttpGet]
         public ActionResult PoolConfig(string puid)
         {
-            if (string.IsNullOrWhiteSpace(puid))
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
             if (corPool == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
-            
             accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetAccount(User.Identity.Name);
             if (accRepo.HasPoolRights(curAcc, corPool))
@@ -435,6 +430,7 @@ namespace BLOBLocker.WebApp.Controllers
                 return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
             }
         }
+
         [HttpGet]
         public ActionResult Build()
         {
@@ -524,7 +520,6 @@ namespace BLOBLocker.WebApp.Controllers
             return View(accRepo.GetAccount(User.Identity.Name));
         }
 
-        [RequiredParameters("addAlias")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult AddContact(string addAlias)
@@ -613,6 +608,7 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("AddContact");
         }
 
+        [RequiredParameters("id")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult DisableNotification(int id)

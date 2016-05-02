@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Code.Membership;
+﻿using BLOBLocker.Code.Attributes;
+using BLOBLocker.Code.Membership;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,9 @@ namespace BLOBLocker.Code.ViewModels.WebApp
 {
     public class RightsEditViewModel
     {
+        [LocalizedDisplayName("Pool.PUID")]
         public string PoolUID { get; set; }
+        [LocalizedDisplayName("Pool.Rights")]
         public ICollection<PoolRightViewModel> Rights { get; set; }
     }
 }

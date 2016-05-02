@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLOBLocker.Code.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -14,12 +15,17 @@ namespace BLOBLocker.Code.ViewModels.WebApp
             ShowAll = true;
         }
 
+        [LocalizedDisplayName("Pool.PUID")]
         [Required]
         public string PoolUID { get; set; }
+
+        [LocalizedDisplayName("Invite.InvitationAlias")]
         [Required]
         public string InviteAlias { get; set; }
 
+        [LocalizedDisplayName("Invite.ShowMessagesSince")]
         public Nullable<DateTime> ShowSince { get; set; }
+        [LocalizedDisplayName("Invite.ShowAllMessages")]
         public bool ShowAll { get; set; } 
     }
 }

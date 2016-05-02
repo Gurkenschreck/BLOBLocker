@@ -1,10 +1,10 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.PoolConfigModel
 @using BLOBLocker.Code.Membership
 @{
-    ViewBag.Title = "PoolConfig";
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolConfig");
 }
 
-<h2>PoolConfig</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>@Html.ActionLink("Back", "Pool", new { puid = Request.QueryString["puid"] })</p>
 
@@ -28,6 +28,4 @@
         @Html.Partial("_EditDefaultRights", Model.RightsEditViewModel)
     }
 </p>
-
-<hr />
 

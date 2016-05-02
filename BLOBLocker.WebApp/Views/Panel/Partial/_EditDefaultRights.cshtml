@@ -3,9 +3,9 @@
 @using(Html.BeginForm("EditDefaultRights", "Panel", FormMethod.Post))
 {
     @Html.LabelFor(p => p.Rights)<br />
-     @Html.EditorFor(p => p.Rights)
+    @Html.EditorFor(p => p.Rights)
     <br />
     @Html.HiddenFor(p => p.PoolUID)
     
-    <button type="submit">Save</button>
+    <button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.Save")</button>
 }

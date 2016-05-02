@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = BLOBLocker.WebApp.Resources.Account.Strings.PageLogOutTitle;
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.SignOut");
 }
 
-<h2>SignOut</h2>
+<h2>@ViewBag.Title</h2>
 
 
 <p>You have been successfuly signed out!</p>

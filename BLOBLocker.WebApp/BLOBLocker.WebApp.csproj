@@ -325,6 +325,7 @@
     <Content Include="Views\Security\Info.cshtml" />
     <Content Include="Views\Security\Peek.cshtml" />
     <Content Include="Views\Shared\_MinimalLayout.cshtml" />
+    <Content Include="Views\Panel\Partial\_MemoryOverview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

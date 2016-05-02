@@ -1,0 +1,36 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.MemoryOverviewViewModel
+
+@using (Html.BeginForm("RemoveAssigned", "Panel", FormMethod.Post))
+{
+    <table border="1">
+        @foreach (var assignedMemory in Model.Memory)
+        {
+            <tr>
+                <td>@HttpContext.GetGlobalResourceObject(null, "Label.AssignedFrom")</td>
+                <td> @assignedMemory.MemoryPool.Owner.Alias </td>
+                <td>@HttpContext.GetGlobalResourceObject(null, "Label.AssignedConnector")</td>
+                <td> @assignedMemory.Space MB </td>
+                <td>@HttpContext.GetGlobalResourceObject(null, "Label.AssignedType")</td>
+                <td>
+                    @if (assignedMemory.IsBasic)
+                    {
+                        @HttpContext.GetGlobalResourceObject(null, "MemoryPool.BasicMemory")
+                    }
+                    else
+                    {
+                        @HttpContext.GetGlobalResourceObject(null, "MemoryPool.AdditionalMemory")
+                    }
+                </td>
+                @if (assignedMemory.MemoryPool.Owner.Alias == User.Identity.Name)
+                {
+                    <td><button type="submit" name="assid" value="@assignedMemory.ID">X</button></td>
+                }
+            </tr>
+        }
+        <tr>
+            <td colspan="5">@HttpContext.GetGlobalResourceObject(null, "Label.Total")</td>
+            <td>@Model.Memory.Select(p => p.Space).Sum() MB</td>
+            <td>@Html.AntiForgeryToken() @Html.Hidden("puid", Model.PUID)</td>
+        </tr>
+    </table>
+}

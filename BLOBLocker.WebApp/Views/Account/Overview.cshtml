@@ -1,16 +1,17 @@
 ﻿@model BLOBLocker.Entities.Models.WebApp.Account
 @{
-    ViewBag.Title = BLOBLocker.WebApp.Resources.Account.Strings.PageOverviewTitle;
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.AccountOverview");
 }
 
-<h2>Overview</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>Here does the user get an overview of his account status, some options and so on.</p>
 Some cool stuff would be
 <ul>
     <li>2-Factor Authentication</li>
-    <li>Account Lock in between a timespan (like 20:00 - 16:30) for security</li>
+    <li>Account Lock in between a timespan (like 20:00 - 16:30)?</li>
     <li>Change/Set contact email</li>
+    <li>Backup key option to prevent data loss through password loss</li>
 </ul>
 
 <hr />

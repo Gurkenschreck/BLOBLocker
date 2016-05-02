@@ -43,6 +43,8 @@ namespace BLOBLocker.WebApp
         }
         protected void Session_Start(object sender, EventArgs args)
         {
+            Session["customCulture"] = Thread.CurrentThread.CurrentUICulture;
+
             if(User.Identity.IsAuthenticated)
             {
                 Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
@@ -65,9 +67,8 @@ namespace BLOBLocker.WebApp
             }
             if (customLanguage != null)
             {
-                var culture = customLanguage;
-                Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = culture;
+                Thread.CurrentThread.CurrentCulture = customLanguage;
+                Thread.CurrentThread.CurrentUICulture = customLanguage;
             }
             else
             {

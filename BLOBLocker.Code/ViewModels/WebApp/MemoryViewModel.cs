@@ -15,7 +15,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [MinLength(5),MaxLength(20)]
         public string PoolUniqueIdentifier { get; set; }
 
-        public ICollection<AssignedMemory> AssignedMemory { get; set; }
+        public MemoryOverviewViewModel MemoryOverviewModel { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Invalid range.")]
         [LocalizedDisplayName("MemoryPool.TotalPoolMemory")]
         public int TotalPoolMemory { get; set; }
@@ -32,5 +32,10 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [LocalizedDisplayName("MemoryPool.BasicToAdd")]
         [Range(0, int.MaxValue, ErrorMessage = "Invalid range.")]
         public int BasicMemoryToAdd { get; set; }
+
+        public MemoryViewModel()
+        {
+            MemoryOverviewModel = new MemoryOverviewViewModel();
+        }
     }
 }

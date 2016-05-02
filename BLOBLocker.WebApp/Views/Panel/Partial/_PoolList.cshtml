@@ -1,7 +1,7 @@
-﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.Pool>
+﻿@model IEnumerable<BLOBLocker.Entities.Models.WebApp.Pool>
 
 <h4>Your pools</h4>
-@if (Model.Where(p => p.IsActive).Count() > 0)
+@if (Model.Count() > 0)
 {
     <table border="1">
         <tr>
@@ -10,7 +10,7 @@
             <th>@Html.Label("Creation date")</th>
             <th>@Html.Label("Participants")</th>
         </tr>
-        @foreach (BLOBLocker.Entities.Models.WebApp.Pool p in Model.Where(p => p.IsActive))
+        @foreach (BLOBLocker.Entities.Models.WebApp.Pool p in Model)
         {
             <tr>
                 <td>@p.Title</td>

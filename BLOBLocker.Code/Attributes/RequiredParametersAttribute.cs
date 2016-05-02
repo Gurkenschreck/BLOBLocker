@@ -25,10 +25,18 @@ namespace BLOBLocker.Code.Attributes
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            foreach(var param in attributes)
-                if(filterContext.ActionParameters[param] == null)
+            foreach (var param in attributes)
+            {
+                if (filterContext.ActionParameters[param] is string)
+                {
+                    if (string.IsNullOrWhiteSpace((string)filterContext.ActionParameters[param]))
+                        filterContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                }
+                else if (filterContext.ActionParameters[param] == null)
+                {
                     filterContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
+                }
+            }
         }
     }
 }

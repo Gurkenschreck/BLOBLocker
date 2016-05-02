@@ -17,7 +17,7 @@
 @Html.Partial("_FilterResources", Model.Filter)
 
 <hr />
-
+There are @Model.StringResources.Count resources (which match with the filter).
 <table border="1" style="width: 100%; padding:5px;">
     @foreach (var resource in Model.StringResources)
     {
