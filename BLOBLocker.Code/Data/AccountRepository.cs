@@ -10,7 +10,14 @@ namespace BLOBLocker.Code.Data
 {
     public sealed class AccountRepository : IRepository<Account>
     {
-        BLWAContext context = new BLWAContext();
+        BLWAContext context;
+        public int Count
+        {
+            get
+            {
+                return context.Accounts.Count();
+            }
+        }
 
         public AccountRepository()
         {
@@ -28,13 +35,19 @@ namespace BLOBLocker.Code.Data
             GC.SuppressFinalize(this);
         }
 
-        public void Add(Account entity)
+        public int Add(Account entity)
         {
             context.Accounts.Add(entity);
-            context.SaveChanges();
+            return context.SaveChanges();
         }
 
-        public void AddOrUpdate(Account entity)
+        public Task<int> AddAsync(Account entity)
+        {
+            context.Accounts.Add(entity);
+            return context.SaveChangesAsync();
+        }
+
+        public int AddOrUpdate(Account entity)
         {
             if (Exists(entity))
             {
@@ -44,37 +57,59 @@ namespace BLOBLocker.Code.Data
             {
                 context.Accounts.Add(entity);
             }
-            context.SaveChanges();
+            return context.SaveChanges();
         }
 
-        public void Delete(Account entity)
+        public Task<int> AddOrUpdateAsync(Account entity)
+        {
+            if (Exists(entity))
+            {
+                context.Entry<Account>(entity).State = System.Data.Entity.EntityState.Modified;
+            }
+            else
+            {
+                context.Accounts.Add(entity);
+            }
+            return context.SaveChangesAsync();
+        }
+
+        public int Delete(Account entity)
         {
             context.Accounts.Remove(entity);
-            context.SaveChanges();
+            return context.SaveChanges();
         }
 
-        public int Count()
+        public Task<int> DeleteAsync(Account entity)
         {
-            return context.Accounts.Count();
+            context.Accounts.Remove(entity);
+            return context.SaveChangesAsync();
         }
+
+        
 
         public bool Exists(Account entity)
         {
-            return context.Accounts.FirstOrDefault(p => p.ID == entity.ID) != null;
+            return context.Accounts.Any(p => p.ID == entity.ID);
         }
 
         public Account Get(int id)
         {
             return Get(p => p.ID == id);
         }
-        public Account GetByKey(string alias)
-        {
-            return Get(p => p.Alias == alias);
-        }
-
+        
         public Account Get(Func<Account, bool> predicate)
         {
             return context.Accounts.FirstOrDefault(predicate);
+        }
+
+        public IEnumerable<Account> GetMultiple(Func<Account, bool> predicate)
+        {
+            return context.Accounts.Where(predicate);
+        }
+
+        public Account GetByKey(string alias)
+        {
+            return Get(p => p.Alias == alias);
         }
 
         public void Dispose()
@@ -89,5 +124,6 @@ namespace BLOBLocker.Code.Data
                 context.Dispose();
             }
         }
+
     }
 }

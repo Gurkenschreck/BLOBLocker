@@ -1,4 +1,5 @@
-﻿using Cipha.Security.Cryptography;
+﻿
+using Cipha.Security.Cryptography;
 using Cipha.Security.Cryptography.Asymmetric;
 using Cipha.Security.Cryptography.Hash;
 using Cipha.Security.Cryptography.Symmetric;

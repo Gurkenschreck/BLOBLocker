@@ -10,12 +10,18 @@ namespace BLOBLocker.Entities.Models
     public interface IRepository<T> : IDisposable
         where T : IDataEntity
     {
-        void Add(T entity);
-        void AddOrUpdate(T entity);
-        void Delete(T entity);
+        int Count { get; }
+
+        int Add(T entity);
+        Task<int> AddAsync(T entity);
+        int AddOrUpdate(T entity);
+        Task<int> AddOrUpdateAsync(T entity);
+        int Delete(T entity);
+        Task<int> DeleteAsync(T entity);
         bool Exists(T entity);
         T Get(int id);
+        T Get(Func<T, bool> predicate);
+        IEnumerable<T> GetMultiple(Func<T, bool> predicate);
         T GetByKey(string key);
-        int Count();
     }
 }

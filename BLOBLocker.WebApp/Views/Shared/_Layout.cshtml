@@ -62,7 +62,8 @@
             - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignUp").As<string>(), "SignUp", "Account")</span>
         }
         </p>
-        <p><span style="float:right;" id="counter">
+        <p>
+            <span style="float:right;" id="counter">
             @using (Html.BeginForm("SetSessionCulture", "Globalization", FormMethod.Get))
             {
                 @Html.DropDownList("culture", cultures, new { onchange="this.form.submit();" })

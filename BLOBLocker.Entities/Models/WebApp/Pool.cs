@@ -8,7 +8,7 @@ using System.Web;
 
 namespace BLOBLocker.Entities.Models.WebApp
 {
-    public class Pool
+    public class Pool : IDataEntity
     {
         public Pool()
         {

@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Attributes\AjaxOnlyAttribute.cs" />
     <Compile Include="Data\AccountRepository.cs" />
+    <Compile Include="Data\PoolRepository.cs" />
     <Compile Include="Extention\EnumExtentions.cs" />
     <Compile Include="Helper\EnumDropdownList.cs" />
     <Compile Include="Resources\LocalizedDisplayNameAttribute.cs" />
