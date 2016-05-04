@@ -69,6 +69,10 @@
     <Compile Include="Migrations\201604241634389_WACascadeLocStrOnDelete.Designer.cs">
       <DependentUpon>201604241634389_WACascadeLocStrOnDelete.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605042036041_WARemoveNeedlessPassword.cs" />
+    <Compile Include="Migrations\201605042036041_WARemoveNeedlessPassword.Designer.cs">
+      <DependentUpon>201605042036041_WARemoveNeedlessPassword.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -117,6 +121,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604241634389_WACascadeLocStrOnDelete.resx">
       <DependentUpon>201604241634389_WACascadeLocStrOnDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605042036041_WARemoveNeedlessPassword.resx">
+      <DependentUpon>201605042036041_WARemoveNeedlessPassword.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

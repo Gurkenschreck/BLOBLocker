@@ -13,6 +13,8 @@ namespace BLOBLocker.Entities.Models.WebApp
         public AccountAddition()
         {
             CreatedOn = DateTime.Now;
+            Contacts = new List<Contact>();
+            Notifications = new List<Notification>();
         }
         [Key]
         public int ID { get; set; }

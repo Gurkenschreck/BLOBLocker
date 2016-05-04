@@ -14,12 +14,13 @@ namespace BLOBLocker.Entities.Models.WebApp
         public Account()
         {
             IsEnabled = true;
+            Roles = new List<AccountRoleLink>();
+            Pools = new List<Pool>();
+            PoolShares = new List<PoolShare>();
         }
         [Key]
         public int ID { get; set; }
         public string Alias { get; set; }
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
         public byte[] Salt { get; set; }
 
         [ForeignKey("Config")]

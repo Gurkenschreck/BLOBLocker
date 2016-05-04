@@ -62,13 +62,13 @@ namespace BLOBLocker.Code.ModelHelper
             acc.Salt = salt;
             acc.Config = config;
 
-            using (var symCipher = new SymmetricCipher<AesManaged>(password, salt, config.IV))
+            /*using (var symCipher = new SymmetricCipher<AesManaged>(password, salt, config.IV))
             {
                 using (var hasher = new Hasher<SHA384Cng>())
                 {
                     acc.Password = symCipher.EncryptToString(hasher.Hash(password));
                 }
-            }
+            }*/
 
             return acc;
         }

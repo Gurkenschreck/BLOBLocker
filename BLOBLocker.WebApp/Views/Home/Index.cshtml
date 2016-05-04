@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = BLOBLocker.WebApp.Resources.Home.Strings.PageIndexTitle;
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.Home");
 }
 
-<h2>@BLOBLocker.WebApp.Resources.Home.Strings.PageIndexTitle</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>@BLOBLocker.WebApp.Resources.Home.Strings.IntroductionText</p>
 <ul>
@@ -13,5 +13,4 @@
     <li>Support, FAQ</li>
     <li>Pricing</li>
 </ul>
-<hr />
 <!--<img src="~/Images/1460291885821.gif" alt="Advertisement" />-->

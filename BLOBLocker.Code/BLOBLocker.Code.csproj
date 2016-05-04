@@ -56,7 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AjaxOnlyAttribute.cs" />
+    <Compile Include="Data\AccountAdditionHandler.cs" />
+    <Compile Include="Data\AccountHandler.cs" />
     <Compile Include="Data\AccountRepository.cs" />
+    <Compile Include="Data\CryptoConfigHandler.cs" />
+    <Compile Include="Data\MemoryPoolHandler.cs" />
     <Compile Include="Data\PoolRepository.cs" />
     <Compile Include="Extention\EnumExtentions.cs" />
     <Compile Include="Helper\EnumDropdownList.cs" />

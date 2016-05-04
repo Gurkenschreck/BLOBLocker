@@ -14,6 +14,8 @@ namespace BLOBLocker.Entities.Models.Models.WebApp
         public MemoryPool()
         {
             AssignedMemory = new List<AssignedMemory>();
+            BasicSpace = 0;
+            AdditionalSpace = 0;
         }
         [Key]
         public int ID { get; set; }

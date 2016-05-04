@@ -2,6 +2,7 @@
 using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace BLOBLocker.Code.Data
     public sealed class AccountRepository : IRepository<Account>
     {
         BLWAContext context;
+
         public int Count
         {
             get
@@ -75,6 +77,8 @@ namespace BLOBLocker.Code.Data
 
         public int Delete(Account entity)
         {
+            DbSet<Account> dbset = context.Accounts;
+
             context.Accounts.Remove(entity);
             return context.SaveChanges();
         }
@@ -84,8 +88,6 @@ namespace BLOBLocker.Code.Data
             context.Accounts.Remove(entity);
             return context.SaveChangesAsync();
         }
-
-        
 
         public bool Exists(Account entity)
         {
