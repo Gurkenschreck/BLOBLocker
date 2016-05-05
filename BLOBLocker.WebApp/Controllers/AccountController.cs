@@ -64,7 +64,6 @@ namespace BLOBLocker.WebApp.Controllers
 
                     AccountRole defaultAccRole = context.AccountRoles.First(p => p.Definition == basicRoleName);
  
-
                     var accProperties = new AccountHandler.AccountProperties
                     {
                         Alias = acc.Alias,
@@ -153,62 +152,51 @@ namespace BLOBLocker.WebApp.Controllers
             }
             if(ModelState.IsValid)
             {
+                AccountHandler accHandler = new AccountHandler();
                 AccountRepository accRepo = new AccountRepository(context);
                 Account correspondingAcc = accRepo.GetByKey(acc.Alias);
                 
                 if (correspondingAcc != null)
                 {
-                    if (correspondingAcc.IsEnabled)
+                    byte[] priRSAKey;
+                    switch (accHandler.Login(correspondingAcc, acc.Password, out priRSAKey))
                     {
-                        bool createPersistentAuthCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
-                        int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>(); ;
+                        case 1:
+                            bool createPersistentAuthCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
+                            int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>(); ;
 
-                        using (var symC = new SymmetricCipher<AesManaged>(acc.Password, correspondingAcc.Salt, correspondingAcc.Config.IV, iterations:correspondingAcc.Config.IterationCount))
-                        {
-                            try
+                            HttpCookie cryptoCookie = null;
+
+                            byte[] sessionCookieKey;
+                            byte[] sessionCookieIV;
+                            byte[] sessionStoredKeyPart;
+                            using(var credHandler = new CredentialHandler(cookieKeySize))
                             {
-                                byte[] plainPrivKey = symC.Decrypt(correspondingAcc.Config.PrivateKey);
-                                string pPriKey = symC.DecryptToString(correspondingAcc.Config.PrivateKey);
-                                HttpCookie cryptoCookie = null;
-
-
-                                byte[] sessionCookieKey;
-                                byte[] sessionCookieIV;
-                                byte[] sessionStoredKeyPart;
-                                using(var credHandler = new CredentialHandler(cookieKeySize))
-                                {
-                                    credHandler.Inject(symC.Decrypt(correspondingAcc.Config.PrivateKey), out cryptoCookie, out sessionCookieKey, out sessionCookieIV, out sessionStoredKeyPart);
-                                    Response.Cookies.Add(cryptoCookie);
-                                }
-                                Session["AccPriKeyCookieKey"] = sessionCookieKey;
-                                Session["AccPriKeyCookieIV"] = sessionCookieIV;
-                                Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
-
-                                correspondingAcc.Addition.LastLogin = DateTime.Now;
-                                context.SaveChanges();
-
-                                FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
-                                if (Request.QueryString["ReturnUrl"] == null)
-                                    return RedirectToAction("Index", "Panel");
-                                else
-                                    Response.Redirect(Request.QueryString["ReturnUrl"]);
+                                credHandler.Inject(priRSAKey, out cryptoCookie, out sessionCookieKey, out sessionCookieIV, out sessionStoredKeyPart);
+                                Response.Cookies.Add(cryptoCookie);
                             }
-                            catch (CryptographicException)
-                            {
-                                correspondingAcc.Addition.LastFailedLogin = DateTime.Now;
-                                BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(correspondingAcc, 
-                                    Resources.Notifications.FailedLogin,
-                                    DateTime.Now);
-                                context.SaveChanges();
-                                // Log wrong password try?
-                                ModelState.AddModelError("WrongAliasOrPassword", Resources.Account.Strings.WrongAliasOrPassword);
-                            }
-                        }
+                            Session["AccPriKeyCookieKey"] = sessionCookieKey;
+                            Session["AccPriKeyCookieIV"] = sessionCookieIV;
+                            Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
+
+                            FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
+                            if (Request.QueryString["ReturnUrl"] == null)
+                                return RedirectToAction("Index", "Panel");
+                            else
+                                Response.Redirect(Request.QueryString["ReturnUrl"]);
+                            break;
+                        case 2:
+                            ModelState.AddModelError("WrongAliasOrPassword", Resources.Account.Strings.WrongAliasOrPassword);
+                            break;
+                        case 3:
+                            ModelState.AddModelError("AccountIsDisabledError", Resources.Account.Strings.AccountIsDisabledError);
+                            break;
+                        default:
+
+                            break;
                     }
-                    else
-                    {
-                        ModelState.AddModelError("AccountIsDisabledError", Resources.Account.Strings.AccountIsDisabledError);
-                    }
+                    context.SaveChanges();
+                    
                 }
                 else
                 {

@@ -6,6 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using BLOBLocker.Code.Data;
 using BLOBLocker.Entities.Models.Models.WebApp;
+using Cipha.Security.Cryptography.Symmetric;
+using System.Security.Cryptography;
+using Cipha.Security.Cryptography;
+using System.Web;
 
 namespace BLOBLocker.Code.Data
 {
@@ -37,8 +41,8 @@ namespace BLOBLocker.Code.Data
             AccountAdditionHandler accAddHandler = new AccountAdditionHandler();
             newAcc.Addition = accAddHandler.SetupNew(additionProps);
 
-            MemoryPoolHandler memPoolHandler = new MemoryPoolHandler();
-            newAcc.MemoryPool = memPoolHandler.SetupNew(newAcc, memPoolProps);
+            MemoryPoolHandler memPoolHandler = new MemoryPoolHandler(newAcc);
+            newAcc.MemoryPool = memPoolHandler.SetupNew(memPoolProps);
 
             byte[] salt;
             CryptoConfigHandler cryptoConfigHandler = new CryptoConfigHandler();
@@ -46,6 +50,46 @@ namespace BLOBLocker.Code.Data
             newAcc.Salt = salt;
 
             return newAcc;
+        }
+
+        /// <summary>
+        /// Logs an account in. Returns a number to identify probable problems.
+        /// 
+        /// 1: Login success
+        /// 2: False password
+        /// 3: Account disabled
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public int Login(Account account, string password, out byte[] priRSAKey)
+        {
+            priRSAKey = null;
+            if (account.IsEnabled)
+            {
+                using (var symC = new SymmetricCipher<AesManaged>(password, account.Salt, account.Config.IV, iterations: account.Config.IterationCount))
+                {
+                    try
+                    {
+                        priRSAKey = symC.Decrypt(account.Config.PrivateKey);
+                        account.Addition.LastLogin = DateTime.Now;
+                    }
+                    catch (CryptographicException)
+                    {
+                        account.Addition.LastFailedLogin = DateTime.Now;
+                        BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(account,
+                                    HttpContext.GetGlobalResourceObject(null, "b").ToString(),
+                                    DateTime.Now);
+                        return 2;
+                    }
+                }
+            }
+            else
+            {
+                return 3;
+            }
+
+            return 1;
         }
     }
 }

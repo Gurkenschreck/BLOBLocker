@@ -22,9 +22,9 @@ namespace BLOBLocker.Code.ModelHelper
         {
             this.Session = Session;
             this.HttpContext = HttpContext;
-            poolShareKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
+            //poolShareKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
         }
-        public PoolShare Connect(PoolShare curAccPoolShare, Account corAcc, Pool pool, byte[] accPrivateKey)
+        public PoolShare Connect(PoolShare curAccPoolShare, Account corAcc, Pool pool, byte[] accPrivateKey, int keySize)
         {
             PoolShare ps = new PoolShare();
             ps.Config = new CryptoConfiguration();
@@ -48,7 +48,7 @@ namespace BLOBLocker.Code.ModelHelper
 
                     using (var corAccRSACipher = new RSACipher<RSACryptoServiceProvider>(corAcc.Config.PublicKey))
                     {
-                        using (var corPSCipher = new SymmetricCipher<AesManaged>(poolShareKeySize))
+                        using (var corPSCipher = new SymmetricCipher<AesManaged>(keySize))
                         {
                             ps.Config.PrivateKey = corPSCipher.Encrypt(curPSPriKey);
                             ps.Config.Key = corAccRSACipher.Encrypt(corPSCipher.Key);

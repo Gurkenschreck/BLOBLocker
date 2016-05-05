@@ -24,7 +24,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public bool IsChatEnabled { get; set; }
         [LocalizedDisplayName("Pool.IsLinkRepositoryEnabled")]
         public bool IsLinkRepositoryEnabled { get; set; }
-        [LocalizedDisplayName("Pool.PoolRights")]
+        [LocalizedDisplayName("Pool.Rights")]
         public ICollection<PoolRightViewModel> Rights { get; set; }
 
         public Pool Generate()

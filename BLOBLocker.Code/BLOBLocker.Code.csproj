@@ -61,6 +61,7 @@
     <Compile Include="Data\AccountRepository.cs" />
     <Compile Include="Data\CryptoConfigHandler.cs" />
     <Compile Include="Data\MemoryPoolHandler.cs" />
+    <Compile Include="Data\PoolHandler.cs" />
     <Compile Include="Data\PoolRepository.cs" />
     <Compile Include="Extention\EnumExtentions.cs" />
     <Compile Include="Helper\EnumDropdownList.cs" />

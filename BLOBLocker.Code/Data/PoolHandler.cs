@@ -1,0 +1,159 @@
+﻿using BLOBLocker.Code.Membership;
+using BLOBLocker.Code.ModelHelper;
+using BLOBLocker.Code.Security.Cryptography;
+using BLOBLocker.Entities.Models.WebApp;
+using Cipha.Security.Cryptography;
+using Cipha.Security.Cryptography.Asymmetric;
+using Cipha.Security.Cryptography.Symmetric;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BLOBLocker.Code.Data
+{
+    public class PoolHandler : IDisposable
+    {
+        Account currentAccount;
+        Pool currentPool;
+        PoolShare currentAccountPoolShare;
+        bool initialized = false;
+
+        byte[] storedKeyPart;
+        byte[] sessionCookieKey;
+        byte[] sessionCookieIV;
+        byte[] sessionStoredKeyPart;
+
+        public bool CanAccessPool
+        {
+            get
+            {
+                return currentAccount.PoolShares.Any(p => p.PoolID == currentPool.ID && p.IsActive);
+            }
+        }
+
+        public PoolHandler(Account currentAccount, Pool currentPool)
+        {
+            this.currentAccount = currentAccount;
+            this.currentPool = currentPool;
+            currentAccountPoolShare = currentAccount.PoolShares.First(p => p.PoolID == currentPool.ID);
+        }
+
+        ~PoolHandler()
+        {
+            Dispose(false);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Initialize(byte[] cookieStoredKeyPart, byte[] sessionCookieKey, byte[] sessionCookieIV, byte[] sessionStoredKeyPart)
+        {
+            this.storedKeyPart = cookieStoredKeyPart;
+            this.sessionCookieKey = sessionCookieKey;
+            this.sessionCookieIV = sessionCookieIV;
+            this.sessionStoredKeyPart = sessionStoredKeyPart;
+            initialized = true;
+        }
+
+        public SymmetricCipher<AesManaged> GetPoolCipher()
+        {
+            if (!initialized)
+                throw new InvalidOperationException("poolhandler must be initialized");
+
+            byte[] del;
+            var cipher = GetPoolCipher(out del);
+            Utilities.SetArrayValuesZero(del);
+            return cipher;
+        }
+
+        public SymmetricCipher<AesManaged> GetPoolCipher(out byte[] poolSharePrivateRSAKey)
+        {
+            if (!initialized)
+                throw new InvalidOperationException("poolhandler must be initialized");
+
+            poolSharePrivateRSAKey = null;
+            using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
+            {
+                byte[] userPriKey = credHandler.Extract(storedKeyPart, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+
+                byte[] poolKey = CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(userPriKey), currentAccountPoolShare, out poolSharePrivateRSAKey);
+                var cipher = new SymmetricCipher<AesManaged>(poolKey, currentPool.Config.IV);
+                Utilities.SetArrayValuesZero(userPriKey);
+                Utilities.SetArrayValuesZero(poolKey);
+                return cipher;
+            }
+            return null;
+        }
+
+        public PoolShare AddToPool(Account addAccount, int poolShareSymmetricKeySize)
+        {
+            if (!initialized)
+                throw new InvalidOperationException("poolhandler must be initialized");
+            using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
+            {
+                byte[] userPriKey = credHandler.Extract(storedKeyPart, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+
+                PoolShare ps = new PoolShare();
+                ps.Config = new CryptoConfiguration();
+
+                ps.Pool = currentPool;
+                ps.SharedWith = addAccount;
+                ps.Rights = currentPool.DefaultRights;
+
+                string curAccPrivateKeyString = Encoding.UTF8.GetString(userPriKey);
+
+                using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(curAccPrivateKeyString))
+                {
+                    byte[] curPSKey = rsaCipher.Decrypt(currentAccountPoolShare.Config.Key);
+                    byte[] curPSIV = rsaCipher.Decrypt(currentAccountPoolShare.Config.IV);
+
+                    using (var curPSCipher = new SymmetricCipher<AesManaged>(curPSKey, curPSIV))
+                    {
+                        byte[] curPSPriKey = curPSCipher.Decrypt(currentAccountPoolShare.Config.PrivateKey);
+
+                        ps.PoolKey = currentAccountPoolShare.PoolKey;
+
+                        using (var corAccRSACipher = new RSACipher<RSACryptoServiceProvider>(addAccount.Config.PublicKey))
+                        {
+                            using (var corPSCipher = new SymmetricCipher<AesManaged>(poolShareSymmetricKeySize))
+                            {
+                                ps.Config.PrivateKey = corPSCipher.Encrypt(curPSPriKey);
+                                ps.Config.Key = corAccRSACipher.Encrypt(corPSCipher.Key);
+                                ps.Config.IV = corAccRSACipher.Encrypt(corPSCipher.IV);
+                            }
+                        }
+                        Utilities.SetArrayValuesZero(curPSPriKey);
+                    }
+                    Utilities.SetArrayValuesZero(curPSKey);
+                    Utilities.SetArrayValuesZero(curPSIV);
+
+                }
+                addAccount.PoolShares.Add(ps);
+                currentPool.Participants.Add(ps);
+                return ps;
+            }
+            //return null;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if(storedKeyPart != null)
+                    Utilities.SetArrayValuesZero(storedKeyPart);
+                if(sessionCookieKey != null)
+                    Utilities.SetArrayValuesZero(sessionCookieKey);
+                if (sessionCookieIV != null)
+                    Utilities.SetArrayValuesZero(sessionCookieIV);
+                if (sessionStoredKeyPart != null)
+                    Utilities.SetArrayValuesZero(sessionStoredKeyPart);
+            }
+        }
+    }
+}

@@ -67,15 +67,14 @@ namespace BLOBLocker.Code.Membership
             }
         }
 
-        public byte[] Extract(HttpCookie keypartCookie, byte[] sessionCookieKey, byte[] sessionCookieIV, byte[] sessionStoredKeyPart)
+        public byte[] Extract(byte[] storedKey, byte[] sessionCookieKey, byte[] sessionCookieIV, byte[] sessionStoredKeyPart)
         {
             // 1. Get session key and iv
             byte[] rKey = sessionCookieKey;
             byte[] rIV = sessionCookieIV;
 
             // 2. Get user part of key
-            HttpCookie receivedCookie = keypartCookie; //Request.Cookies["Secret"];
-            byte[] rPa = Convert.FromBase64String(receivedCookie.Value);
+            byte[] rPa = storedKey;
             // 3. Get key extracted from user cookie key
             byte[] ra = rPa.Take(cipher.KeySize / 8).ToArray();
             // 4. Initialize cipher with extracted keypart and cookieIV
