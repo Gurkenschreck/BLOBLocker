@@ -99,6 +99,7 @@
     <Compile Include="ViewModels\Validation\AccountViewModelValidation.cs" />
     <Compile Include="ViewModels\Validation\IActionModelValidation.cs" />
     <Compile Include="ViewModels\WebApp\AccountViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\AddContactViewModel.cs" />
     <Compile Include="ViewModels\WebApp\BuildPoolViewModel.cs" />
     <Compile Include="ViewModels\WebApp\ChatViewModel.cs" />
     <Compile Include="ViewModels\WebApp\InvitationViewModel.cs" />

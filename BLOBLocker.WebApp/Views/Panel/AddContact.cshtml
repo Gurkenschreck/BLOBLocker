@@ -8,14 +8,8 @@
 
 Add a new contact
 <p>
-    @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
-    {
-        Html.ValidationSummary();
-
-        @:Alias: @Html.TextBox("addAlias")
-        @Html.AntiForgeryToken()
-        <button type="submit">Add</button>
-    }
+    
+    @Html.Partial("_AddContact", new BLOBLocker.Code.ViewModels.WebApp.AddContactViewModel())
 </p>
 
 <p>

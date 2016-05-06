@@ -214,9 +214,9 @@ namespace BLOBLocker.WebApp.Controllers
             var accRepo = new AccountRepository(context);
             var corAcc = accRepo.GetByKey(ivm.InviteAlias);
             if (corAcc == null)
-                ModelState.AddModelError("InviteAlias", "Account with this alias does not exist.");
+                ModelState.AddModelError("InviteAlias", HttpContext.GetGlobalResourceObject(null, "Account.AccountNonexistent").As<string>());
             if (ivm.InviteAlias == User.Identity.Name)
-                ModelState.AddModelError("InviteAlias", "You are already in this group");
+                ModelState.AddModelError("InviteAlias", HttpContext.GetGlobalResourceObject(null, "Account.SelfIsInGroup").As<string>());
 
             if(ModelState.IsValid)
             {
@@ -226,34 +226,28 @@ namespace BLOBLocker.WebApp.Controllers
                     if (pool.Participants.All(p => p.SharedWith.Alias != ivm.InviteAlias))
                     {
                         var curAcc = accRepo.GetByKey(User.Identity.Name);
-
                         PoolShare curAccPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.IsActive && p.PoolID == pool.ID);
-                        if (curAccPoolShare != null)
-                        {
-                            HttpCookie keypartCookie = Request.Cookies["Secret"];
-                            byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                            byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                            byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                            int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
 
-                            PoolHandler ph = new PoolHandler(curAcc, pool);
-                            ph.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                                sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-                            PoolShare ps = ph.AddToPool(corAcc, poolShareSymKeySize);
-                            if (!ivm.ShowAll)
-                            {
-                                ps.ShowSince = ivm.ShowSince;
-                            }
-                            context.SaveChanges();
-                        }
-                        else
+                        HttpCookie keypartCookie = Request.Cookies["Secret"];
+                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                        int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
+
+                        PoolHandler ph = new PoolHandler(curAcc, pool);
+                        ph.Initialize(Convert.FromBase64String(keypartCookie.Value),
+                            sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                        PoolShare ps = ph.AddToPool(corAcc, poolShareSymKeySize);
+                        if (!ivm.ShowAll)
                         {
-                            ModelState.AddModelError("InviteAlias", "Cannot invite user. You shouldn't even be here.");
+                            ps.ShowSince = ivm.ShowSince;
                         }
+                        context.SaveChanges();
                     }
                     else
                     {
-                        ModelState.AddModelError("InviteAlias", "Account is already part of this curPool.");
+                        ModelState.AddModelError("InviteAlias",
+                            string.Format(HttpContext.GetGlobalResourceObject(null, "Pool.AccountAlreadyInPool").As<string>(), ivm.InviteAlias));
                     }
                 }
             }
@@ -300,14 +294,16 @@ namespace BLOBLocker.WebApp.Controllers
                 switch(memPoolHandler.AssignMemoryToPool(pool, mvm.BasicMemoryToAdd, true))
                 {
                     case 2:
-                        ModelState.AddModelError("BasicMemoryToAdd", "Not enough free basic space");
+                        ModelState.AddModelError("BasicMemoryToAdd",
+                            HttpContext.GetGlobalResourceObject(null, "MemoryPool.NotEnoughBasicSpace").As<string>());
                     break;
                 }
 
                 switch (memPoolHandler.AssignMemoryToPool(pool, mvm.AdditionalMemoryToAdd, false))
                 {
                     case 2:
-                        ModelState.AddModelError("AdditionalMemoryToAdd", "Not enough additional space");
+                        ModelState.AddModelError("AdditionalMemoryToAdd",
+                            HttpContext.GetGlobalResourceObject(null, "MemoryPool.NotEnoughAdditionalSpace").As<string>());
                         break;
                 }
 
@@ -405,8 +401,6 @@ namespace BLOBLocker.WebApp.Controllers
             if(ModelState.IsValid)
             {
                 int saltByteLength = HttpContext.Application["security.SaltByteLength"].As<int>();
-
-
                 int poolSymKeySize = HttpContext.Application["security.PoolKeySize"].As<int>();
                 int poolRSAKeySize = HttpContext.Application["security.PoolRSAKeySize"].As<int>();
                 int poolShareKeySize = HttpContext.Application["security.PoolShareKeySize"].As<int>();
@@ -441,7 +435,9 @@ namespace BLOBLocker.WebApp.Controllers
                     }
                 }
                 
-                BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(curAcc, "Pool {0} creation was a success!", pool.Title);
+                BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(curAcc,
+                    HttpContext.GetGlobalResourceObject(null, "Notification.PoolCreationSuccess").As<string>(),
+                    pool.Title);
 
                 poolRepo.Add(pool);
                 return RedirectToAction("Index");
@@ -458,39 +454,30 @@ namespace BLOBLocker.WebApp.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult AddContact(string addAlias)
+        public ActionResult AddContact(AddContactViewModel acvm)
         {
-            if(string.IsNullOrWhiteSpace(addAlias))
-            {
-                ModelState.AddModelError("addAlias", "Invalid addAlias");
-            }
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            if (acvm.AddAlias == curAcc.Alias)
+                ModelState.AddModelError("AddAlias", HttpContext.GetGlobalResourceObject(null, "Contact.CannotAddYourself").As<string>());
+
             if(ModelState.IsValid)
             {
-                var correspondingAccount = accRepo.GetByKey(addAlias);
+                var correspondingAccount = accRepo.GetByKey(acvm.AddAlias);
                 if(correspondingAccount != null)
                 {
-                    if(curAcc.Addition.Contacts.All(p => p.AccountID != correspondingAccount.ID))
+                    AccountHandler accountHandler = new AccountHandler(curAcc);
+                    Contact contact = accountHandler.AddContact(correspondingAccount);
+                    if (contact == null)
                     {
-                        curAcc.Addition.Contacts.Add(new Contact
-                        {
-                            AccountID = correspondingAccount.ID
-                        });
-
-                        BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(curAcc, Resources.Notifications.AddAccount, correspondingAccount.Alias);
-                        BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(correspondingAccount, Resources.Notifications.GetAdded, curAcc.Alias);
-
-                        context.SaveChanges();
+                        ModelState.AddModelError("AddModel", HttpContext.GetGlobalResourceObject(null, "Contact.AccountAlreadyAdded").As<string>());
                     }
-                    else
-                    {
-                        ModelState.AddModelError("addModel", "User already in your list.");
-                    }
+                    context.SaveChanges();
                 }
                 else
                 {
-                    ModelState.AddModelError("addAlias", "No such user found");
+                    ModelState.AddModelError("AddAlias", HttpContext.GetGlobalResourceObject(null, "Contact.AccountNonExistent").As<string>());
                 }
             }
             return View(curAcc);
@@ -502,7 +489,7 @@ namespace BLOBLocker.WebApp.Controllers
         {
             if (string.IsNullOrWhiteSpace(shareWithAlias))
             {
-                ModelState.AddModelError("addAlias", "Invalid addAlias");
+                ModelState.AddModelError("shareWithAlias", "Invalid addAlias");
             }
             if (ModelState.IsValid)
             {
@@ -514,31 +501,19 @@ namespace BLOBLocker.WebApp.Controllers
                 {
                     if (curAcc.ID != correspondingAccount.ID)
                     {
-                        ICollection<Contact> corAccContacts = correspondingAccount.Addition.Contacts;
-                        foreach (Contact contact in curAcc.Addition.Contacts)
-                        {
-                            if (!corAccContacts.Any(c => c.AccountID == contact.AccountID))
-                            {
-                                corAccContacts.Add(new Contact
-                                {
-                                    AccountID = contact.AccountID
-                                });
-                            }
-                        }
+                        AccountHandler accHandler = new AccountHandler(curAcc);
 
-                        BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(correspondingAccount, BLOBLocker.WebApp.Resources.Notifications.ShareContactsReceived, curAcc.Alias);
-                        BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(curAcc, BLOBLocker.WebApp.Resources.Notifications.ShareContactsShared, correspondingAccount.Alias);
-
+                        accHandler.ShareContactsWith(correspondingAccount);
                         context.SaveChanges();
                     }
                     else
                     {
-                        ModelState.AddModelError("addAlias", "You cannot share with yourself");
+                        ModelState.AddModelError("shareWithAlias", "You cannot share with yourself");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("addAlias", "No such user found");
+                    ModelState.AddModelError("shareWithAlias", "No such user found");
                 }
             }
             return RedirectToAction("AddContact");
@@ -547,7 +522,7 @@ namespace BLOBLocker.WebApp.Controllers
         [RequiredParameters("id")]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult DisableNotification(int id)
+        public void DisableNotification(int id)
         {
             var notification = context.Notifications.Where(p => p.ID == id).FirstOrDefault();
             if (notification != null)
@@ -555,7 +530,7 @@ namespace BLOBLocker.WebApp.Controllers
                 notification.IsVisible = false;
                 context.SaveChanges();
             }
-            return RedirectToAction("Index");
+            Response.Redirect(Request.UrlReferrer.AbsoluteUri);
         }
     }
 }

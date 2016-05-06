@@ -8,14 +8,7 @@
 
 @HttpContext.GetGlobalResourceObject(null, "Label.AddAccountToContacts")
 <p>
-    @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
-    {
-        Html.ValidationSummary();
-
-        <text>@BLOBLocker.WebApp.Resources.Panel.Strings.lbl_AddAccount @Html.TextBox("addAlias")</text>
-        @Html.AntiForgeryToken()
-        <input type="submit" value="@BLOBLocker.WebApp.Resources.Panel.Strings.btn_AddAccount" />
-    }
+    @Html.Partial("_AddContact", new BLOBLocker.Code.ViewModels.WebApp.AddContactViewModel())
 </p>
 @HttpContext.GetGlobalResourceObject(null, "Label.ShareContacts")
 <p>
@@ -24,7 +17,7 @@
         Html.ValidationSummary();
         <text>@HttpContext.GetGlobalResourceObject(null, "Label.ShareWith") @Html.TextBox("shareWithAlias")</text>
         @Html.AntiForgeryToken()
-        <input type="submit" value="@BLOBLocker.WebApp.Resources.Panel.Strings.btn_ShareWith" />
+        <input type="submit" value="@HttpContext.GetGlobalResourceObject(null, "Button.Share")" />
     }
 </p>
 

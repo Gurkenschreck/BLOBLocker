@@ -46,6 +46,10 @@ namespace BLOBLocker.WebApp.Controllers
         [ValidateAntiForgeryToken, AllowAnonymous, HttpPost]
         public ActionResult SignUp(AccountViewModel acc)
         {
+            bool isRegRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
+            ViewBag.IsRegistrationRestricted = isRegRestricted;
+            if (isRegRestricted)
+                ModelState.AddModelError(null, HttpContext.GetGlobalResourceObject(null, "Account.RegistrationRestricted").As<string>());
             // Check if info is correct
             if(ModelState.IsValid)
             {
@@ -100,7 +104,7 @@ namespace BLOBLocker.WebApp.Controllers
                     int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>();
 
                     BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(newAcc,
-                        Resources.Notifications.WelcomeMessage,
+                        HttpContext.GetGlobalResourceObject(null, "Notification.WelcomeMessage").As<string>(),
                         newAcc.Alias);
 
                     accRepo.Add(newAcc);
@@ -128,9 +132,9 @@ namespace BLOBLocker.WebApp.Controllers
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
                     return RedirectToAction("Index", "Panel");
                 }
-                ModelState.AddModelError("AliasAlreadyExists", Resources.Account.Strings.AliasAlreadyExists);
+                ModelState.AddModelError("AliasAlreadyExists", HttpContext.GetGlobalResourceObject(null, "Account.AccountAlreadyExists").As<string>());
             }
-            ViewBag.IsRegistrationRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
+            
             return View(acc);
         }
 
@@ -148,7 +152,7 @@ namespace BLOBLocker.WebApp.Controllers
             bool loginEnabled = HttpContext.Application["system.EnableLogin"].As<bool>();
             if (!loginEnabled)
             {
-                ModelState.AddModelError("LoginClosed", Resources.Account.Strings.LoginDisabled);
+                ModelState.AddModelError("LoginClosed", HttpContext.GetGlobalResourceObject(null, "Account.LoginDisabled").As<string>());
             }
             if(ModelState.IsValid)
             {
@@ -186,10 +190,10 @@ namespace BLOBLocker.WebApp.Controllers
                                 Response.Redirect(Request.QueryString["ReturnUrl"]);
                             break;
                         case 2:
-                            ModelState.AddModelError("WrongAliasOrPassword", Resources.Account.Strings.WrongAliasOrPassword);
+                            ModelState.AddModelError("WrongAliasOrPassword", HttpContext.GetGlobalResourceObject(null, "Account.WrongLoginOrPassword").As<string>());
                             break;
                         case 3:
-                            ModelState.AddModelError("AccountIsDisabledError", Resources.Account.Strings.AccountIsDisabledError);
+                            ModelState.AddModelError("AccountIsDisabledError", HttpContext.GetGlobalResourceObject(null, "Account.Disabled").As<string>());
                             break;
                         default:
 
@@ -200,7 +204,7 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("WrongAliasOrPassword", Resources.Account.Strings.WrongAliasOrPassword);
+                    ModelState.AddModelError("WrongAliasOrPassword", HttpContext.GetGlobalResourceObject(null, "Account.WrongLoginOrPassword").As<string>());
                 }
             }
             return View(acc);

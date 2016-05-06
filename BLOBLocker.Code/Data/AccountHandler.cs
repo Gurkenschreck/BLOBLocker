@@ -15,11 +15,22 @@ namespace BLOBLocker.Code.Data
 {
     public class AccountHandler
     {
+        Account currentAccount;
         public class AccountProperties
         {
             public ICollection<AccountRole> Roles { get; set; }
             public string Alias { get; set; }
             public string Password { get; set; }
+        }
+
+        public AccountHandler()
+        {
+
+        }
+
+        public AccountHandler(Account account)
+        {
+            currentAccount = account;
         }
 
         public Account SetupAccount(AccountProperties accProps,
@@ -59,9 +70,9 @@ namespace BLOBLocker.Code.Data
         /// 2: False password
         /// 3: Account disabled
         /// </summary>
-        /// <param name="account"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
+        /// <param name="account">The account to log in.</param>
+        /// <param name="password">The login password.</param>
+        /// <returns>Returns status of outcome.</returns>
         public int Login(Account account, string password, out byte[] priRSAKey)
         {
             priRSAKey = null;
@@ -78,7 +89,7 @@ namespace BLOBLocker.Code.Data
                     {
                         account.Addition.LastFailedLogin = DateTime.Now;
                         BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(account,
-                                    HttpContext.GetGlobalResourceObject(null, "b").ToString(),
+                                    HttpContext.GetGlobalResourceObject(null, "Notification.LoginFailed").ToString(),
                                     DateTime.Now);
                         return 2;
                     }
@@ -90,6 +101,54 @@ namespace BLOBLocker.Code.Data
             }
 
             return 1;
+        }
+
+        public Contact AddContact(Account addAccount)
+        {
+            if (currentAccount.Addition.Contacts.All(p => p.AccountID != addAccount.ID))
+            {
+                Contact contact = new Contact();
+                contact.AccountID = addAccount.ID;
+                currentAccount.Addition.Contacts.Add(contact);
+
+                BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(currentAccount,
+                    HttpContext.GetGlobalResourceObject(null, "Notification.AccountAddedToContacts").ToString(), addAccount.Alias);
+                BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(addAccount,
+                    HttpContext.GetGlobalResourceObject(null, "Notification.YouWereAddedToContacts").ToString(), currentAccount.Alias);
+
+                return contact;
+            }
+            else
+            {
+                
+                return null;
+            }
+        }
+
+        public ICollection<Contact> ShareContactsWith(Account shareWith)
+        {
+            if (currentAccount == null)
+                throw new InvalidOperationException("currentAccount is not set");
+
+            ICollection<Contact> corAccContacts = shareWith.Addition.Contacts;
+            ICollection<Contact> added = new List<Contact>();
+            foreach (Contact contact in currentAccount.Addition.Contacts)
+            {
+                if (!corAccContacts.Any(c => c.AccountID == contact.AccountID))
+                {
+                    Contact c = new Contact();
+                    c.AccountID = contact.AccountID;
+                    corAccContacts.Add(c);
+                    added.Add(c);
+                }
+            }
+
+            BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(shareWith,
+                HttpContext.GetGlobalResourceObject(null, "Notification.ContactsWereSharedWithYou").ToString(), currentAccount.Alias);
+            BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(currentAccount,
+                HttpContext.GetGlobalResourceObject(null, "Notification.ShareContactsWith").ToString(), shareWith.Alias);
+
+            return added;
         }
     }
 }
