@@ -38,7 +38,7 @@ namespace BLOBLocker.Code.Data
         {
             this.currentAccount = currentAccount;
             this.currentPool = currentPool;
-            currentAccountPoolShare = currentAccount.PoolShares.First(p => p.PoolID == currentPool.ID);
+            currentAccountPoolShare = currentAccount.PoolShares.FirstOrDefault(p => p.PoolID == currentPool.ID);
         }
 
         ~PoolHandler()
@@ -83,7 +83,7 @@ namespace BLOBLocker.Code.Data
                 Utilities.SetArrayValuesZero(poolKey);
                 return cipher;
             }
-            return null;
+            //return null;
         }
 
         public PoolShare AddToPool(Account addAccount, int poolShareSymmetricKeySize)
@@ -134,6 +134,54 @@ namespace BLOBLocker.Code.Data
                 return ps;
             }
             //return null;
+        }
+
+        public PoolShare SetupNew(int puidByteLength,
+            int defaultRights, int poolSaltByteLength,
+            int poolShareKeySize, int poolShareRSAKeySize,
+            int poolRSAKeySize, int poolSymKeySize)
+        {
+            currentPool.Owner = currentAccount;
+            currentPool.UniqueIdentifier = Convert.ToBase64String(Utilities.GenerateBytes(puidByteLength));
+            currentPool.Salt = Cipha.Security.Cryptography.Utilities.GenerateBytes(poolSaltByteLength);
+
+            CryptoConfiguration poolConfig = new CryptoConfiguration();
+            currentAccountPoolShare = new PoolShare();
+            currentAccountPoolShare.Pool = currentPool;
+            currentAccountPoolShare.SharedWith = currentAccount;
+
+            CryptoConfiguration poolShareConfig = new CryptoConfiguration();
+            poolShareConfig.RSAKeySize = poolShareRSAKeySize;
+            poolShareConfig.KeySize = poolShareKeySize;
+
+            using (var accRSACipher = new RSACipher<RSACryptoServiceProvider>(currentAccount.Config.PublicKey))
+            {
+                using (var poolShareCipher = new SymmetricCipher<AesManaged>(poolShareKeySize))
+                {
+                    // 1. PoolShare Key|IV generation
+                    poolShareConfig.Key = accRSACipher.Encrypt(poolShareCipher.Key);
+                    poolShareConfig.IV = accRSACipher.Encrypt(poolShareCipher.IV);
+                    using (var poolRSACipher = new RSACipher<RSACryptoServiceProvider>(poolRSAKeySize))
+                    {
+                        using (var poolSymCipher = new SymmetricCipher<AesManaged>(poolSymKeySize))
+                        {
+                            poolConfig.PublicKey = poolRSACipher.ToXmlString(false);
+                            poolConfig.IV = poolSymCipher.IV;
+
+                            poolShareConfig.PrivateKey = poolShareCipher.Encrypt(poolRSACipher.ToXmlString(true));
+                            currentAccountPoolShare.PoolKey = poolRSACipher.Encrypt(poolSymCipher.Key);
+
+                            poolConfig.PublicKeySignature = poolRSACipher.SignStringToString<SHA256Cng>(poolConfig.PublicKey);
+                        }
+                    }
+                }
+            }
+
+            currentPool.Config = poolConfig;
+            currentAccountPoolShare.Config = poolShareConfig;
+            currentAccountPoolShare.Rights = int.MaxValue;
+            currentAccount.PoolShares.Add(currentAccountPoolShare);
+            return currentAccountPoolShare;
         }
 
         public void Dispose()

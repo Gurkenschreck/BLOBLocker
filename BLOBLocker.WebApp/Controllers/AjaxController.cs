@@ -12,6 +12,7 @@ namespace BLOBLocker.WebApp.Controllers
     [AjaxOnly]
     public class AjaxController : BaseController
     {
+        [RequiredParameters("id")]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public string DisableNotificationAsync(int id)

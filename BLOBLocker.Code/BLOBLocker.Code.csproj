@@ -82,13 +82,8 @@
     <Compile Include="Membership\CryptoCookieBakery.cs" />
     <Compile Include="Membership\PoolRight.cs" />
     <Compile Include="Membership\PoolRightHelper.cs" />
-    <Compile Include="ModelHelper\AccountRepository.cs" />
-    <Compile Include="ModelHelper\CryptoConfigRepository.cs" />
     <Compile Include="Security\Cryptography\CryptoHelper.cs" />
     <Compile Include="ModelHelper\NotificationHelper.cs" />
-    <Compile Include="ModelHelper\PoolShareHandler.cs" />
-    <Compile Include="ModelHelper\PoolRepository.cs" />
-    <Compile Include="ModelHelper\Repository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\BLResourceProvider.cs" />
     <Compile Include="Resources\BLResourceProviderFactory.cs" />

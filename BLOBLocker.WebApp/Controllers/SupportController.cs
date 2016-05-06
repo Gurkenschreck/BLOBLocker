@@ -1,5 +1,5 @@
 ﻿using BLOBLocker.Code.Controllers;
-using BLOBLocker.Code.ModelHelper;
+using BLOBLocker.Code.Data;
 using BLOBLocker.Entities.Models;
 using BLOBLocker.Entities.Models.WebApp;
 using System;
@@ -37,7 +37,7 @@ namespace BLOBLocker.WebApp.Controllers
         public ActionResult ShowUser(string name)
         {
             AccountRepository accRepo = new AccountRepository(context);
-            Account found = accRepo.GetAccount(name);
+            Account found = accRepo.GetByKey(name);
             return View(found);
         }
     }
