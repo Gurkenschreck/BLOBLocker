@@ -48,8 +48,6 @@ namespace BLOBLocker.WebApp.Controllers
         {
             bool isRegRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
             ViewBag.IsRegistrationRestricted = isRegRestricted;
-            if (isRegRestricted)
-                ModelState.AddModelError(null, HttpContext.GetGlobalResourceObject(null, "Account.RegistrationRestricted").As<string>());
             // Check if info is correct
             if(ModelState.IsValid)
             {

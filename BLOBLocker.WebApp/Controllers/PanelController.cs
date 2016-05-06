@@ -76,7 +76,6 @@ namespace BLOBLocker.WebApp.Controllers
                 cvm.PUID = puid;
                 
                 //Decrypt messages //take last x messages // show only since share date
-                List<Message> encryptedMessageList = null; //= curPool.Messages.Where(p => p.IsVisible).ToList();
                 int showAmountMessages = Request.QueryString["smc"] != null 
                     ? Convert.ToInt32(Request.QueryString["smc"]) 
                     : Convert.ToInt32(HttpContext.Application["pool.ShowLastMessageCount"]);
@@ -84,54 +83,22 @@ namespace BLOBLocker.WebApp.Controllers
                 int incrementShowAmountMessages = Convert.ToInt32(HttpContext.Application["pool.IncrementShowMessageCount"]);
                 cvm.NextAmountShowLastMessageCount = showAmountMessages + incrementShowAmountMessages;
 
-                if(curPoolShare.ShowSince != null)
-                {
-                    DateTime showSince = (DateTime)curPoolShare.ShowSince;
-                    encryptedMessageList = curPool.Messages
-                                                  .Skip(curPool.Messages.Count - showAmountMessages)
-                                                  .Where(p => DateTime.Compare(showSince, (DateTime)p.Sent) < 0)
-                                                  .OrderByDescending(p => p.Sent)
-                                                  .ToList();
-
-                }
-                else
-                {
-                    encryptedMessageList = curPool.Messages
-                                                  .Skip(curPool.Messages.Count - showAmountMessages)
-                                                  .OrderByDescending(p => p.Sent)
-                                                  .ToList();
-                }
-
                 cvm.NewMessage = new MessageViewModel();
                 cvm.NewMessage.PUID = puid;
-                if (encryptedMessageList.Count > 0)
+
+
+                byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                HttpCookie keypartCookie = Request.Cookies["Secret"];
+
+                using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    List<Message> decryptedMessageList = new List<Message>();
+                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value), sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
 
-                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-
-                    HttpCookie keypartCookie = Request.Cookies["Secret"];
-
-                    PoolHandler poolHandler = new PoolHandler(curAcc, curPool);
-                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-                    using(var poolCipher = poolHandler.GetPoolCipher())
-                    {
-                        foreach (var encMsg in encryptedMessageList)
-                        {
-                            Message curMsg = encMsg;
-                            curMsg.Text = poolCipher.DecryptToString(curMsg.Text);
-                            decryptedMessageList.Add(curMsg);
-                        }
-                    }
-
-                    cvm.Messages = decryptedMessageList;
-                }
-                else
-                {
-                    cvm.Messages = new List<Message>();
+                    ICollection<Message> plainMessages;
+                    poolHandler.GetChat(cvm.NextAmountShowLastMessageCount, out plainMessages);
+                    cvm.Messages = plainMessages ?? new List<Message>();
                 }
             }
 
@@ -160,20 +127,21 @@ namespace BLOBLocker.WebApp.Controllers
                 byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
                 HttpCookie keypartCookie = Request.Cookies["Secret"];
 
-                PoolHandler poolHandler = new PoolHandler(curAcc, curPool);
-                poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                    sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-                byte[] poolPrivateRSAKey;
-                using(var poolCipher = poolHandler.GetPoolCipher(out poolPrivateRSAKey))
+                using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    msg.Text = poolCipher.EncryptToString(cvm.MessageText);
-
-                    using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(Encoding.UTF8.GetString(poolPrivateRSAKey)))
+                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
+                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                    byte[] poolPrivateRSAKey;
+                    using (var poolCipher = poolHandler.GetPoolCipher(out poolPrivateRSAKey))
                     {
-                        msg.TextSignature = rsaCipher.SignStringToString<SHA256Cng>(msg.Text);
+                        msg.Text = poolCipher.EncryptToString(cvm.MessageText);
+
+                        using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(Encoding.UTF8.GetString(poolPrivateRSAKey)))
+                        {
+                            msg.TextSignature = rsaCipher.SignStringToString<SHA256Cng>(msg.Text);
+                        }
                     }
                 }
-
                 curPool.Messages.Add(msg);
                 context.SaveChanges();
             }
@@ -234,13 +202,16 @@ namespace BLOBLocker.WebApp.Controllers
                         byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
                         int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
 
-                        PoolHandler ph = new PoolHandler(curAcc, pool);
-                        ph.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                            sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-                        PoolShare ps = ph.AddToPool(corAcc, poolShareSymKeySize);
-                        if (!ivm.ShowAll)
+                        using (PoolHandler ph = new PoolHandler(curAcc, pool))
                         {
-                            ps.ShowSince = ivm.ShowSince;
+                            ph.Initialize(Convert.FromBase64String(keypartCookie.Value),
+                                sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                            PoolShare ps = ph.AddToPool(corAcc, poolShareSymKeySize);
+
+                            if (!ivm.ShowAll)
+                            {
+                                ps.ShowSince = ivm.ShowSince;
+                            }
                         }
                         context.SaveChanges();
                     }
@@ -329,32 +300,34 @@ namespace BLOBLocker.WebApp.Controllers
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
 
-            var poolHandler = new PoolHandler(curAcc, corPool);
-            if (poolHandler.CanAccessPool)
+            using (var poolHandler = new PoolHandler(curAcc, corPool))
             {
-                PoolOverviewViewModel povm = new PoolOverviewViewModel();
-                povm.Populate(corPool);
-
-                PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
-                povm.CurrentPoolShare = curPoolShare;
-
-                if (!string.IsNullOrWhiteSpace(corPool.Description))
+                if (poolHandler.CanAccessPool)
                 {
-                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                    HttpCookie keypartCookie = Request.Cookies["Secret"];
+                    PoolOverviewViewModel povm = new PoolOverviewViewModel();
+                    povm.Populate(corPool);
 
-                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-                    using (var poolCipher = poolHandler.GetPoolCipher())
+                    PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
+                    povm.CurrentPoolShare = curPoolShare;
+
+                    if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
-                        povm.Description = poolCipher.DecryptToString(corPool.Description);
-                    }
-                }
+                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                        HttpCookie keypartCookie = Request.Cookies["Secret"];
 
-                ViewBag.Rights = curPoolShare.Rights;
-                return View(povm);
+                        poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
+                            sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                        using (var poolCipher = poolHandler.GetPoolCipher())
+                        {
+                            povm.Description = poolCipher.DecryptToString(corPool.Description);
+                        }
+                    }
+
+                    ViewBag.Rights = curPoolShare.Rights;
+                    return View(povm);
+                }
             }
             
             return RedirectToAction("JoinPool", new { puid = corPool.UniqueIdentifier });
@@ -371,17 +344,19 @@ namespace BLOBLocker.WebApp.Controllers
 
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
-            PoolHandler poolHandler = new PoolHandler(curAcc, corPool);
-            if (poolHandler.CanAccessPool)
+            using (PoolHandler poolHandler = new PoolHandler(curAcc, corPool))
             {
-                PoolConfigModel configModel = new PoolConfigModel();
-                configModel.Populate(corPool, curAcc);
-                ViewBag.Rights = configModel.PoolShare.Rights;
-                return View(configModel);
-            }
-            else
-            {
-                return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
+                if (poolHandler.CanAccessPool)
+                {
+                    PoolConfigModel configModel = new PoolConfigModel();
+                    configModel.Populate(corPool, curAcc);
+                    ViewBag.Rights = configModel.PoolShare.Rights;
+                    return View(configModel);
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
+                }
             }
         }
 
@@ -410,31 +385,33 @@ namespace BLOBLocker.WebApp.Controllers
                 var accRepo = new AccountRepository(context);
                 Account curAcc = accRepo.GetByKey(User.Identity.Name);
                 Pool pool = poolViewModel.Generate();
-                PoolHandler ph = new PoolHandler(curAcc, pool);
-                
-                PoolShare poolShare = ph.SetupNew(9,
-                    PoolRightHelper.CalculateRights(poolViewModel.Rights),
-                    saltByteLength,
-                    poolShareKeySize,
-                    poolShareRSAKeySize,
-                    poolRSAKeySize,
-                    poolSymKeySize);
-
-                if (!string.IsNullOrWhiteSpace(poolViewModel.Description))
+                using (PoolHandler ph = new PoolHandler(curAcc, pool))
                 {
-                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                    HttpCookie keypartCookie = Request.Cookies["Secret"];
 
-                    ph.Initialize(Convert.FromBase64String(keypartCookie.Value), sessionCookieKey,
-                        sessionCookieIV, sessionStoredKeyPart);
-                    using (var poolCipher = ph.GetPoolCipher())
+                    PoolShare poolShare = ph.SetupNew(9,
+                        PoolRightHelper.CalculateRights(poolViewModel.Rights),
+                        saltByteLength,
+                        poolShareKeySize,
+                        poolShareRSAKeySize,
+                        poolRSAKeySize,
+                        poolSymKeySize);
+
+                    if (!string.IsNullOrWhiteSpace(poolViewModel.Description))
                     {
-                        pool.Description = poolCipher.EncryptToString(poolViewModel.Description);
+                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                        HttpCookie keypartCookie = Request.Cookies["Secret"];
+
+                        ph.Initialize(Convert.FromBase64String(keypartCookie.Value), sessionCookieKey,
+                            sessionCookieIV, sessionStoredKeyPart);
+                        using (var poolCipher = ph.GetPoolCipher())
+                        {
+                            pool.Description = poolCipher.EncryptToString(poolViewModel.Description);
+                        }
                     }
                 }
-                
+
                 BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(curAcc,
                     HttpContext.GetGlobalResourceObject(null, "Notification.PoolCreationSuccess").As<string>(),
                     pool.Title);

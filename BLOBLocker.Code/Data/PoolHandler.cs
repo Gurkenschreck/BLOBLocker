@@ -1,6 +1,7 @@
 ﻿using BLOBLocker.Code.Membership;
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Code.Security.Cryptography;
+using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Entities.Models.WebApp;
 using Cipha.Security.Cryptography;
 using Cipha.Security.Cryptography.Asymmetric;
@@ -47,12 +48,15 @@ namespace BLOBLocker.Code.Data
             GC.SuppressFinalize(this);
         }
 
-        public void Initialize(byte[] cookieStoredKeyPart, byte[] sessionCookieKey, byte[] sessionCookieIV, byte[] sessionStoredKeyPart)
+        public void Initialize(byte[] cookieStoredKeyPart,
+            byte[] sessionCookieKey,
+            byte[] sessionCookieIV,
+            byte[] sessionStoredKeyPart)
         {
-            this.storedKeyPart = cookieStoredKeyPart;
-            this.sessionCookieKey = sessionCookieKey;
-            this.sessionCookieIV = sessionCookieIV;
-            this.sessionStoredKeyPart = sessionStoredKeyPart;
+            this.storedKeyPart = cookieStoredKeyPart.Clone() as byte[];
+            this.sessionCookieKey = sessionCookieKey.Clone() as byte[];
+            this.sessionCookieIV = sessionCookieIV.Clone() as byte[];
+            this.sessionStoredKeyPart = sessionStoredKeyPart.Clone() as byte[];
             initialized = true;
         }
 
@@ -178,10 +182,58 @@ namespace BLOBLocker.Code.Data
             }
 
             currentPool.Config = poolConfig;
+            currentPool.DefaultRights = defaultRights;
+
             currentAccountPoolShare.Config = poolShareConfig;
             currentAccountPoolShare.Rights = int.MaxValue;
             currentAccount.PoolShares.Add(currentAccountPoolShare);
             return currentAccountPoolShare;
+        }
+
+        public void GetChat(int amountOfMessagesToShow,
+            out ICollection<Message> chatMessages)
+        {
+            if (!initialized)
+                throw new InvalidOperationException("poolhandler must be initialized");
+            ICollection<Message> encryptedMessageList;
+            ICollection<Message> decryptedMessageList;
+
+            if (currentAccountPoolShare.ShowSince != null)
+            {
+                DateTime showSince = (DateTime)currentAccountPoolShare.ShowSince;
+                encryptedMessageList = currentPool.Messages
+                                              .Skip(currentPool.Messages.Count - amountOfMessagesToShow)
+                                              .Where(p => DateTime.Compare(showSince, (DateTime)p.Sent) < 0)
+                                              .OrderByDescending(p => p.Sent)
+                                              .ToList();
+
+            }
+            else
+            {
+                encryptedMessageList = currentPool.Messages
+                                              .Skip(currentPool.Messages.Count - amountOfMessagesToShow)
+                                              .OrderByDescending(p => p.Sent)
+                                              .ToList();
+            }
+
+            if (encryptedMessageList.Count > 0)
+            {
+                decryptedMessageList = new List<Message>();
+                using (var poolCipher = GetPoolCipher())
+                {
+                    foreach (var encMsg in encryptedMessageList)
+                    {
+                        Message curMsg = encMsg;
+                        curMsg.Text = poolCipher.DecryptToString(curMsg.Text);
+                        decryptedMessageList.Add(curMsg);
+                    }
+                }
+                chatMessages = decryptedMessageList;
+            }
+            else
+            {
+                chatMessages = null;
+            }
         }
 
         public void Dispose()

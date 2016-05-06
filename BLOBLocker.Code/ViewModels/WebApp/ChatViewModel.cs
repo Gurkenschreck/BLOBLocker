@@ -22,5 +22,10 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [Range(0, int.MaxValue, ErrorMessage="Invalid number of messages to show")]
         public int NextAmountShowLastMessageCount { get; set; }
         public PoolShare PoolShare { get; set; }
+
+        public ChatViewModel()
+        {
+            Messages = new List<Message>();
+        }
     }
 }
