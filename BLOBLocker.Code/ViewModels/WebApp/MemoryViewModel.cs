@@ -37,5 +37,21 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         {
             MemoryOverviewModel = new MemoryOverviewViewModel();
         }
+
+        public void Populate(Account curAcc, Pool curPool)
+        {
+            TotalPoolMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum();
+            MemoryOverviewModel.PUID = curPool.UniqueIdentifier;
+            MemoryOverviewModel.Memory = curPool.AssignedMemory.Where(p => p.IsEnabled).ToList();
+            FreeBasicMemory = curAcc.MemoryPool.BasicSpace - curAcc
+                .MemoryPool.AssignedMemory
+                .Where(p => p.IsBasic && p.IsEnabled)
+                .Select(p => p.Space).Sum();
+            FreeAdditionalMemory = curAcc.MemoryPool.AdditionalSpace - curAcc
+                .MemoryPool.AssignedMemory
+                .Where(p => !p.IsBasic && p.IsEnabled)
+                .Select(p => p.Space).Sum();
+            PoolUniqueIdentifier = curPool.UniqueIdentifier;
+        }
     }
 }

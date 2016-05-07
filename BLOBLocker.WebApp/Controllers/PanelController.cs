@@ -43,6 +43,90 @@ namespace BLOBLocker.WebApp.Controllers
             return View(pivm);
         }
 
+        [RequiredParameters("puid")]
+        [HttpGet]
+        public ActionResult Pool(string puid)
+        {
+            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
+            if (corPool == null)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            var accRepo = new AccountRepository(context);
+            Account curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            using (var poolHandler = new PoolHandler(curAcc, corPool))
+            {
+                if (poolHandler.CanAccessPool)
+                {
+                    PoolOverviewViewModel povm = new PoolOverviewViewModel();
+                    povm.Populate(corPool);
+
+                    PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
+                    povm.CurrentPoolShare = curPoolShare;
+
+                    if (!string.IsNullOrWhiteSpace(corPool.Description))
+                    {
+                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                        HttpCookie keypartCookie = Request.Cookies["Secret"];
+
+                        poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
+                            sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                        using (var poolCipher = poolHandler.GetPoolCipher())
+                        {
+                            povm.Description = poolCipher.DecryptToString(corPool.Description);
+                        }
+                    }
+
+                    ViewBag.Rights = curPoolShare.Rights;
+                    return View(povm);
+                }
+            }
+
+            return RedirectToAction("JoinPool", new { puid = corPool.UniqueIdentifier });
+        }
+
+        [RequiredParameters("puid")]
+        [RestoreModelState]
+        [HttpGet]
+        public ActionResult PoolConfig(string puid)
+        {
+            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
+            if (corPool == null)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            var accRepo = new AccountRepository(context);
+            Account curAcc = accRepo.GetByKey(User.Identity.Name);
+            using (PoolHandler poolHandler = new PoolHandler(curAcc, corPool))
+            {
+                if (poolHandler.CanAccessPool)
+                {
+                    PoolConfigModel configModel = new PoolConfigModel();
+                    configModel.Populate(corPool, curAcc);
+                    ViewBag.Rights = configModel.PoolShare.Rights;
+
+                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                    HttpCookie keypartCookie = Request.Cookies["Secret"];
+
+                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
+                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                    using (var cipher = poolHandler.GetPoolCipher())
+                    {
+                        configModel.TitleDescriptionViewModel.Description = cipher.DecryptToString(corPool.Description);
+                    }
+
+                    return View(configModel);
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
+                }
+            }
+        }
+
         [RequiredParameters("revm")]
         [HttpPost]
         [PreserveModelState]
@@ -235,18 +319,7 @@ namespace BLOBLocker.WebApp.Controllers
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
             MemoryViewModel mvm = new MemoryViewModel();
-            mvm.TotalPoolMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum();
-            mvm.MemoryOverviewModel.PUID = puid;
-            mvm.MemoryOverviewModel.Memory = curPool.AssignedMemory.Where(p => p.IsEnabled).ToList();
-            mvm.FreeBasicMemory = curAcc.MemoryPool.BasicSpace - curAcc
-                .MemoryPool.AssignedMemory
-                .Where(p => p.IsBasic && p.IsEnabled)
-                .Select(p => p.Space).Sum();
-            mvm.FreeAdditionalMemory = curAcc.MemoryPool.AdditionalSpace - curAcc
-                .MemoryPool.AssignedMemory
-                .Where(p => !p.IsBasic && p.IsEnabled)
-                .Select(p => p.Space).Sum();
-            mvm.PoolUniqueIdentifier = curPool.UniqueIdentifier;
+            mvm.Populate(curAcc, curPool);
             return View(mvm);
         }
 
@@ -289,76 +362,7 @@ namespace BLOBLocker.WebApp.Controllers
             return View();
         }
 
-        [RequiredParameters("puid")]
-        [HttpGet]
-        public ActionResult Pool(string puid)
-        {
-            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
-            if (corPool == null)
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-
-            var accRepo = new AccountRepository(context);
-            Account curAcc = accRepo.GetByKey(User.Identity.Name);
-
-            using (var poolHandler = new PoolHandler(curAcc, corPool))
-            {
-                if (poolHandler.CanAccessPool)
-                {
-                    PoolOverviewViewModel povm = new PoolOverviewViewModel();
-                    povm.Populate(corPool);
-
-                    PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
-                    povm.CurrentPoolShare = curPoolShare;
-
-                    if (!string.IsNullOrWhiteSpace(corPool.Description))
-                    {
-                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                        HttpCookie keypartCookie = Request.Cookies["Secret"];
-
-                        poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                            sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-                        using (var poolCipher = poolHandler.GetPoolCipher())
-                        {
-                            povm.Description = poolCipher.DecryptToString(corPool.Description);
-                        }
-                    }
-
-                    ViewBag.Rights = curPoolShare.Rights;
-                    return View(povm);
-                }
-            }
-            
-            return RedirectToAction("JoinPool", new { puid = corPool.UniqueIdentifier });
-        }
-
-        [RequiredParameters("puid")]
-        [RestoreModelState]
-        [HttpGet]
-        public ActionResult PoolConfig(string puid)
-        {
-            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
-            if (corPool == null)
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-
-            var accRepo = new AccountRepository(context);
-            Account curAcc = accRepo.GetByKey(User.Identity.Name);
-            using (PoolHandler poolHandler = new PoolHandler(curAcc, corPool))
-            {
-                if (poolHandler.CanAccessPool)
-                {
-                    PoolConfigModel configModel = new PoolConfigModel();
-                    configModel.Populate(corPool, curAcc);
-                    ViewBag.Rights = configModel.PoolShare.Rights;
-                    return View(configModel);
-                }
-                else
-                {
-                    return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
-                }
-            }
-        }
+        
 
         [HttpGet]
         public ActionResult Build()
@@ -450,7 +454,9 @@ namespace BLOBLocker.WebApp.Controllers
                     {
                         ModelState.AddModelError("AddModel", HttpContext.GetGlobalResourceObject(null, "Contact.AccountAlreadyAdded").As<string>());
                     }
-                    context.SaveChanges();
+                    else{
+                        context.SaveChanges();                        
+                    }
                 }
                 else
                 {
@@ -466,7 +472,7 @@ namespace BLOBLocker.WebApp.Controllers
         {
             if (string.IsNullOrWhiteSpace(shareWithAlias))
             {
-                ModelState.AddModelError("shareWithAlias", "Invalid addAlias");
+                ModelState.AddModelError("shareWithAlias", HttpContext.GetGlobalResourceObject(null, "Contact.BadAddAlias").As<string>());
             }
             if (ModelState.IsValid)
             {
@@ -485,12 +491,12 @@ namespace BLOBLocker.WebApp.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("shareWithAlias", "You cannot share with yourself");
+                        ModelState.AddModelError("shareWithAlias", HttpContext.GetGlobalResourceObject(null, "Contact.CannotShareWithYourself").As<string>());
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("shareWithAlias", "No such user found");
+                    ModelState.AddModelError("shareWithAlias", HttpContext.GetGlobalResourceObject(null, "Contact.AccountNonexistent").As<string>());
                 }
             }
             return RedirectToAction("AddContact");

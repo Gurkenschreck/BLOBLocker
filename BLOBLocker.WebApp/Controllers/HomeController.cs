@@ -16,7 +16,6 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            //var x = HttpContext.GetGlobalResourceObject("a", "General.Hello");
             return View();
         }
 

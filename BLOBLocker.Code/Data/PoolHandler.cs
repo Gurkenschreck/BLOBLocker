@@ -183,7 +183,6 @@ namespace BLOBLocker.Code.Data
 
             currentPool.Config = poolConfig;
             currentPool.DefaultRights = defaultRights;
-
             currentAccountPoolShare.Config = poolShareConfig;
             currentAccountPoolShare.Rights = int.MaxValue;
             currentAccount.PoolShares.Add(currentAccountPoolShare);
