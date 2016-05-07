@@ -163,7 +163,6 @@ namespace BLOBLocker.WebApp.Controllers
                     }
                 }
                 
-
                 context.SaveChanges();
             }
 
@@ -212,7 +211,6 @@ namespace BLOBLocker.WebApp.Controllers
 
                 cvm.NewMessage = new MessageViewModel();
                 cvm.NewMessage.PUID = puid;
-
 
                 byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
                 byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
