@@ -27,6 +27,14 @@ namespace BLOBLocker.Code.Data
         byte[] sessionCookieIV;
         byte[] sessionStoredKeyPart;
 
+        public PoolShare CorrespondingPoolShare
+        {
+            get
+            {
+                return currentAccountPoolShare;
+            }
+        }
+
         public bool CanAccessPool
         {
             get

@@ -92,7 +92,9 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpGet]
         public ActionResult PoolConfig(string puid)
         {
-            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
+            PoolRepository poolRepo = new PoolRepository(context);
+
+            Pool corPool = poolRepo.GetByKey(puid);
             if (corPool == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
 
@@ -104,7 +106,8 @@ namespace BLOBLocker.WebApp.Controllers
                 {
                     PoolConfigModel configModel = new PoolConfigModel();
                     configModel.Populate(corPool, curAcc);
-                    ViewBag.Rights = configModel.PoolShare.Rights;
+                    configModel.TitleDescriptionViewModel.Rights = poolHandler.CorrespondingPoolShare.Rights;
+                    //ViewBag.Rights = configModel.PoolShare.Rights;
 
                     byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
                     byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
@@ -125,6 +128,46 @@ namespace BLOBLocker.WebApp.Controllers
                     return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
                 }
             }
+        }
+
+        [ValidateAntiForgeryToken]
+        [RequiredParameters("tdvm")]
+        [PreserveModelState]
+        [HttpPost]
+        public ActionResult ChangeTitleAndDescription(TitleDescriptionViewModel tdvm)
+        {
+            if (ModelState.IsValid)
+            {
+                AccountRepository accRepo = new AccountRepository(context);
+                Account curAcc = accRepo.GetByKey(User.Identity.Name);
+                PoolRepository poolRepo = new PoolRepository(context);
+                Pool curPool = poolRepo.GetByKey(tdvm.PUID);
+
+                curPool.Title = tdvm.Title;
+
+                if (string.IsNullOrWhiteSpace(tdvm.Description))
+                    tdvm.Description = string.Empty;
+                
+                using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
+                {
+                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
+                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
+                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                    HttpCookie keypartCookie = Request.Cookies["Secret"];
+
+                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
+                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                    using (var cipher = poolHandler.GetPoolCipher())
+                    {
+                        curPool.Description = cipher.EncryptToString(tdvm.Description);
+                    }
+                }
+                
+
+                context.SaveChanges();
+            }
+
+            return RedirectToAction("PoolConfig", new { puid = tdvm.PUID });
         }
 
         [RequiredParameters("revm")]
