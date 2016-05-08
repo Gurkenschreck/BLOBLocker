@@ -116,9 +116,13 @@ namespace BLOBLocker.WebApp.Controllers
 
                     poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
                         sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-                    using (var cipher = poolHandler.GetPoolCipher())
+
+                    if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
-                        configModel.TitleDescriptionViewModel.Description = cipher.DecryptToString(corPool.Description);
+                        using (var cipher = poolHandler.GetPoolCipher())
+                        {
+                            configModel.TitleDescriptionViewModel.Description = cipher.DecryptToString(corPool.Description);
+                        }
                     }
 
                     return View(configModel);
