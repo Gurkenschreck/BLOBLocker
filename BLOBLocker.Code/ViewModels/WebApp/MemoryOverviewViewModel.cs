@@ -11,5 +11,6 @@ namespace BLOBLocker.Code.ViewModels.WebApp
     {
         public string PUID { get; set; }
         public ICollection<AssignedMemory> Memory { get; set; }
+        public int Rights { get; set; }
     }
 }

@@ -107,7 +107,6 @@ namespace BLOBLocker.WebApp.Controllers
                     PoolConfigModel configModel = new PoolConfigModel();
                     configModel.Populate(corPool, curAcc);
                     configModel.TitleDescriptionViewModel.Rights = poolHandler.CorrespondingPoolShare.Rights;
-                    //ViewBag.Rights = configModel.PoolShare.Rights;
 
                     byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
                     byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];

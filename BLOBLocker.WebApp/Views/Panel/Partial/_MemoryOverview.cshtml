@@ -1,4 +1,6 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.MemoryOverviewViewModel
+@using BLOBLocker.Entities.Models.WebApp
+@using BLOBLocker.Code.Membership
 
 @using (Html.BeginForm("RemoveAssigned", "Panel", FormMethod.Post))
 {
@@ -21,7 +23,8 @@
                         @HttpContext.GetGlobalResourceObject(null, "MemoryPool.AdditionalMemory")
                     }
                 </td>
-                @if (assignedMemory.MemoryPool.Owner.Alias == User.Identity.Name)
+                @if (assignedMemory.MemoryPool.Owner.Alias == User.Identity.Name || 
+                    PoolRightHelper.HasRight(Model.Rights, PoolRight.RemoveAssignedMemory))
                 {
                     <td><button type="submit" name="assid" value="@assignedMemory.ID">X</button></td>
                 }

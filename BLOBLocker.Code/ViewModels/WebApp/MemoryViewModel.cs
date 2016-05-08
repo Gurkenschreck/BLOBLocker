@@ -42,6 +42,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         {
             TotalPoolMemory = curPool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum();
             MemoryOverviewModel.PUID = curPool.UniqueIdentifier;
+            MemoryOverviewModel.Rights = curAcc.PoolShares.First(p => p.PoolID == curPool.ID).Rights;
             MemoryOverviewModel.Memory = curPool.AssignedMemory.Where(p => p.IsEnabled).ToList();
             FreeBasicMemory = curAcc.MemoryPool.BasicSpace - curAcc
                 .MemoryPool.AssignedMemory
