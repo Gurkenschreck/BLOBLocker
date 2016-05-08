@@ -13,6 +13,13 @@
 </p>
 
 <p>
+    @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ManageModules))
+    {
+        @Html.Partial("_ManageModules", Model.ManageModulesViewModel)
+    }
+</p>
+
+<p>
     @Html.Action("AssignMemory")
 </p>
 

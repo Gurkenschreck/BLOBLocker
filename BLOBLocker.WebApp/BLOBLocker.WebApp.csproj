@@ -327,6 +327,7 @@
     <Content Include="Views\Shared\_MinimalLayout.cshtml" />
     <Content Include="Views\Panel\Partial\_MemoryOverview.cshtml" />
     <Content Include="Views\Panel\Partial\_AddContact.cshtml" />
+    <Content Include="Views\Panel\Partial\_ManageModules.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

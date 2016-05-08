@@ -169,6 +169,26 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("PoolConfig", new { puid = tdvm.PUID });
         }
 
+        [ValidateAntiForgeryToken]
+        [RequiredParameters("mmvm")]
+        [PreserveModelState]
+        [HttpPost]
+        public ActionResult ManageModules(ManageModulesViewModel mmvm)
+        {
+            if (ModelState.IsValid)
+            {
+                PoolRepository poolRepo = new PoolRepository(context);
+                Pool curPool = poolRepo.GetByKey(mmvm.PUID);
+
+                curPool.ChatEnabled = mmvm.EnableChat;
+                curPool.FileStorageEnabled = mmvm.EnableFileStorage;
+                curPool.LinkRepositoryEnabled = mmvm.EnableLinkRepository;
+
+                context.SaveChanges();
+            }
+            return RedirectToAction("PoolConfig", new { puid = mmvm.PUID });
+        }
+
         [RequiredParameters("revm")]
         [HttpPost]
         [PreserveModelState]

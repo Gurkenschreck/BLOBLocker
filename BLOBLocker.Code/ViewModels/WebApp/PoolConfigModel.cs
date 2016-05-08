@@ -18,6 +18,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public AssignedMemory AdditionalMemory { get; set; }
         public RightsEditViewModel RightsEditViewModel { get; set; }
         public TitleDescriptionViewModel TitleDescriptionViewModel { get; set; }
+        public ManageModulesViewModel ManageModulesViewModel { get; set; }
 
         public void Populate(Pool pool, Account curAcc)
         {
@@ -37,6 +38,14 @@ namespace BLOBLocker.Code.ViewModels.WebApp
                 PUID = pool.UniqueIdentifier,
                 Title = pool.Title,
                 Description = pool.Description
+            };
+
+            ManageModulesViewModel = new ManageModulesViewModel
+            {
+                PUID = pool.UniqueIdentifier,
+                EnableChat = pool.ChatEnabled,
+                EnableFileStorage = pool.FileStorageEnabled,
+                EnableLinkRepository = pool.LinkRepositoryEnabled
             };
         }
     }

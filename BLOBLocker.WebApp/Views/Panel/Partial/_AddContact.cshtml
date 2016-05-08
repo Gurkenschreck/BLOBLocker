@@ -2,9 +2,7 @@
 
 @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
 {
-    Html.ValidationSummary();
-
-    <text>@Html.LabelFor(p => p.AddAlias) @Html.TextBoxFor(p => p.AddAlias)</text>
+    <text>@Html.LabelFor(p => p.AddAlias) @Html.TextBoxFor(p => p.AddAlias) @Html.ValidationMessageFor(p => p.AddAlias)</text>
     @Html.AntiForgeryToken()
     <input type="submit" value="@HttpContext.GetGlobalResourceObject(null, "Button.Add")" />
 }

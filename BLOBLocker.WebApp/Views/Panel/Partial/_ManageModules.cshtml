@@ -1,0 +1,14 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.ManageModulesViewModel
+
+@using (Html.BeginForm("ManageModules", "Panel", FormMethod.Post)) { 
+    <table>
+        <tr>
+            <td>@Html.EditorFor(p => p.EnableChat) @Html.LabelFor(p => p.EnableChat)</td>
+            <td>@Html.EditorFor(p => p.EnableFileStorage) @Html.LabelFor(p => p.EnableFileStorage)</td>
+            <td>@Html.EditorFor(p => p.EnableLinkRepository) @Html.LabelFor(p => p.EnableLinkRepository)</td>
+        </tr>
+        <tr>
+            <td colspan="3">@Html.HiddenFor(p => p.PUID) @Html.AntiForgeryToken() <button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.Apply")</button></td>
+        </tr>
+    </table>
+}
