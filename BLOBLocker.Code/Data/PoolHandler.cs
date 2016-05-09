@@ -1,6 +1,7 @@
 ﻿using BLOBLocker.Code.Membership;
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Code.Security.Cryptography;
+using BLOBLocker.Code.Text;
 using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Entities.Models.WebApp;
 using Cipha.Security.Cryptography;
@@ -154,8 +155,8 @@ namespace BLOBLocker.Code.Data
             int poolRSAKeySize, int poolSymKeySize)
         {
             currentPool.Owner = currentAccount;
-            currentPool.UniqueIdentifier = Convert.ToBase64String(Utilities.GenerateBytes(puidByteLength));
-            currentPool.Salt = Cipha.Security.Cryptography.Utilities.GenerateBytes(poolSaltByteLength);
+            currentPool.UniqueIdentifier = Base32.ToBase32String(Utilities.GenerateBytes(puidByteLength));
+            currentPool.Salt = Utilities.GenerateBytes(poolSaltByteLength);
 
             CryptoConfiguration poolConfig = new CryptoConfiguration();
             currentAccountPoolShare = new PoolShare();

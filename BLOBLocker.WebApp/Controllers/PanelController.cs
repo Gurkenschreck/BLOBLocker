@@ -426,8 +426,6 @@ namespace BLOBLocker.WebApp.Controllers
             return View();
         }
 
-        
-
         [HttpGet]
         public ActionResult Build()
         {
@@ -455,7 +453,6 @@ namespace BLOBLocker.WebApp.Controllers
                 Pool pool = poolViewModel.Generate();
                 using (PoolHandler ph = new PoolHandler(curAcc, pool))
                 {
-
                     PoolShare poolShare = ph.SetupNew(9,
                         PoolRightHelper.CalculateRights(poolViewModel.Rights),
                         saltByteLength,

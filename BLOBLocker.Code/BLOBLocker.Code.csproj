@@ -88,6 +88,7 @@
     <Compile Include="Resources\BLResourceProvider.cs" />
     <Compile Include="Resources\BLResourceProviderFactory.cs" />
     <Compile Include="Security\ReverseProxy.cs" />
+    <Compile Include="Text\Base32.cs" />
     <Compile Include="ViewModels\AdminTool\AdminEditAccountModel.cs" />
     <Compile Include="ViewModels\AdminTool\AdminOverviewViewModel.cs" />
     <Compile Include="ViewModels\AdminTool\EditTranslationViewModel.cs" />
