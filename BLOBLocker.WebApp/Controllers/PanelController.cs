@@ -194,6 +194,7 @@ namespace BLOBLocker.WebApp.Controllers
 
         [RequiredParameters("revm")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [PreserveModelState]
         public ActionResult EditDefaultRights(RightsEditViewModel revm)
         {
@@ -255,6 +256,7 @@ namespace BLOBLocker.WebApp.Controllers
 
         [RequiredParameters("cvm")]
         [PreserveModelState]
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult SendMessage(MessageViewModel cvm)
         {
@@ -568,7 +570,9 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpPost]
         public void DisableNotification(int id)
         {
-            var notification = context.Notifications.Where(p => p.ID == id).FirstOrDefault();
+            var accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+            var notification = curAcc.Addition.Notifications.Where(p => p.ID == id).FirstOrDefault();
             if (notification != null)
             {
                 notification.IsVisible = false;

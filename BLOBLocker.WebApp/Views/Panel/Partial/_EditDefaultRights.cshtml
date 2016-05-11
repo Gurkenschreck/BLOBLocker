@@ -5,7 +5,7 @@
     @Html.LabelFor(p => p.Rights)<br />
     @Html.EditorFor(p => p.Rights)
     <br />
-    @Html.HiddenFor(p => p.PoolUID)
+    @Html.HiddenFor(p => p.PoolUID) @Html.AntiForgeryToken()
     
     <button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.Save")</button>
 }
