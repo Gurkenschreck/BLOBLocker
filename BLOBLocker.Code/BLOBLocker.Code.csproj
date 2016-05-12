@@ -73,6 +73,7 @@
     <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
     <Compile Include="Attributes\CustomValidateAttribute.cs" />
     <Compile Include="BlobLockerViewEngine.cs" />
+    <Compile Include="Security\Cryptography\CryptoKeyInformation.cs" />
     <Compile Include="Security\Cryptography\CryptoManager.cs" />
     <Compile Include="Extention\ObjectExtentions.cs" />
     <Compile Include="Membership\AdminToolRoleProvider.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="ViewModels\WebApp\AccountViewModel.cs" />
     <Compile Include="ViewModels\WebApp\AddContactViewModel.cs" />
     <Compile Include="ViewModels\WebApp\BuildPoolViewModel.cs" />
+    <Compile Include="ViewModels\WebApp\ChangePasswordViewModel.cs" />
     <Compile Include="ViewModels\WebApp\ChatViewModel.cs" />
     <Compile Include="ViewModels\WebApp\InvitationViewModel.cs" />
     <Compile Include="ViewModels\WebApp\ManageModulesViewModel.cs" />
@@ -113,6 +115,8 @@
     <Compile Include="ViewModels\WebApp\PoolOverviewViewModel.cs" />
     <Compile Include="ViewModels\WebApp\RightsEditViewModel.cs" />
     <Compile Include="ViewModels\WebApp\TitleDescriptionViewModel.cs" />
+    <Compile Include="Web\CryptoSessionStoreExtractor.cs" />
+    <Compile Include="Web\CryptoSessionStoreHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLOBLocker.Entities\BLOBLocker.Entities.csproj">

@@ -26,6 +26,8 @@ using BLOBLocker.Code.Extention;
 using BLOBLocker.Code.ViewModels.Validation;
 using BLOBLocker.Code.Data;
 using BLOBLocker.Entities.Models.Models.WebApp;
+using BLOBLocker.Code.Web;
+using BLOBLocker.Code.Security.Cryptography;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -109,8 +111,16 @@ namespace BLOBLocker.WebApp.Controllers
 
                     using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV))
                     {
-                        HttpCookie keyPartCookie = null;
 
+                        CryptoKeyInformation cssi;
+                        using (var cssh = new CryptoSessionStoreHandler(Session, Request, Response, cookieKeySize))
+                        {
+                            cssh.StoreData(symC.Decrypt(newAcc.Config.PrivateKey),
+                                out cssi);
+                            cssh.InjectCryptoSessionStore("AccPriKey", cssi);
+                        }
+
+                        /*HttpCookie keyPartCookie = null;
                         using(var credHandler = new CredentialHandler(cookieKeySize))
                         {
                             byte[] sessionCookieKey;
@@ -125,7 +135,7 @@ namespace BLOBLocker.WebApp.Controllers
                             Session["AccPriKeyCookieKey"] = sessionCookieKey;
                             Session["AccPriKeyCookieIV"] = sessionCookieIV;
                             Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
-                        }
+                        }*/
                     }
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
                     return RedirectToAction("Index", "Panel");
@@ -167,7 +177,15 @@ namespace BLOBLocker.WebApp.Controllers
                             bool createPersistentAuthCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
                             int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>(); ;
 
-                            HttpCookie cryptoCookie = null;
+                            CryptoKeyInformation cssi;
+                            using (var cssh = new CryptoSessionStoreHandler(Session,
+                                Request, Response, cookieKeySize))
+                            {
+                                cssh.StoreData(priRSAKey, out cssi);
+                                cssh.InjectCryptoSessionStore("AccPriKey", cssi);
+                            }
+
+                          /*  HttpCookie cryptoCookie = null;
 
                             byte[] sessionCookieKey;
                             byte[] sessionCookieIV;
@@ -180,7 +198,7 @@ namespace BLOBLocker.WebApp.Controllers
                             Session["AccPriKeyCookieKey"] = sessionCookieKey;
                             Session["AccPriKeyCookieIV"] = sessionCookieIV;
                             Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
-
+                            */
                             FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                             if (Request.QueryString["ReturnUrl"] == null)
                                 return RedirectToAction("Index", "Panel");
@@ -211,11 +229,16 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpGet]
         public ActionResult SignOut()
         {
-            Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
-            Response.Cookies["Secret"].Expires = DateTime.Now.AddDays(-1);
+            //Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
 
+            foreach (var cookieName in Request.Cookies.AllKeys)
+            {
+                Response.Cookies[cookieName].Value = "";
+                Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
+            }
+                
             var customCulture = Session["customCulture"] as CultureInfo;
-
+            
             Session.Abandon();
             if(customCulture != null)
                 Session["customCulture"] = customCulture;

@@ -2,6 +2,7 @@
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Code.Security.Cryptography;
 using BLOBLocker.Code.Text;
+using BLOBLocker.Code.Web;
 using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Entities.Models.WebApp;
 using Cipha.Security.Cryptography;
@@ -69,6 +70,15 @@ namespace BLOBLocker.Code.Data
             initialized = true;
         }
 
+        public void Initialize(CryptoKeyInformation cryptoKeyInformation)
+        {
+            this.storedKeyPart = cryptoKeyInformation.CryptoCookiePart.Clone() as byte[];
+            this.sessionCookieKey = cryptoKeyInformation.SessionKey.Clone() as byte[];
+            this.sessionCookieIV = cryptoKeyInformation.SessionIV.Clone() as byte[];
+            this.sessionStoredKeyPart = cryptoKeyInformation.SessionStoredKeyPart.Clone() as byte[];
+            initialized = true;
+        }
+
         public SymmetricCipher<AesManaged> GetPoolCipher()
         {
             if (!initialized)
@@ -86,6 +96,8 @@ namespace BLOBLocker.Code.Data
                 throw new InvalidOperationException("poolhandler must be initialized");
 
             poolSharePrivateRSAKey = null;
+
+            
             using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
             {
                 byte[] userPriKey = credHandler.Extract(storedKeyPart, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);

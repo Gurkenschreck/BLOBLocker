@@ -24,6 +24,7 @@ using System.Text;
 using BLOBLocker.Code.ViewModels.WebApp;
 using BLOBLocker.Code.Security.Cryptography;
 using BLOBLocker.Code.Data;
+using BLOBLocker.Code.Web;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -66,13 +67,11 @@ namespace BLOBLocker.WebApp.Controllers
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
-                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                        HttpCookie keypartCookie = Request.Cookies["Secret"];
-
-                        poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                            sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                        var cssh = new CryptoSessionStoreExtractor(Session, Request);
+                        using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                        {
+                            poolHandler.Initialize(keyInform);
+                        }
                         using (var poolCipher = poolHandler.GetPoolCipher())
                         {
                             povm.Description = poolCipher.DecryptToString(corPool.Description);
@@ -108,20 +107,18 @@ namespace BLOBLocker.WebApp.Controllers
                     configModel.Populate(corPool, curAcc);
                     configModel.TitleDescriptionViewModel.Rights = poolHandler.CorrespondingPoolShare.Rights;
 
-                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                    HttpCookie keypartCookie = Request.Cookies["Secret"];
-
-                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
+                        var cssh = new CryptoSessionStoreExtractor(Session, Request);
+                        using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                        {
+                            poolHandler.Initialize(keyInform);
+                        }
                         using (var cipher = poolHandler.GetPoolCipher())
                         {
                             configModel.TitleDescriptionViewModel.Description = cipher.DecryptToString(corPool.Description);
                         }
+
                     }
 
                     return View(configModel);
@@ -150,20 +147,20 @@ namespace BLOBLocker.WebApp.Controllers
 
                 if (string.IsNullOrWhiteSpace(tdvm.Description))
                     tdvm.Description = string.Empty;
-                
+
                 using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                    byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                    byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                    HttpCookie keypartCookie = Request.Cookies["Secret"];
+                    var cssh = new CryptoSessionStoreExtractor(Session, Request);
+                    using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                    {
 
-                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                        poolHandler.Initialize(keyInform);
+                    }
                     using (var cipher = poolHandler.GetPoolCipher())
                     {
                         curPool.Description = cipher.EncryptToString(tdvm.Description);
                     }
+
                 }
                 
                 context.SaveChanges();
@@ -224,10 +221,10 @@ namespace BLOBLocker.WebApp.Controllers
                 cvm.PoolShare = curPoolShare;
                 ViewBag.Rights = curPoolShare.Rights;
                 cvm.PUID = puid;
-                
+
                 //Decrypt messages //take last x messages // show only since share date
-                int showAmountMessages = Request.QueryString["smc"] != null 
-                    ? Convert.ToInt32(Request.QueryString["smc"]) 
+                int showAmountMessages = Request.QueryString["smc"] != null
+                    ? Convert.ToInt32(Request.QueryString["smc"])
                     : Convert.ToInt32(HttpContext.Application["pool.ShowLastMessageCount"]);
 
                 int incrementShowAmountMessages = Convert.ToInt32(HttpContext.Application["pool.IncrementShowMessageCount"]);
@@ -236,18 +233,18 @@ namespace BLOBLocker.WebApp.Controllers
                 cvm.NewMessage = new MessageViewModel();
                 cvm.NewMessage.PUID = puid;
 
-                byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                HttpCookie keypartCookie = Request.Cookies["Secret"];
-
                 using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value), sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                    var cssh = new CryptoSessionStoreExtractor(Session, Request);
+                    using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                    {
 
+                        poolHandler.Initialize(keyInform);
+                    }
                     ICollection<Message> plainMessages;
                     poolHandler.GetChat(cvm.NextAmountShowLastMessageCount, out plainMessages);
                     cvm.Messages = plainMessages ?? new List<Message>();
+
                 }
             }
 
@@ -272,15 +269,13 @@ namespace BLOBLocker.WebApp.Controllers
                 msg.Pool = curPool;
                 msg.Sender = curAcc;
 
-                byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                HttpCookie keypartCookie = Request.Cookies["Secret"];
-
                 using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    poolHandler.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                        sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                    var cssh = new CryptoSessionStoreExtractor(Session, Request);
+                    using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                    {
+                        poolHandler.Initialize(keyInform);
+                    }
                     byte[] poolPrivateRSAKey;
                     using (var poolCipher = poolHandler.GetPoolCipher(out poolPrivateRSAKey))
                     {
@@ -291,6 +286,7 @@ namespace BLOBLocker.WebApp.Controllers
                             msg.TextSignature = rsaCipher.SignStringToString<SHA256Cng>(msg.Text);
                         }
                     }
+
                 }
                 curPool.Messages.Add(msg);
                 context.SaveChanges();
@@ -345,19 +341,18 @@ namespace BLOBLocker.WebApp.Controllers
                     {
                         var curAcc = accRepo.GetByKey(User.Identity.Name);
                         PoolShare curAccPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.IsActive && p.PoolID == pool.ID);
-
-                        HttpCookie keypartCookie = Request.Cookies["Secret"];
-                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
+                        
                         int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
 
                         using (PoolHandler ph = new PoolHandler(curAcc, pool))
                         {
-                            ph.Initialize(Convert.FromBase64String(keypartCookie.Value),
-                                sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                            var cssh = new CryptoSessionStoreExtractor(Session, Request);
+                            using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                            {
+                                ph.Initialize(keyInform);
+                            }
+                            
                             PoolShare ps = ph.AddToPool(corAcc, poolShareSymKeySize);
-
                             if (!ivm.ShowAll)
                             {
                                 ps.ShowSince = ivm.ShowSince;
@@ -465,13 +460,11 @@ namespace BLOBLocker.WebApp.Controllers
 
                     if (!string.IsNullOrWhiteSpace(poolViewModel.Description))
                     {
-                        byte[] sessionCookieKey = Session["AccPriKeyCookieKey"] as byte[];
-                        byte[] sessionCookieIV = Session["AccPriKeyCookieIV"] as byte[];
-                        byte[] sessionStoredKeyPart = Session["AccPriKeySessionStoredKeyPart"] as byte[];
-                        HttpCookie keypartCookie = Request.Cookies["Secret"];
-
-                        ph.Initialize(Convert.FromBase64String(keypartCookie.Value), sessionCookieKey,
-                            sessionCookieIV, sessionStoredKeyPart);
+                        var cssh = new CryptoSessionStoreExtractor(Session, Request);
+                        using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                        {
+                            ph.Initialize(keyInform);
+                        }
                         using (var poolCipher = ph.GetPoolCipher())
                         {
                             pool.Description = poolCipher.EncryptToString(poolViewModel.Description);
