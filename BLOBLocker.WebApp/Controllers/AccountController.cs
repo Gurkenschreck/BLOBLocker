@@ -111,31 +111,14 @@ namespace BLOBLocker.WebApp.Controllers
 
                     using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV))
                     {
-
-                        CryptoKeyInformation cssi;
                         using (var cssh = new CryptoSessionStoreHandler(Session, Request, Response, cookieKeySize))
                         {
+                            CryptoKeyInformation cssi;
                             cssh.StoreData(symC.Decrypt(newAcc.Config.PrivateKey),
                                 out cssi);
                             cssh.InjectCryptoSessionStore("AccPriKey", cssi);
+                            cssi.Dispose();
                         }
-
-                        /*HttpCookie keyPartCookie = null;
-                        using(var credHandler = new CredentialHandler(cookieKeySize))
-                        {
-                            byte[] sessionCookieKey;
-                            byte[] sessionCookieIV;
-                            byte[] sessionStoredKeyPart;
-                            credHandler.Inject(symC.Decrypt(newAcc.Config.PrivateKey),
-                                out keyPartCookie,
-                                out sessionCookieKey,
-                                out sessionCookieIV,
-                                out sessionStoredKeyPart);
-                            Response.Cookies.Add(keyPartCookie);
-                            Session["AccPriKeyCookieKey"] = sessionCookieKey;
-                            Session["AccPriKeyCookieIV"] = sessionCookieIV;
-                            Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
-                        }*/
                     }
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
                     return RedirectToAction("Index", "Panel");
@@ -177,28 +160,15 @@ namespace BLOBLocker.WebApp.Controllers
                             bool createPersistentAuthCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
                             int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>(); ;
 
-                            CryptoKeyInformation cssi;
                             using (var cssh = new CryptoSessionStoreHandler(Session,
                                 Request, Response, cookieKeySize))
                             {
+                                CryptoKeyInformation cssi;
                                 cssh.StoreData(priRSAKey, out cssi);
                                 cssh.InjectCryptoSessionStore("AccPriKey", cssi);
+                                cssi.Dispose();
                             }
 
-                          /*  HttpCookie cryptoCookie = null;
-
-                            byte[] sessionCookieKey;
-                            byte[] sessionCookieIV;
-                            byte[] sessionStoredKeyPart;
-                            using(var credHandler = new CredentialHandler(cookieKeySize))
-                            {
-                                credHandler.Inject(priRSAKey, out cryptoCookie, out sessionCookieKey, out sessionCookieIV, out sessionStoredKeyPart);
-                                Response.Cookies.Add(cryptoCookie);
-                            }
-                            Session["AccPriKeyCookieKey"] = sessionCookieKey;
-                            Session["AccPriKeyCookieIV"] = sessionCookieIV;
-                            Session["AccPriKeySessionStoredKeyPart"] = sessionStoredKeyPart;
-                            */
                             FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                             if (Request.QueryString["ReturnUrl"] == null)
                                 return RedirectToAction("Index", "Panel");
@@ -251,6 +221,52 @@ namespace BLOBLocker.WebApp.Controllers
             var AccRepo = new AccountRepository(context);
             var acc = AccRepo.GetByKey(User.Identity.Name);
             return View(acc);
+        }
+
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            return View(new ChangePasswordViewModel());
+        }
+
+        [RequiredParameters("cpvm")]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordViewModel cpvm)
+        {
+            if (ModelState.IsValid)
+            {
+                int saltByteLength = HttpContext.Application["security.SaltByteLength"].As<int>();
+                int accountSymKeySize = HttpContext.Application["security.AccountKeySize"].As<int>();
+                int hashIterations = HttpContext.Application["security.HashIterationCount"].As<int>();
+
+                var cryptoProperties = new CryptoConfigHandler.CryptoConfigProperties
+                {
+                    SaltByteLength = saltByteLength,
+                    SymmetricKeySize = accountSymKeySize,
+                    HashIterations = hashIterations
+                };
+
+                var accRepo = new AccountRepository(context);
+                var curAcc = accRepo.GetByKey(User.Identity.Name);
+                var accHandler = new AccountHandler(curAcc);
+                if (accHandler.ChangePassword(cpvm.CurrentPassword, cpvm.NewPassword, cryptoProperties))
+                {
+                    context.SaveChanges();
+                    return RedirectToAction("PasswordChanged");
+                }
+                else
+                {
+                    ModelState.AddModelError("CurrentPassword", HttpContext.GetGlobalResourceObject(null, "Account.CurrentPasswordWrong").As<string>());
+                } 
+            }
+            return View(cpvm);
+        }
+
+        [ChildActionOnly]
+        public ActionResult PasswordChanged()
+        {
+            return View();
         }
     }
 }

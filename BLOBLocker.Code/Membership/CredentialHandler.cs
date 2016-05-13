@@ -56,8 +56,8 @@ namespace BLOBLocker.Code.Membership
             //5. Save Pa in cookie of user
             keypartCookie = new HttpCookie("Secret");
             keypartCookie.Value = Convert.ToBase64String(Pa);
-            keypartCookie.HttpOnly = true;
-            keypartCookie.Secure = true;
+            keypartCookie.HttpOnly = HttpOnly;
+            keypartCookie.Secure = Secure;
             //6. Initialize 2nd cipher to encrypt Pb for session storage
             using (var cookieCipher = new SymmetricCipher<AesManaged>(a, iv))
             {
@@ -87,7 +87,6 @@ namespace BLOBLocker.Code.Membership
                 byte[] rP = new byte[rPa.Length + rPb.Length];
                 Array.Copy(rPa, rP, rPa.Length);
                 Array.Copy(rPb, 0, rP, rPa.Length, rPb.Length);
-
 
                 // 7. Decrypt encrypted private key of account
                 using (var symCi = new SymmetricCipher<AesManaged>(rKey, rIV))

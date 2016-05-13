@@ -150,5 +150,24 @@ namespace BLOBLocker.Code.Data
 
             return added;
         }
+
+        public bool ChangePassword(string currentPassword, string newPassword, CryptoConfigHandler.CryptoConfigProperties properties)
+        {
+            if (currentAccount == null)
+                throw new InvalidOperationException("currentaccount is not set");
+
+            byte[] newSalt;
+            CryptoConfigHandler cryptoConfigHandler = new CryptoConfigHandler();
+            if(cryptoConfigHandler.ExchangeSymmetricKey(currentPassword, newPassword, currentAccount.Salt,
+                currentAccount.Config, properties, out newSalt))
+            {
+                currentAccount.Salt = newSalt;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

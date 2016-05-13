@@ -5,6 +5,8 @@
 
 <h2>@ViewBag.Title</h2>
 
+@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.ChangePassword").ToString(), "ChangePassword")
+
 <p>Here does the user get an overview of his account status, some options and so on.</p>
 Some cool stuff would be
 <ul>

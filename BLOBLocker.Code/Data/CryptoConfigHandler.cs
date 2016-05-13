@@ -1,4 +1,5 @@
 ﻿using BLOBLocker.Entities.Models.WebApp;
+using Cipha.Security.Cryptography;
 using Cipha.Security.Cryptography.Asymmetric;
 using Cipha.Security.Cryptography.Symmetric;
 using System;
@@ -29,7 +30,7 @@ namespace BLOBLocker.Code.Data
             newConfig.RSAKeySize = properties.RSAKeySize;
 
             byte[] iv;
-            using (var symC = new SymmetricCipher<AesManaged>(password, out salt, out iv, keySize: newConfig.KeySize, iterations: newConfig.IterationCount))
+            using (var symC = new SymmetricCipher<AesManaged>(password, out salt, out iv, properties.SaltByteLength, newConfig.KeySize, iterations: newConfig.IterationCount))
             {
                 newConfig.IV = iv;
 
@@ -39,8 +40,42 @@ namespace BLOBLocker.Code.Data
                     newConfig.PrivateKey = Convert.FromBase64String(rsaC.ToEncryptedXmlString<AesManaged>(true, symC.Key, symC.IV));
                     newConfig.PublicKeySignature = rsaC.SignStringToString<SHA256Cng>(newConfig.PublicKey);
                 }
+
+                newConfig.Key = symC.Encrypt(Utilities.GenerateBytes(32));
             }
             return newConfig;
+        }
+
+        public bool ExchangeSymmetricKey(string currentPassword, string newPassword, byte[] currentSalt, CryptoConfiguration configToChange, CryptoConfigProperties properties, out byte[] salt)
+        {
+            using (var oldCipher = new SymmetricCipher<AesManaged>(currentPassword,
+                currentSalt, configToChange.IV, iterations: configToChange.IterationCount))
+            {
+                byte[] plainCurrentPriRSAKey = null;
+                try
+                {
+                    plainCurrentPriRSAKey = oldCipher.Decrypt(configToChange.PrivateKey);
+                }
+                catch (CryptographicException)
+                {
+                    salt = null;
+                    return false;
+                }
+
+                byte[] newSalt;
+                byte[] newIV;
+                using (var newCipher = new SymmetricCipher<AesManaged>(newPassword,
+                    out newSalt, out newIV, properties.SaltByteLength, properties.SymmetricKeySize, iterations: properties.HashIterations))
+                {
+                    salt = newSalt;
+                    configToChange.IterationCount = properties.HashIterations;
+                    configToChange.IV = newIV;
+                    configToChange.Key = newCipher.Encrypt(Utilities.GenerateBytes(32));
+
+                    configToChange.PrivateKey = newCipher.Encrypt(plainCurrentPriRSAKey);
+                }
+            }
+            return true;
         }
     }
 }
