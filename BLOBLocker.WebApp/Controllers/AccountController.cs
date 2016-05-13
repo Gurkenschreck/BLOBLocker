@@ -263,7 +263,7 @@ namespace BLOBLocker.WebApp.Controllers
             return View(cpvm);
         }
 
-        [ChildActionOnly]
+        [HttpGet]
         public ActionResult PasswordChanged()
         {
             return View();
