@@ -1,7 +1,9 @@
 ﻿using BLOBLocker.Code;
+using BLOBLocker.Code.Web;
 using BLOBLocker.Entities.Models;
 using BLOBLocker.Entities.Models.WebApp;
 using BLOBLocker.WebApp.App_Start;
+using Cipha.Security.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -41,21 +43,32 @@ namespace BLOBLocker.WebApp
 
             TaskConfig.StartBackgroundService(Application, cancellationToken);
         }
+
+        protected void Application_End(object sender, EventArgs args)
+        {
+            cancellationTokenSource.Cancel();
+        }
+
         protected void Session_Start(object sender, EventArgs args)
         {
             Session["customCulture"] = Thread.CurrentThread.CurrentUICulture;
 
             if(User.Identity.IsAuthenticated)
             {
-                Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
-                Response.Cookies["Secret"].Expires = DateTime.Now.AddDays(-1);
+                foreach (var cookieName in Request.Cookies.AllKeys)
+                {
+                    Response.Cookies[cookieName].Value = "";
+                    Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
+                }
+                
                 Response.Redirect(FormsAuthentication.LoginUrl);
             }
         }
 
-        protected void Application_End(object sender, EventArgs args)
+        protected void Session_End(object sender, EventArgs args)
         {
-            cancellationTokenSource.Cancel();
+            
+            Session.RemoveAll();
         }
 
         protected void Application_AcquireRequestState(object sender, EventArgs args)

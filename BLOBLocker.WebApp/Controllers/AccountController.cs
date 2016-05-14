@@ -111,13 +111,10 @@ namespace BLOBLocker.WebApp.Controllers
 
                     using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV))
                     {
-                        using (var cssh = new CryptoSessionStoreHandler(Session, Request, Response, cookieKeySize))
+                        using(var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
                         {
-                            CryptoKeyInformation cssi;
-                            cssh.StoreData(symC.Decrypt(newAcc.Config.PrivateKey),
-                                out cssi);
-                            cssh.InjectCryptoSessionStore("AccPriKey", cssi);
-                            cssi.Dispose();
+                            css["PrivRSAKey"] = symC.Decrypt(newAcc.Config.PrivateKey);
                         }
                     }
                     FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
@@ -160,15 +157,12 @@ namespace BLOBLocker.WebApp.Controllers
                             bool createPersistentAuthCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
                             int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>(); ;
 
-                            using (var cssh = new CryptoSessionStoreHandler(Session,
-                                Request, Response, cookieKeySize))
+                            using(var css = new CryptoSessionStore("AccPriKey",
+                                Session, Request, Response))
                             {
-                                CryptoKeyInformation cssi;
-                                cssh.StoreData(priRSAKey, out cssi);
-                                cssh.InjectCryptoSessionStore("AccPriKey", cssi);
-                                cssi.Dispose();
+                                css["PrivRSAKey"] = priRSAKey;
                             }
-
+                            
                             FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
                             if (Request.QueryString["ReturnUrl"] == null)
                                 return RedirectToAction("Index", "Panel");
@@ -199,8 +193,6 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpGet]
         public ActionResult SignOut()
         {
-            //Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
-
             foreach (var cookieName in Request.Cookies.AllKeys)
             {
                 Response.Cookies[cookieName].Value = "";
@@ -209,7 +201,7 @@ namespace BLOBLocker.WebApp.Controllers
                 
             var customCulture = Session["customCulture"] as CultureInfo;
             
-            Session.Abandon();
+            Session.RemoveAll();
             if(customCulture != null)
                 Session["customCulture"] = customCulture;
             return RedirectToAction("Index", "Home");

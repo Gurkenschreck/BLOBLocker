@@ -29,10 +29,12 @@ namespace BLOBLocker.AdminTool
         {
             if (User.Identity.IsAuthenticated)
             {
-                Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddDays(-1);
-                Response.Cookies["Secret"].Expires = DateTime.Now.AddDays(-1);
+                foreach (var cookieName in Request.Cookies.AllKeys)
+                {
+                    Response.Cookies[cookieName].Value = "";
+                    Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
+                }
                 Response.Redirect(FormsAuthentication.LoginUrl);
-                
             }
         }
 

@@ -24,10 +24,7 @@ namespace BLOBLocker.Code.Data
         PoolShare currentAccountPoolShare;
         bool initialized = false;
 
-        byte[] storedKeyPart;
-        byte[] sessionCookieKey;
-        byte[] sessionCookieIV;
-        byte[] sessionStoredKeyPart;
+        byte[] privateRSAAccountKey;
 
         public PoolShare CorrespondingPoolShare
         {
@@ -58,26 +55,20 @@ namespace BLOBLocker.Code.Data
             GC.SuppressFinalize(this);
         }
 
-        public void Initialize(byte[] cookieStoredKeyPart,
-            byte[] sessionCookieKey,
-            byte[] sessionCookieIV,
-            byte[] sessionStoredKeyPart)
+        public void Initialize(byte[] privateRSAAccountKey)
         {
-            this.storedKeyPart = cookieStoredKeyPart.Clone() as byte[];
-            this.sessionCookieKey = sessionCookieKey.Clone() as byte[];
-            this.sessionCookieIV = sessionCookieIV.Clone() as byte[];
-            this.sessionStoredKeyPart = sessionStoredKeyPart.Clone() as byte[];
+            this.privateRSAAccountKey = privateRSAAccountKey.Clone() as byte[];
             initialized = true;
         }
 
-        public void Initialize(CryptoKeyInformation cryptoKeyInformation)
+        /*public void Initialize(CryptoKeyInformation cryptoKeyInformation)
         {
             this.storedKeyPart = cryptoKeyInformation.CryptoCookiePart.Clone() as byte[];
             this.sessionCookieKey = cryptoKeyInformation.SessionKey.Clone() as byte[];
             this.sessionCookieIV = cryptoKeyInformation.SessionIV.Clone() as byte[];
             this.sessionStoredKeyPart = cryptoKeyInformation.SessionStoredKeyPart.Clone() as byte[];
             initialized = true;
-        }
+        }*/
 
         public SymmetricCipher<AesManaged> GetPoolCipher()
         {
@@ -97,68 +88,56 @@ namespace BLOBLocker.Code.Data
 
             poolSharePrivateRSAKey = null;
 
-            
-            using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
-            {
-                byte[] userPriKey = credHandler.Extract(storedKeyPart, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
-
-                byte[] poolKey = CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(userPriKey), currentAccountPoolShare, out poolSharePrivateRSAKey);
-                var cipher = new SymmetricCipher<AesManaged>(poolKey, currentPool.Config.IV);
-                Utilities.SetArrayValuesZero(userPriKey);
-                Utilities.SetArrayValuesZero(poolKey);
-                return cipher;
-            }
-            //return null;
+            byte[] poolKey = CryptoHelper.GetPoolKey(Encoding.UTF8.GetString(privateRSAAccountKey),
+                currentAccountPoolShare, out poolSharePrivateRSAKey);
+            var cipher = new SymmetricCipher<AesManaged>(poolKey, currentPool.Config.IV);
+            Utilities.SetArrayValuesZero(poolKey);
+            return cipher;
         }
 
         public PoolShare AddToPool(Account addAccount, int poolShareSymmetricKeySize)
         {
             if (!initialized)
                 throw new InvalidOperationException("poolhandler must be initialized");
-            using (CredentialHandler credHandler = new CredentialHandler(sessionCookieKey, sessionCookieIV))
+
+            PoolShare ps = new PoolShare();
+            ps.Config = new CryptoConfiguration();
+
+            ps.Pool = currentPool;
+            ps.SharedWith = addAccount;
+            ps.Rights = currentPool.DefaultRights;
+
+            string curAccPrivateKeyString = Encoding.UTF8.GetString(privateRSAAccountKey);
+
+            using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(curAccPrivateKeyString))
             {
-                byte[] userPriKey = credHandler.Extract(storedKeyPart, sessionCookieKey, sessionCookieIV, sessionStoredKeyPart);
+                byte[] curPSKey = rsaCipher.Decrypt(currentAccountPoolShare.Config.Key);
+                byte[] curPSIV = rsaCipher.Decrypt(currentAccountPoolShare.Config.IV);
 
-                PoolShare ps = new PoolShare();
-                ps.Config = new CryptoConfiguration();
-
-                ps.Pool = currentPool;
-                ps.SharedWith = addAccount;
-                ps.Rights = currentPool.DefaultRights;
-
-                string curAccPrivateKeyString = Encoding.UTF8.GetString(userPriKey);
-
-                using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(curAccPrivateKeyString))
+                using (var curPSCipher = new SymmetricCipher<AesManaged>(curPSKey, curPSIV))
                 {
-                    byte[] curPSKey = rsaCipher.Decrypt(currentAccountPoolShare.Config.Key);
-                    byte[] curPSIV = rsaCipher.Decrypt(currentAccountPoolShare.Config.IV);
+                    byte[] curPSPriKey = curPSCipher.Decrypt(currentAccountPoolShare.Config.PrivateKey);
 
-                    using (var curPSCipher = new SymmetricCipher<AesManaged>(curPSKey, curPSIV))
+                    ps.PoolKey = currentAccountPoolShare.PoolKey;
+
+                    using (var corAccRSACipher = new RSACipher<RSACryptoServiceProvider>(addAccount.Config.PublicKey))
                     {
-                        byte[] curPSPriKey = curPSCipher.Decrypt(currentAccountPoolShare.Config.PrivateKey);
-
-                        ps.PoolKey = currentAccountPoolShare.PoolKey;
-
-                        using (var corAccRSACipher = new RSACipher<RSACryptoServiceProvider>(addAccount.Config.PublicKey))
+                        using (var corPSCipher = new SymmetricCipher<AesManaged>(poolShareSymmetricKeySize))
                         {
-                            using (var corPSCipher = new SymmetricCipher<AesManaged>(poolShareSymmetricKeySize))
-                            {
-                                ps.Config.PrivateKey = corPSCipher.Encrypt(curPSPriKey);
-                                ps.Config.Key = corAccRSACipher.Encrypt(corPSCipher.Key);
-                                ps.Config.IV = corAccRSACipher.Encrypt(corPSCipher.IV);
-                            }
+                            ps.Config.PrivateKey = corPSCipher.Encrypt(curPSPriKey);
+                            ps.Config.Key = corAccRSACipher.Encrypt(corPSCipher.Key);
+                            ps.Config.IV = corAccRSACipher.Encrypt(corPSCipher.IV);
                         }
-                        Utilities.SetArrayValuesZero(curPSPriKey);
                     }
-                    Utilities.SetArrayValuesZero(curPSKey);
-                    Utilities.SetArrayValuesZero(curPSIV);
-
+                    Utilities.SetArrayValuesZero(curPSPriKey);
                 }
-                addAccount.PoolShares.Add(ps);
-                currentPool.Participants.Add(ps);
-                return ps;
+                Utilities.SetArrayValuesZero(curPSKey);
+                Utilities.SetArrayValuesZero(curPSIV);
+
             }
-            //return null;
+            addAccount.PoolShares.Add(ps);
+            currentPool.Participants.Add(ps);
+            return ps;
         }
 
         public PoolShare SetupNew(int puidByteLength,
@@ -265,14 +244,8 @@ namespace BLOBLocker.Code.Data
         {
             if (disposing)
             {
-                if(storedKeyPart != null)
-                    Utilities.SetArrayValuesZero(storedKeyPart);
-                if(sessionCookieKey != null)
-                    Utilities.SetArrayValuesZero(sessionCookieKey);
-                if (sessionCookieIV != null)
-                    Utilities.SetArrayValuesZero(sessionCookieIV);
-                if (sessionStoredKeyPart != null)
-                    Utilities.SetArrayValuesZero(sessionStoredKeyPart);
+                if(privateRSAAccountKey != null)
+                    Utilities.SetArrayValuesZero(privateRSAAccountKey);
             }
         }
     }

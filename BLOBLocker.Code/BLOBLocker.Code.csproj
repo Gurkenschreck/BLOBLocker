@@ -115,8 +115,10 @@
     <Compile Include="ViewModels\WebApp\PoolOverviewViewModel.cs" />
     <Compile Include="ViewModels\WebApp\RightsEditViewModel.cs" />
     <Compile Include="ViewModels\WebApp\TitleDescriptionViewModel.cs" />
+    <Compile Include="Web\CryptoSessionStore.cs" />
     <Compile Include="Web\CryptoSessionStoreExtractor.cs" />
     <Compile Include="Web\CryptoSessionStoreHandler.cs" />
+    <Compile Include="Web\SessionStoreCredentials.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLOBLocker.Entities\BLOBLocker.Entities.csproj">

@@ -67,10 +67,11 @@ namespace BLOBLocker.WebApp.Controllers
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
-                        var cssh = new CryptoSessionStoreExtractor(Session, Request);
-                        using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                        using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
                         {
-                            poolHandler.Initialize(keyInform);
+                            byte[] cc = css["PrivRSAKey"];
+                            poolHandler.Initialize(cc);
                         }
                         using (var poolCipher = poolHandler.GetPoolCipher())
                         {
@@ -109,18 +110,16 @@ namespace BLOBLocker.WebApp.Controllers
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
-                        var cssh = new CryptoSessionStoreExtractor(Session, Request);
-                        using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                        using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
                         {
-                            poolHandler.Initialize(keyInform);
+                            poolHandler.Initialize(css["PrivRSAKey"]);
                         }
                         using (var cipher = poolHandler.GetPoolCipher())
                         {
                             configModel.TitleDescriptionViewModel.Description = cipher.DecryptToString(corPool.Description);
                         }
-
                     }
-
                     return View(configModel);
                 }
                 else
@@ -150,11 +149,10 @@ namespace BLOBLocker.WebApp.Controllers
 
                 using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    var cssh = new CryptoSessionStoreExtractor(Session, Request);
-                    using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                    using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
                     {
-
-                        poolHandler.Initialize(keyInform);
+                        poolHandler.Initialize(css["PrivRSAKey"]);
                     }
                     using (var cipher = poolHandler.GetPoolCipher())
                     {
@@ -235,11 +233,10 @@ namespace BLOBLocker.WebApp.Controllers
 
                 using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    var cssh = new CryptoSessionStoreExtractor(Session, Request);
-                    using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                    using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
                     {
-
-                        poolHandler.Initialize(keyInform);
+                        poolHandler.Initialize(css["PrivRSAKey"]);
                     }
                     ICollection<Message> plainMessages;
                     poolHandler.GetChat(cvm.NextAmountShowLastMessageCount, out plainMessages);
@@ -271,10 +268,10 @@ namespace BLOBLocker.WebApp.Controllers
 
                 using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    var cssh = new CryptoSessionStoreExtractor(Session, Request);
-                    using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                    using (var css = new CryptoSessionStore("PrivRSAKey",
+                            Session, Request, Response))
                     {
-                        poolHandler.Initialize(keyInform);
+                        poolHandler.Initialize(css["PrivRSAKey"]);
                     }
                     byte[] poolPrivateRSAKey;
                     using (var poolCipher = poolHandler.GetPoolCipher(out poolPrivateRSAKey))
@@ -344,15 +341,15 @@ namespace BLOBLocker.WebApp.Controllers
                         
                         int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
 
-                        using (PoolHandler ph = new PoolHandler(curAcc, pool))
+                        using (PoolHandler poolHandler = new PoolHandler(curAcc, pool))
                         {
-                            var cssh = new CryptoSessionStoreExtractor(Session, Request);
-                            using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                            using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
                             {
-                                ph.Initialize(keyInform);
+                                poolHandler.Initialize(css["PrivRSAKey"]);
                             }
-                            
-                            PoolShare ps = ph.AddToPool(corAcc, poolShareSymKeySize);
+
+                            PoolShare ps = poolHandler.AddToPool(corAcc, poolShareSymKeySize);
                             if (!ivm.ShowAll)
                             {
                                 ps.ShowSince = ivm.ShowSince;
@@ -448,9 +445,9 @@ namespace BLOBLocker.WebApp.Controllers
                 var accRepo = new AccountRepository(context);
                 Account curAcc = accRepo.GetByKey(User.Identity.Name);
                 Pool pool = poolViewModel.Generate();
-                using (PoolHandler ph = new PoolHandler(curAcc, pool))
+                using (PoolHandler poolHandler = new PoolHandler(curAcc, pool))
                 {
-                    PoolShare poolShare = ph.SetupNew(9,
+                    PoolShare poolShare = poolHandler.SetupNew(9,
                         PoolRightHelper.CalculateRights(poolViewModel.Rights),
                         saltByteLength,
                         poolShareKeySize,
@@ -460,12 +457,12 @@ namespace BLOBLocker.WebApp.Controllers
 
                     if (!string.IsNullOrWhiteSpace(poolViewModel.Description))
                     {
-                        var cssh = new CryptoSessionStoreExtractor(Session, Request);
-                        using (var keyInform = cssh.GetCryptoKeyInformation("AccPriKey"))
+                        using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
                         {
-                            ph.Initialize(keyInform);
+                            poolHandler.Initialize(css["PrivRSAKey"]);
                         }
-                        using (var poolCipher = ph.GetPoolCipher())
+                        using (var poolCipher = poolHandler.GetPoolCipher())
                         {
                             pool.Description = poolCipher.EncryptToString(poolViewModel.Description);
                         }

@@ -66,24 +66,24 @@ namespace BLOBLocker.Code.Web
             GC.SuppressFinalize(this);
         }
 
-        public CryptoKeyInformation GetCryptoSessionStoreInformation(string storeName)
+        public CryptoKeyInformation GetCryptoSessionStoreInformation(string storeName, bool cloneValues = false)
         {
-            byte[] storeSessionKey = session[storeName + "_SessionKey"] as byte[];
-            byte[] storeSessionIV = session[storeName + "_SessionIV"] as byte[];
-            byte[] storeSessionStoredKeyPart = session[storeName + "_SessionStoredKeyPart"] as byte[];
-            HttpCookie cryptoCookie = request.Cookies[storeName + "_Crypto"];
+            byte[] storeSessionKey = session[storeName + "__SessionKey"] as byte[];
+            byte[] storeSessionIV = session[storeName + "__SessionIV"] as byte[];
+            byte[] storeSessionStoredKeyPart = session[storeName + "__SessionStoredKeyPart"] as byte[];
+            HttpCookie cryptoCookie = request.Cookies[storeName + "__Crypto"];
 
             return new CryptoKeyInformation(Convert.FromBase64String(cryptoCookie.Value),
-                storeSessionKey, storeSessionIV, storeSessionStoredKeyPart, false);
+                storeSessionKey, storeSessionIV, storeSessionStoredKeyPart, cloneValues);
         }
 
         public void InjectCryptoSessionStore(string storeName, CryptoKeyInformation cssi)
         {
-            session[storeName + "_SessionKey"] = cssi.SessionKey.Clone() as byte[];
-            session[storeName + "_SessionIV"] = cssi.SessionIV.Clone() as byte[];
-            session[storeName + "_SessionStoredKeyPart"] = cssi.SessionStoredKeyPart.Clone() as byte[];
+            session[storeName + "__SessionKey"] = cssi.SessionKey.Clone() as byte[];
+            session[storeName + "__SessionIV"] = cssi.SessionIV.Clone() as byte[];
+            session[storeName + "__SessionStoredKeyPart"] = cssi.SessionStoredKeyPart.Clone() as byte[];
 
-            HttpCookie cryptoCookie = new HttpCookie(storeName + "_Crypto",
+            HttpCookie cryptoCookie = new HttpCookie(storeName + "__Crypto",
                 Convert.ToBase64String(cssi.CryptoCookiePart));
             cryptoCookie.Secure = CookieSecure;
             cryptoCookie.HttpOnly = CookieHttpOnly;
