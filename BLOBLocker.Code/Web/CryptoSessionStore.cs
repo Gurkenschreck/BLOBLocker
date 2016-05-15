@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.SessionState;
 
 namespace BLOBLocker.Code.Web
 {
@@ -34,7 +35,7 @@ namespace BLOBLocker.Code.Web
         public string StoreName
         {
             get { return storeName; }
-            set { storeName = value; }
+            private set { storeName = value; }
         }
 
         public bool CookieHttpOnly
@@ -208,26 +209,30 @@ namespace BLOBLocker.Code.Web
             if (sessionStoreCredentials == null)
                 throw new InvalidOperationException("sessionStoreCredentials needs to be initialized first");
 
+            // 1. Use the cookie stored part to decrypt the session stored part
             using(var cookieKeyPartCipher = new SymmetricCipher<AesManaged>(sessionStoreCredentials.CookieKeyPart,
                 sessionStoreCredentials.IV))
             {
                 byte[] plainSessionKeyPart = cookieKeyPartCipher.Decrypt(sessionStoreCredentials.EncryptedStoreKeyPart);
 
+                // 2. Merge cookie key part and session key part
                 byte[] cookieKeyPart = sessionStoreCredentials.CookieKeyPart;
-
                 byte[] encryptedSessionStoreKey = new byte[cookieKeyPart.Length 
                     + plainSessionKeyPart.Length];
                 Array.Copy(cookieKeyPart, encryptedSessionStoreKey, cookieKeyPart.Length);
                 Array.Copy(plainSessionKeyPart, 0, encryptedSessionStoreKey, cookieKeyPart.Length, plainSessionKeyPart.Length);
+                Utilities.SetArrayValuesZero(cookieKeyPart);
+                Utilities.SetArrayValuesZero(plainSessionKeyPart);
 
+                // 3. Use plain session stored key and iv to decrypt the encrypted storeCipher key and iv
                 using (var sessionKeyCipher = new SymmetricCipher<AesManaged>(sessionStoreCredentials.Key,
                     sessionStoreCredentials.IV))
                 {
-                    byte[] key = sessionKeyCipher.Decrypt(encryptedSessionStoreKey);
-                    byte[] iv = sessionKeyCipher.Decrypt(sessionStoreCredentials.EncryptedStoreIV); // makes probs
-                    storeCipher = new SymmetricCipher<AesManaged>(key, iv);
-                    Utilities.SetArrayValuesZero(key);
-                    Utilities.SetArrayValuesZero(iv);
+                    byte[] storeKey = sessionKeyCipher.Decrypt(encryptedSessionStoreKey);
+                    byte[] storeIV = sessionKeyCipher.Decrypt(sessionStoreCredentials.EncryptedStoreIV); 
+                    storeCipher = new SymmetricCipher<AesManaged>(storeKey, storeIV);
+                    Utilities.SetArrayValuesZero(storeKey);
+                    Utilities.SetArrayValuesZero(storeIV);
                 }
                 Utilities.SetArrayValuesZero(encryptedSessionStoreKey);
             }
@@ -240,17 +245,22 @@ namespace BLOBLocker.Code.Web
             // 1. Initialize SessionKeyCipher
             using (var sessionKeyCipher = new SymmetricCipher<AesManaged>(keySize))
             {
-                // 2. 
                 byte[] plainStoreCipherKey = storeCipher.Key;
                 byte[] plainStoreCipherIV = storeCipher.IV;
 
-                // 3. Encrypt 
+                // 2. Encrypt storeCipher key and iv
                 byte[] encryptedStoreCipherKey = sessionKeyCipher.Encrypt(plainStoreCipherKey);
+                Utilities.SetArrayValuesZero(plainStoreCipherKey);
                 byte[] encryptedStoreCipherIV = sessionKeyCipher.Encrypt(plainStoreCipherIV);
+                Utilities.SetArrayValuesZero(plainStoreCipherIV);
 
+                // 3. Split encrypted storeCipher key
                 byte[] cookieKeyPart = encryptedStoreCipherKey.Take(sessionKeyCipher.KeySize / 8).ToArray();
                 byte[] plainSessionKeyPart = encryptedStoreCipherKey.Skip(sessionKeyCipher.KeySize / 8).ToArray();
                 Utilities.SetArrayValuesZero(encryptedStoreCipherKey);
+
+                // 4. Use first part (which will be stored in a cookie) as a key itself and encrypt the 
+                // second part which will be stored in the session
                 byte[] encryptedSessionKeyPart;
                 using (var cookieKeyPartCipher = new SymmetricCipher<AesManaged>(cookieKeyPart, sessionKeyCipher.IV))
                 {
@@ -280,7 +290,7 @@ namespace BLOBLocker.Code.Web
                 }
             }
         }
-        public static void WipeAllStores(HttpSessionStateBase session)
+        public static void WipeAllStores(HttpSessionState session)
         {
             foreach (string key in session.Keys)
             {

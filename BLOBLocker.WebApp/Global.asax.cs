@@ -67,8 +67,7 @@ namespace BLOBLocker.WebApp
 
         protected void Session_End(object sender, EventArgs args)
         {
-            
-            Session.RemoveAll();
+            CryptoSessionStore.WipeAllStores(Session);
         }
 
         protected void Application_AcquireRequestState(object sender, EventArgs args)

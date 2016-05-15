@@ -202,6 +202,7 @@ namespace BLOBLocker.WebApp.Controllers
             var customCulture = Session["customCulture"] as CultureInfo;
             
             Session.RemoveAll();
+            Session.Abandon();
             if(customCulture != null)
                 Session["customCulture"] = customCulture;
             return RedirectToAction("Index", "Home");
