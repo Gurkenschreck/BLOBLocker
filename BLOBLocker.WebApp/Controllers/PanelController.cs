@@ -70,6 +70,7 @@ namespace BLOBLocker.WebApp.Controllers
                         using (var css = new CryptoSessionStore("AccPriKey",
                             Session, Request, Response))
                         {
+
                             byte[] cc = css["PrivRSAKey"];
                             poolHandler.Initialize(cc);
                         }
@@ -268,7 +269,7 @@ namespace BLOBLocker.WebApp.Controllers
 
                 using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
                 {
-                    using (var css = new CryptoSessionStore("PrivRSAKey",
+                    using (var css = new CryptoSessionStore("AccPriKey",
                             Session, Request, Response))
                     {
                         poolHandler.Initialize(css["PrivRSAKey"]);

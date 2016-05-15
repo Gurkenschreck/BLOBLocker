@@ -179,7 +179,7 @@ namespace BLOBLocker.Code.Web
         void extractCryptoSessionStore()
         {
             byte[] encryptedStoreKeyPart = session[EncryptedStoreKeyPartLabel] as byte[];
-            byte[] encryptedStoreIV = session[EncryptedStoreKeyPartLabel] as byte[];
+            byte[] encryptedStoreIV = session[EncryptedStoreIVLabel] as byte[];
             byte[] storeSessionKey = session[SessionKeyLabel] as byte[];
             byte[] storeSessionIV = session[SessionIVLabel] as byte[];
             HttpCookie cryptoCookie = request.Cookies[CookieKeyPartLabel];
@@ -223,9 +223,11 @@ namespace BLOBLocker.Code.Web
                 using (var sessionKeyCipher = new SymmetricCipher<AesManaged>(sessionStoreCredentials.Key,
                     sessionStoreCredentials.IV))
                 {
-                    byte[] a = sessionKeyCipher.Decrypt(encryptedSessionStoreKey);
-                    byte[] b = sessionKeyCipher.Decrypt(sessionStoreCredentials.EncryptedStoreIV); // makes probs
-                    storeCipher = new SymmetricCipher<AesManaged>(a, b);                    
+                    byte[] key = sessionKeyCipher.Decrypt(encryptedSessionStoreKey);
+                    byte[] iv = sessionKeyCipher.Decrypt(sessionStoreCredentials.EncryptedStoreIV); // makes probs
+                    storeCipher = new SymmetricCipher<AesManaged>(key, iv);
+                    Utilities.SetArrayValuesZero(key);
+                    Utilities.SetArrayValuesZero(iv);
                 }
                 Utilities.SetArrayValuesZero(encryptedSessionStoreKey);
             }
