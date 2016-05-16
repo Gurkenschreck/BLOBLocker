@@ -17,6 +17,9 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [DataType(DataType.Password)]
         [LocalizedDisplayName("Account.Password")]
         public string Password { get; set; }
+        [Required]
+        [LocalizedDisplayName("Account.ConfirmNewPassword")]
+        public string ConfirmPassword { get; set; }
         [LocalizedDisplayName("Account.Email")]
         public string ContactEmail { get; set; }
         [LocalizedDisplayName("Account.RegistrationCode")]
@@ -29,6 +32,9 @@ namespace BLOBLocker.Code.ViewModels.WebApp
             
             if(string.IsNullOrEmpty(Password))
                 yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.EmptyPasswordError").As<string>(), new[] { "Password" });
+
+            if (!Password.Equals(ConfirmPassword))
+                yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.PasswordsDoNotMatch").As<string>(), new[] { "NewPassword" });
         }
     }
 }

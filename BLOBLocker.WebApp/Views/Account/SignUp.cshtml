@@ -21,6 +21,10 @@
             <td>@Html.PasswordFor(model => model.Password)</td>
         </tr>
         <tr>
+            <th>@Html.LabelFor(model => model.ConfirmPassword)</th>
+            <td>@Html.PasswordFor(model => model.ConfirmPassword)</td>
+        </tr>
+        <tr>
             <th>@Html.LabelFor(model => model.ContactEmail)</th>
             <td>@Html.EditorFor(model => model.ContactEmail)</td>
         </tr>
