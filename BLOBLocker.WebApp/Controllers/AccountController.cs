@@ -25,7 +25,6 @@ using BLOBLocker.Code.ViewModels.WebApp;
 using BLOBLocker.Code.Extention;
 using BLOBLocker.Code.ViewModels.Validation;
 using BLOBLocker.Code.Data;
-using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Code.Web;
 using BLOBLocker.Code.Security.Cryptography;
 
@@ -135,7 +134,7 @@ namespace BLOBLocker.WebApp.Controllers
 
         [RequiredParameters("acc")]
         [ValidateAntiForgeryToken, AllowAnonymous, HttpPost]
-        public ActionResult SignIn(AccountViewModel acc)
+        public ActionResult SignIn(LoginViewModel acc)
         {
             bool loginEnabled = HttpContext.Application["system.EnableLogin"].As<bool>();
             if (!loginEnabled)

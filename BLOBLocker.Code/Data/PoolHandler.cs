@@ -1,15 +1,18 @@
-﻿using BLOBLocker.Code.Membership;
+﻿using BLOBLocker.Code.Exception;
+using BLOBLocker.Code.Membership;
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Code.Security.Cryptography;
 using BLOBLocker.Code.Text;
 using BLOBLocker.Code.Web;
-using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Entities.Models.WebApp;
 using Cipha.Security.Cryptography;
 using Cipha.Security.Cryptography.Asymmetric;
+using Cipha.Security.Cryptography.Hash;
 using Cipha.Security.Cryptography.Symmetric;
+using Cipha.Security.IO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -26,7 +29,7 @@ namespace BLOBLocker.Code.Data
 
         byte[] privateRSAAccountKey;
 
-        public PoolShare CorrespondingPoolShare
+        public PoolShare PoolShare
         {
             get
             {
@@ -34,19 +37,86 @@ namespace BLOBLocker.Code.Data
             }
         }
 
+        public Pool Pool
+        {
+            get
+            {
+                return currentPool;
+            }
+        }
+
+        public Account Account
+        {
+            get
+            {
+                return currentAccount;
+            }
+        }
+
         public bool CanAccessPool
         {
             get
             {
-                return currentAccount.PoolShares.Any(p => p.PoolID == currentPool.ID && p.IsActive);
+                if (currentPool != null)
+                {
+                    return currentAccount.PoolShares.Any(p => p.PoolID == currentPool.ID && p.IsActive);
+                }
+                else
+                {
+                    return false;
+                }
             }
+        }
+
+        public bool IsUserInPool(string user)
+        {
+            return Pool.Participants.Any(p => p.SharedWith.Alias == user);
+        }
+
+        public int FreePoolSpace
+        {
+            get
+            {
+                int used = 0;
+                foreach (var file in Pool.Files.Where(p => !p.IsDeleted))
+                {
+                    used += file.FileSize;
+                }
+                return TotalPoolSpace - used;
+            }
+        }
+
+        public int TotalPoolSpace
+        {
+            get
+            {
+                int available = 0;
+                foreach (var assignedMemory in Pool.AssignedMemory.Where(p => p.IsEnabled))
+                {
+                    available += assignedMemory.Space;
+                }
+                return available * 1024 * 1024;
+            }
+        }
+
+        public PoolHandler(Account currentAccount, string poolUniqueIdentifier, out bool canAccessPool)
+        {
+            this.currentAccount = currentAccount;
+            this.currentAccountPoolShare = currentAccount.PoolShares
+                .FirstOrDefault(p => p.Pool.UniqueIdentifier == poolUniqueIdentifier && p.IsActive);
+            if (currentAccountPoolShare != null)
+            {
+                this.currentPool = currentAccountPoolShare.Pool;
+            }
+
+            canAccessPool = CanAccessPool;
         }
 
         public PoolHandler(Account currentAccount, Pool currentPool)
         {
             this.currentAccount = currentAccount;
             this.currentPool = currentPool;
-            currentAccountPoolShare = currentAccount.PoolShares.FirstOrDefault(p => p.PoolID == currentPool.ID);
+            this.currentAccountPoolShare = currentAccount.PoolShares.FirstOrDefault(p => p.PoolID == currentPool.ID && p.IsActive);
         }
 
         ~PoolHandler()
@@ -57,19 +127,12 @@ namespace BLOBLocker.Code.Data
 
         public void Initialize(byte[] privateRSAAccountKey)
         {
+            if (!CanAccessPool)
+                throw new UnauthorizedPoolAccessException();
             this.privateRSAAccountKey = privateRSAAccountKey.Clone() as byte[];
             initialized = true;
         }
-
-        /*public void Initialize(CryptoKeyInformation cryptoKeyInformation)
-        {
-            this.storedKeyPart = cryptoKeyInformation.CryptoCookiePart.Clone() as byte[];
-            this.sessionCookieKey = cryptoKeyInformation.SessionKey.Clone() as byte[];
-            this.sessionCookieIV = cryptoKeyInformation.SessionIV.Clone() as byte[];
-            this.sessionStoredKeyPart = cryptoKeyInformation.SessionStoredKeyPart.Clone() as byte[];
-            initialized = true;
-        }*/
-
+        
         public SymmetricCipher<AesManaged> GetPoolCipher()
         {
             if (!initialized)
@@ -205,7 +268,6 @@ namespace BLOBLocker.Code.Data
                                               .Where(p => DateTime.Compare(showSince, (DateTime)p.Sent) < 0)
                                               .OrderByDescending(p => p.Sent)
                                               .ToList();
-
             }
             else
             {
@@ -232,6 +294,188 @@ namespace BLOBLocker.Code.Data
             else
             {
                 chatMessages = null;
+            }
+        }
+
+        public Message SendMessage(string message)
+        {
+            if (!initialized)
+                throw new InvalidOperationException("poolhandler must be initialized");
+
+            Message msg = new Message();
+            msg.Pool = currentPool;
+            msg.Sender = currentAccount;
+            using (var poolCipher = GetPoolCipher())
+            {
+                msg.Text = poolCipher.EncryptToString(message);
+
+                using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(Encoding.UTF8.GetString(privateRSAAccountKey)))
+                {
+                    msg.TextSignature = rsaCipher.SignStringToString<SHA256Cng>(msg.Text);
+                }
+                currentPool.Messages.Add(msg);
+            }
+            return msg;
+        }
+
+        public StoredFile StoreFile(VirtualFile file, bool encryptContent = true)
+        {
+            if (!initialized)
+                throw new InvalidOperationException("poolhandler must be initialized");
+
+            if(file.Content.Length > FreePoolSpace)
+                throw new NotEnoughPoolSpaceException(string.Format("pool {0} has {1} free space and cannot store {2}", Pool.ID, FreePoolSpace, file.Content.Length));
+
+            StoredFile sf = new StoredFile();
+            sf.Owner = currentAccount;
+            sf.Pool = currentPool;
+            currentPool.Files.Add(sf);
+
+            byte[] content = file.Content;
+
+            sf.IPv4Address = file.IPv4Address;
+            sf.OriginalFileName = file.FileName;
+            sf.FileSize = content.Length;
+            sf.MimeType = file.MimeType;
+            sf.FileExtension = file.FileExtension;
+            sf.OriginalFileName = file.FileName;
+            sf.Description = file.Description;
+            sf.Encrypted = encryptContent;
+            sf.IsVisible = file.IsVisible;
+
+            using (var md5Hasher = new Hasher<MD5CryptoServiceProvider>())
+            {
+                sf.MD5Checksum = BitConverter.ToString(md5Hasher.Hash(content)).Replace("-", "");
+            }
+
+            using (var sha1Hasher = new Hasher<SHA1CryptoServiceProvider>())
+            {
+                sf.SHA1Checksum = BitConverter.ToString(sha1Hasher.Hash(content)).Replace("-", "");
+            }
+
+            // Create unique filename
+            string directory = string.Format("{0}/{1}", file.FilePath, currentPool.UniqueIdentifier);
+            // Create directory if pool dir doesn't exist
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            string pathToBe;
+            do
+            {
+                sf.StoredFileName = Base32.ToBase32String(Utilities.GenerateBytes(9));
+                pathToBe = string.Format("{0}/{1}.locked", directory, sf.StoredFileName);
+            } while (File.Exists(pathToBe));
+
+
+            // Encrypt the storedFile content and store it
+            using (var byteStream = new MemoryStream(content))
+            {
+                using (var fileStream = new FileStream(pathToBe, FileMode.Create))
+                {
+                    if (encryptContent)
+                    {
+                        using (var poolCipher = GetPoolCipher())
+                        {
+                            using (var cipherStream = new CipherStream<AesManaged>(poolCipher))
+                            {
+                                cipherStream.EncryptStream(byteStream, fileStream);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        byteStream.WriteTo(fileStream);
+                    }
+                }
+            }
+
+            return sf;
+        }
+
+        public ICollection<StoredFile> GetFiles()
+        {
+            StoredFile[] fileList;
+
+            if (PoolRightHelper.HasRight(PoolShare, PoolRight.ManageFileStorage))
+            {
+                fileList = currentPool.Files.Where(p => !p.IsDeleted).ToArray();
+            }
+            else
+            {
+                fileList = currentPool.Files.Where(p => p.IsVisible && !p.IsDeleted).ToArray();
+            }
+
+            return fileList;
+        }
+
+        public VirtualFile GetFile(string storedFileName, string filePath, bool decryptContent)
+        {
+            return GetFile(storedFileName, filePath, decryptContent, null, -1);
+        }
+
+        public VirtualFile GetFile(string storedFileName, string filePath,
+            bool decryptContent, string[] previewAble, int maxByteSizeForPreview)
+        {
+            if (!initialized)
+                throw new InvalidOperationException("poolhandler must be initialized");
+
+            var storedFile = currentPool.Files.FirstOrDefault(p => p.StoredFileName == storedFileName);
+            if (storedFile != null)
+            {
+                VirtualFile vf = new VirtualFile();
+                vf.FileName = storedFile.OriginalFileName;
+                vf.FileExtension = storedFile.FileExtension;
+                vf.IPv4Address = storedFile.IPv4Address;
+                vf.MimeType = storedFile.MimeType;
+                vf.Description = storedFile.Description;
+                vf.MD5Checksum = storedFile.MD5Checksum;
+                vf.SHA1Checksum = storedFile.SHA1Checksum;
+                vf.Owner = storedFile.Owner.Alias;
+                vf.UploadedOn = (DateTime)storedFile.UploadedOn;
+                vf.FileSizeInByte = storedFile.FileSize;
+                vf.IsVisible = storedFile.IsVisible;
+
+                string localFilePath = string.Format("{0}/{1}/{2}.locked",
+                    filePath, currentPool.UniqueIdentifier, storedFile.StoredFileName);
+
+                if (!storedFile.IsDeleted || File.Exists(localFilePath))
+                {
+                    if ((storedFile.FileSize <= maxByteSizeForPreview && previewAble.Contains(storedFile.FileExtension))
+                        || (maxByteSizeForPreview == -1 && previewAble == null))
+                    {
+                        using (var poolCipher = GetPoolCipher())
+                        {
+                            using (var fileStream = new FileStream(localFilePath, FileMode.Open))
+                            {
+                                using (var memoryStream = new MemoryStream())
+                                {
+                                    if (decryptContent)
+                                    {
+                                        using (var cipherStream = new CipherStream<AesManaged>(poolCipher))
+                                        {
+                                            cipherStream.DecryptStream(fileStream, memoryStream);
+                                            vf.Content = memoryStream.ToArray();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        vf.Content = memoryStream.ToArray();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    throw new FileNotFoundException(localFilePath + " does not exist");
+                }
+
+                return vf;
+            }
+            else
+            {
+                return null;
             }
         }
 

@@ -18,13 +18,15 @@ using BLOBLocker.Code.Attributes;
 using BLOBLocker.Code.Controllers;
 using BLOBLocker.Entities.Models.WebApp;
 using Cipha.Security.Cryptography;
-using BLOBLocker.Entities.Models.Models.WebApp;
 using BLOBLocker.Code.Membership;
 using System.Text;
 using BLOBLocker.Code.ViewModels.WebApp;
 using BLOBLocker.Code.Security.Cryptography;
 using BLOBLocker.Code.Data;
 using BLOBLocker.Code.Web;
+using System.IO;
+using System.Net.Mime;
+using BLOBLocker.Code.Exception;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -44,25 +46,23 @@ namespace BLOBLocker.WebApp.Controllers
             return View(pivm);
         }
 
+        [RestoreModelState, PreserveModelState]
         [RequiredParameters("puid")]
         [HttpGet]
         public ActionResult Pool(string puid)
         {
-            Pool corPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
-            if (corPool == null)
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
-
-            using (var poolHandler = new PoolHandler(curAcc, corPool))
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
             {
-                if (poolHandler.CanAccessPool)
+                if (canAccess)
                 {
                     PoolOverviewViewModel povm = new PoolOverviewViewModel();
+                    var corPool = poolHandler.Pool;
                     povm.Populate(corPool);
 
-                    PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
+                    PoolShare curPoolShare = poolHandler.PoolShare;
                     povm.CurrentPoolShare = curPoolShare;
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
@@ -70,7 +70,6 @@ namespace BLOBLocker.WebApp.Controllers
                         using (var css = new CryptoSessionStore("AccPriKey",
                             Session, Request, Response))
                         {
-
                             byte[] cc = css["PrivRSAKey"];
                             poolHandler.Initialize(cc);
                         }
@@ -79,35 +78,220 @@ namespace BLOBLocker.WebApp.Controllers
                             povm.Description = poolCipher.DecryptToString(corPool.Description);
                         }
                     }
-
-                    ViewBag.Rights = curPoolShare.Rights;
+                    TempData["rights"] = curPoolShare.Rights;
                     return View(povm);
                 }
+                else
+                {
+                    return RedirectToAction("JoinPool", new { puid = puid });
+                }
             }
-
-            return RedirectToAction("JoinPool", new { puid = corPool.UniqueIdentifier });
         }
 
+        [RequiredParameters("puid")]
+        [HttpGet]
+        public ActionResult Upload(string puid)
+        {
+            NewFileViewModel nfvm = new NewFileViewModel();
+            nfvm.PUID = puid;
+            return View(nfvm);
+        }
+        
+        [RequiredParameters("nfvm")]
+        [PreserveModelState]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult UploadMinimal(NewFileViewModel nfvm)
+        {
+            if (ModelState.IsValid)
+            {
+                AccountRepository accRepo = new AccountRepository(context);
+                Account curAcc = accRepo.GetByKey(User.Identity.Name);
+
+                bool canAccessPool;
+                using (var poolHandler = new PoolHandler(curAcc, nfvm.PUID, out canAccessPool))
+                {
+                    if (canAccessPool)
+                    {
+                        using (var css = new CryptoSessionStore("AccPriKey",
+                                Session, Request, Response))
+                        {
+                            poolHandler.Initialize(css["PrivRSAKey"]);
+                        }
+                        string fileStorePath = HttpContext.Application["system.PoolBasePath"].ToString();
+
+                        var vfiles = nfvm.Parse();
+                        foreach (var file in vfiles)
+                        {
+                            file.FilePath = fileStorePath;
+                            file.IPv4Address = Request.UserHostAddress;
+
+                            try
+                            {
+                                var storedFile = poolHandler.StoreFile(file);
+                            }
+                            catch (NotEnoughPoolSpaceException ex)
+                            {
+                                Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
+                                ModelState.AddModelError("Files", HttpContext.GetGlobalResourceObject(null, "Pool.NotEnoughFreeSpaceError").ToString());
+                            }
+                        }
+
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        return RedirectToAction("JoinPool", nfvm.PUID);
+                    }
+                }
+            }
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
+        }
+
+        [HttpGet]
+        public ActionResult Storage(string puid)
+        {
+            AccountRepository accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+            bool canAccessPool;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccessPool))
+            {
+                if (canAccessPool)
+                {
+                    var svm = new StorageViewModel();
+                    svm.PUID = puid;
+                    svm.Files = poolHandler.GetFiles();
+                    TempData["rights"] = poolHandler.PoolShare.Rights;
+                    return View(svm);
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", puid);
+                }
+            }
+        }
+
+        [RestoreModelState]
+        [RequiredParameters("puid")]
+        [HttpGet, ChildActionOnly]
+        public ActionResult StorageMinimal(string puid)
+        {
+            var accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
+            {
+                var svm = new StorageViewModel();
+                svm.PUID = puid;
+
+                svm.Files = poolHandler.GetFiles();
+                return PartialView("_Storage", svm);
+            }
+        }
+
+        [RequiredParameters("puid", "fl")]
+        [HttpGet]
+        public ActionResult Download(string puid, string fl, bool dl)
+        {
+            AccountRepository accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
+            {
+                if (canAccess)
+                {
+                    using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
+                    {
+                        poolHandler.Initialize(css["PrivRSAKey"]);
+                    }
+                    string fileStorePath = HttpContext.Application["system.PoolBasePath"].ToString();
+                    var virtualFile = poolHandler.GetFile(fl, fileStorePath, true);
+                    string completeFileName = string.Format("{0}.{1}", virtualFile.FileName, virtualFile.FileExtension);
+
+                    if (dl)
+                    {
+                        return File(virtualFile.Content, virtualFile.MimeType, completeFileName);
+                    }
+                    else
+                    {
+                        var cd = new ContentDisposition
+                        {
+                            FileName = string.Format("{0} - {1} - BLOBLocker", completeFileName, poolHandler.PoolShare.Pool.Title),
+                            Inline = true
+                        };
+
+                        Response.AddHeader("Content-Disposition", cd.ToString());
+                        return File(virtualFile.Content, virtualFile.MimeType);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", puid);
+                }
+            }
+        }
+
+        [RequiredParameters("puid", "fl")]
+        [HttpGet]
+        public ActionResult Preview(string puid, string fl)
+        {
+            AccountRepository accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
+            {
+                if (canAccess)
+                {
+                    using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
+                    {
+                        poolHandler.Initialize(css["PrivRSAKey"]);
+                    }
+                    string fileStorePath = HttpContext.Application["system.PoolBasePath"].ToString();
+
+
+                    // get previewable from ApplicationContext
+                    string previewAbleFullString = HttpContext.Application["pool.PreviewableExtensions"].ToString();
+                    string[] previewAble = previewAbleFullString.Replace(" ", string.Empty).Split(',');
+
+                    // get max preview size from ApplicationContext
+                    int maxByteSize = HttpContext.Application["pool.MaxPreviewByteSize"].As<int>();
+
+                    var virtualFile = poolHandler.GetFile(fl, fileStorePath,
+                        true, previewAble, maxByteSize);
+
+                    ViewBag.Rights = poolHandler.PoolShare.Rights;
+
+                    return View(virtualFile);
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", puid);
+                }
+            }
+        }
+
+        [OutputCache(NoStore=true, Duration=0)]
         [RequiredParameters("puid")]
         [RestoreModelState]
         [HttpGet]
         public ActionResult PoolConfig(string puid)
         {
-            PoolRepository poolRepo = new PoolRepository(context);
-
-            Pool corPool = poolRepo.GetByKey(puid);
-            if (corPool == null)
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
-            using (PoolHandler poolHandler = new PoolHandler(curAcc, corPool))
+
+            bool canAccessPool;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccessPool))
             {
-                if (poolHandler.CanAccessPool)
+                if (canAccessPool)
                 {
+                    var corPool = poolHandler.Pool;
                     PoolConfigModel configModel = new PoolConfigModel();
                     configModel.Populate(corPool, curAcc);
-                    configModel.TitleDescriptionViewModel.Rights = poolHandler.CorrespondingPoolShare.Rights;
+                    configModel.TitleDescriptionViewModel.Rights = poolHandler.PoolShare.Rights;
 
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
@@ -125,53 +309,49 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("JoinPool", corPool.UniqueIdentifier);
+                    return RedirectToAction("JoinPool", puid);
                 }
             }
         }
 
-        [ValidateAntiForgeryToken]
         [RequiredParameters("tdvm")]
         [PreserveModelState]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult ChangeTitleAndDescription(TitleDescriptionViewModel tdvm)
         {
             if (ModelState.IsValid)
             {
                 AccountRepository accRepo = new AccountRepository(context);
                 Account curAcc = accRepo.GetByKey(User.Identity.Name);
-                PoolRepository poolRepo = new PoolRepository(context);
-                Pool curPool = poolRepo.GetByKey(tdvm.PUID);
 
-                curPool.Title = tdvm.Title;
-
-                if (string.IsNullOrWhiteSpace(tdvm.Description))
-                    tdvm.Description = string.Empty;
-
-                using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
+                bool canAccessPool;
+                using (var poolHandler = new PoolHandler(curAcc, tdvm.PUID, out canAccessPool))
                 {
-                    using (var css = new CryptoSessionStore("AccPriKey",
+                    if (canAccessPool)
+                    {
+                        using (var css = new CryptoSessionStore("AccPriKey",
                             Session, Request, Response))
-                    {
-                        poolHandler.Initialize(css["PrivRSAKey"]);
+                        {
+                            poolHandler.Initialize(css["PrivRSAKey"]);
+                        }
+                        using (var cipher = poolHandler.GetPoolCipher())
+                        {
+                            poolHandler.Pool.Description = cipher.EncryptToString(tdvm.Description);
+                        }
+                        context.SaveChanges();
                     }
-                    using (var cipher = poolHandler.GetPoolCipher())
+                    else
                     {
-                        curPool.Description = cipher.EncryptToString(tdvm.Description);
+                        return RedirectToAction("JoinPool", tdvm.PUID);
                     }
-
                 }
-                
-                context.SaveChanges();
             }
-
-            return RedirectToAction("PoolConfig", new { puid = tdvm.PUID });
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
-        [ValidateAntiForgeryToken]
         [RequiredParameters("mmvm")]
         [PreserveModelState]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult ManageModules(ManageModulesViewModel mmvm)
         {
             if (ModelState.IsValid)
@@ -185,13 +365,12 @@ namespace BLOBLocker.WebApp.Controllers
 
                 context.SaveChanges();
             }
-            return RedirectToAction("PoolConfig", new { puid = mmvm.PUID });
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
         [RequiredParameters("revm")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         [PreserveModelState]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult EditDefaultRights(RightsEditViewModel revm)
         {
             var curAcc = context.Accounts.FirstOrDefault(p => p.Alias == User.Identity.Name);
@@ -201,39 +380,37 @@ namespace BLOBLocker.WebApp.Controllers
                 ps.Pool.DefaultRights = PoolRightHelper.CalculateRights(revm.Rights);
                 context.SaveChanges();
             }
-            return RedirectToAction("PoolConfig", new { puid = revm.PoolUID });
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
         [RequiredParameters("puid")]
-        [ChildActionOnly]
         [HttpGet]
         public ActionResult Chat(string puid)
         {
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
 
-            PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == puid);
-            Pool curPool = curPoolShare.Pool;
-            ChatViewModel cvm = new ChatViewModel();
-            if (ModelState.IsValid)
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
             {
-                cvm.PoolShare = curPoolShare;
-                ViewBag.Rights = curPoolShare.Rights;
-                cvm.PUID = puid;
-
-                //Decrypt messages //take last x messages // show only since share date
-                int showAmountMessages = Request.QueryString["smc"] != null
-                    ? Convert.ToInt32(Request.QueryString["smc"])
-                    : Convert.ToInt32(HttpContext.Application["pool.ShowLastMessageCount"]);
-
-                int incrementShowAmountMessages = Convert.ToInt32(HttpContext.Application["pool.IncrementShowMessageCount"]);
-                cvm.NextAmountShowLastMessageCount = showAmountMessages + incrementShowAmountMessages;
-
-                cvm.NewMessage = new MessageViewModel();
-                cvm.NewMessage.PUID = puid;
-
-                using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
+                if (canAccess)
                 {
+                    ChatViewModel cvm = new ChatViewModel();
+                    cvm.PoolShare = poolHandler.PoolShare;
+                    ViewBag.Rights = cvm.PoolShare;
+                    cvm.PUID = puid;
+
+                    //Decrypt messages //take last x messages // show only since share date
+                    int showAmountMessages = Request.QueryString["smc"] != null
+                        ? Convert.ToInt32(Request.QueryString["smc"])
+                        : Convert.ToInt32(HttpContext.Application["pool.ShowLastMessageCount"]);
+
+                    int incrementShowAmountMessages = Convert.ToInt32(HttpContext.Application["pool.IncrementShowMessageCount"]);
+                    cvm.NextAmountShowLastMessageCount = showAmountMessages + incrementShowAmountMessages;
+
+                    cvm.NewMessage = new MessageViewModel();
+                    cvm.NewMessage.PUID = puid;
+
                     using (var css = new CryptoSessionStore("AccPriKey",
                             Session, Request, Response))
                     {
@@ -242,17 +419,64 @@ namespace BLOBLocker.WebApp.Controllers
                     ICollection<Message> plainMessages;
                     poolHandler.GetChat(cvm.NextAmountShowLastMessageCount, out plainMessages);
                     cvm.Messages = plainMessages ?? new List<Message>();
-
+                    return View(cvm);
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", new { puid = puid });
                 }
             }
+        }
 
-            return View(cvm);
+        [RequiredParameters("puid")]
+        [ChildActionOnly]
+        [HttpGet]
+        public ActionResult ChatMinimal(string puid)
+        {
+            var accRepo = new AccountRepository(context);
+            Account curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
+            {
+                if (canAccess)
+                {
+                    ChatViewModel cvm = new ChatViewModel();
+                    cvm.PoolShare = poolHandler.PoolShare;
+                    ViewBag.Rights = cvm.PoolShare;
+                    cvm.PUID = puid;
+
+                    //Decrypt messages //take last x messages // show only since share date
+                    int showAmountMessages = Request.QueryString["smc"] != null
+                        ? Convert.ToInt32(Request.QueryString["smc"])
+                        : Convert.ToInt32(HttpContext.Application["pool.ShowLastMessageCount"]);
+
+                    int incrementShowAmountMessages = Convert.ToInt32(HttpContext.Application["pool.IncrementShowMessageCount"]);
+                    cvm.NextAmountShowLastMessageCount = showAmountMessages + incrementShowAmountMessages;
+
+                    cvm.NewMessage = new MessageViewModel();
+                    cvm.NewMessage.PUID = puid;
+
+                    using (var css = new CryptoSessionStore("AccPriKey",
+                            Session, Request, Response))
+                    {
+                        poolHandler.Initialize(css["PrivRSAKey"]);
+                    }
+                    ICollection<Message> plainMessages;
+                    poolHandler.GetChat(cvm.NextAmountShowLastMessageCount, out plainMessages);
+                    cvm.Messages = plainMessages ?? new List<Message>();
+                    return PartialView("_Chat", cvm);
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                }
+            }
         }
 
         [RequiredParameters("cvm")]
         [PreserveModelState]
-        [ValidateAntiForgeryToken]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult SendMessage(MessageViewModel cvm)
         {
             if(ModelState.IsValid)
@@ -260,43 +484,39 @@ namespace BLOBLocker.WebApp.Controllers
                 var accRepo = new AccountRepository(context);
                 Account curAcc = accRepo.GetByKey(User.Identity.Name);
 
-                PoolShare curPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.Pool.UniqueIdentifier == cvm.PUID);
-                Pool curPool = curPoolShare.Pool;
-
-                Message msg = new Message();
-                msg.Pool = curPool;
-                msg.Sender = curAcc;
-
-                using (PoolHandler poolHandler = new PoolHandler(curAcc, curPool))
+                bool canAccess;
+                using (PoolHandler poolHandler = new PoolHandler(curAcc, cvm.PUID, out canAccess))
                 {
-                    using (var css = new CryptoSessionStore("AccPriKey",
-                            Session, Request, Response))
+                    if (canAccess)
                     {
-                        poolHandler.Initialize(css["PrivRSAKey"]);
-                    }
-                    byte[] poolPrivateRSAKey;
-                    using (var poolCipher = poolHandler.GetPoolCipher(out poolPrivateRSAKey))
-                    {
-                        msg.Text = poolCipher.EncryptToString(cvm.MessageText);
-
-                        using (var rsaCipher = new RSACipher<RSACryptoServiceProvider>(Encoding.UTF8.GetString(poolPrivateRSAKey)))
+                        using (var css = new CryptoSessionStore("AccPriKey",
+                                Session, Request, Response))
                         {
-                            msg.TextSignature = rsaCipher.SignStringToString<SHA256Cng>(msg.Text);
+                            // get css PrivRSAKey to bytearr
+                            poolHandler.Initialize(css["PrivRSAKey"]);
+                            // set extracted css to null.
                         }
-                    }
 
+                        Message msg = poolHandler.SendMessage(cvm.MessageText);
+                        if (msg != null)
+                        {
+                            // Success
+                        }
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        return RedirectToAction("JoinPool", new { puid = cvm.PUID });
+                    }
                 }
-                curPool.Messages.Add(msg);
-                context.SaveChanges();
             }
 
-            return RedirectToAction("Pool", new { puid = cvm.PUID });
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
         [RequiredParameters("assid", "puid")]
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-        public ActionResult RemoveAssigned(int assid, string puid)
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult RemoveAssigned(string puid, int assid)
         {
             var not = context.AssignedMemory.FirstOrDefault(p => p.ID == assid);
             if(not !=  null)
@@ -304,9 +524,10 @@ namespace BLOBLocker.WebApp.Controllers
                 not.IsEnabled = false;
                 context.SaveChanges();
             }
-            return RedirectToAction("PoolConfig", new { puid=puid });
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
+        [RequiredParameters("puid")]
         [RestoreModelState]
         [ChildActionOnly]
         [HttpGet]
@@ -330,22 +551,22 @@ namespace BLOBLocker.WebApp.Controllers
             if (ivm.InviteAlias == User.Identity.Name)
                 ModelState.AddModelError("InviteAlias", HttpContext.GetGlobalResourceObject(null, "Account.SelfIsInGroup").As<string>());
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var pool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == ivm.PoolUID);
-                if (pool != null)
-                {
-                    if (pool.Participants.All(p => p.SharedWith.Alias != ivm.InviteAlias))
-                    {
-                        var curAcc = accRepo.GetByKey(User.Identity.Name);
-                        PoolShare curAccPoolShare = curAcc.PoolShares.FirstOrDefault(p => p.IsActive && p.PoolID == pool.ID);
-                        
-                        int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
+                var curAcc = accRepo.GetByKey(User.Identity.Name);
 
-                        using (PoolHandler poolHandler = new PoolHandler(curAcc, pool))
+                bool canAccess;
+
+                using (PoolHandler poolHandler = new PoolHandler(curAcc, ivm.PoolUID, out canAccess))
+                {
+                    if (canAccess)
+                    {
+                        if (poolHandler.IsUserInPool(ivm.InviteAlias))
                         {
+                            int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
+
                             using (var css = new CryptoSessionStore("AccPriKey",
-                            Session, Request, Response))
+                                Session, Request, Response))
                             {
                                 poolHandler.Initialize(css["PrivRSAKey"]);
                             }
@@ -355,31 +576,44 @@ namespace BLOBLocker.WebApp.Controllers
                             {
                                 ps.ShowSince = ivm.ShowSince;
                             }
+                            context.SaveChanges();
                         }
-                        context.SaveChanges();
+                        else
+                        {
+                            ModelState.AddModelError("InviteAlias",
+                                string.Format(HttpContext.GetGlobalResourceObject(null, "Pool.AccountAlreadyInPool").As<string>(), ivm.InviteAlias));
+                        }
                     }
                     else
                     {
-                        ModelState.AddModelError("InviteAlias",
-                            string.Format(HttpContext.GetGlobalResourceObject(null, "Pool.AccountAlreadyInPool").As<string>(), ivm.InviteAlias));
+                        return RedirectToAction("JoinPool", new { puid = ivm.PoolUID });
                     }
                 }
             }
-            return RedirectToAction("PoolConfig", new { puid = ivm.PoolUID });
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
         [RequiredParameters("puid")]
         [RestoreModelState]
-        [ChildActionOnly, HttpGet]
+        [HttpGet, ChildActionOnly]
         public ActionResult AssignMemory(string puid)
         {
-            bool isvalid = ModelState.IsValid;
-            Pool curPool = context.Pools.FirstOrDefault(p => p.UniqueIdentifier == puid);
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
-            MemoryViewModel mvm = new MemoryViewModel();
-            mvm.Populate(curAcc, curPool);
-            return View(mvm);
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
+            {
+                if (canAccess)
+                {
+                    MemoryViewModel mvm = new MemoryViewModel();
+                    mvm.Populate(curAcc, poolHandler.Pool);
+                    return View(mvm);
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                }
+            }
         }
 
         [RequiredParameters("mvm")]
@@ -412,7 +646,7 @@ namespace BLOBLocker.WebApp.Controllers
 
                 context.SaveChanges();
             }
-            return RedirectToAction("PoolConfig", new { puid = mvm.PoolUniqueIdentifier });
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
         [HttpGet]
@@ -430,8 +664,7 @@ namespace BLOBLocker.WebApp.Controllers
         }
 
         [RequiredParameters("poolViewModel")]
-        [ValidateAntiForgeryToken]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Build(BuildPoolViewModel poolViewModel)
         {
             if(ModelState.IsValid)
@@ -487,8 +720,8 @@ namespace BLOBLocker.WebApp.Controllers
             return View(accRepo.GetByKey(User.Identity.Name));
         }
 
-        [ValidateAntiForgeryToken]
-        [HttpPost]
+        [RequiredParameters("acvm")]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult AddContact(AddContactViewModel acvm)
         {
             var accRepo = new AccountRepository(context);
@@ -520,8 +753,8 @@ namespace BLOBLocker.WebApp.Controllers
             return View(curAcc);
         }
 
-        [ValidateAntiForgeryToken]
-        [HttpPost]
+        [RequiredParameters("shareWithAlias")]
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult ShareContacts(string shareWithAlias)
         {
             if (string.IsNullOrWhiteSpace(shareWithAlias))
@@ -557,8 +790,7 @@ namespace BLOBLocker.WebApp.Controllers
         }
 
         [RequiredParameters("id")]
-        [ValidateAntiForgeryToken]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public void DisableNotification(int id)
         {
             var accRepo = new AccountRepository(context);

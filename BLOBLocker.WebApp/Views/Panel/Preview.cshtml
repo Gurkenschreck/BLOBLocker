@@ -1,0 +1,99 @@
+﻿@model BLOBLocker.Code.Data.VirtualFile
+@using BLOBLocker.Code.Membership
+@{
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.FilePreview").ToString(), Model.FileName + "." + Model.FileExtension);
+    
+    string[] imageFormats = {
+                              "jpg", "png", "gif"  
+                            };
+
+    string[] videoFormats = {
+                              "webm", "mp4", "ogg"
+                            };
+
+    string[] audioFormats = {
+                              "mp3", "wav"  
+                            };
+                            
+    string[] textFormats = {
+                              "txt", "log", "config", "ini"   
+                           };
+
+    int rights = ViewBag.Rights;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.BackToPool").ToString(), "Pool", new { puid = Request.QueryString["puid"] })
+@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.BackToStorage").ToString(), "Storage", new { puid = Request.QueryString["puid"] })
+
+<table style="width:100%;" border="1">
+    <tr>
+        <td>@Html.LabelFor(p => p.Description)</td>
+        <td colspan="5">@Html.ValueFor(p => p.Description)</td>
+        <td>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.ViewInTab").ToString(), "Download", new { puid = Request.QueryString["puid"], fl = Request["fl"], dl = false }, new { target = "_blank" })</td>
+        <td>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.Download").ToString(), "Download", new { puid=Request.QueryString["puid"], fl = Request["fl"], dl = true })</td>
+    </tr>
+    <tr>
+        <th>@Html.LabelFor(p => p.FileName)</th>
+        <td>@Html.ValueFor(p => p.FileName)</td>
+        <th>@Html.LabelFor(p => p.FileExtension)</th>
+        <td>@Html.ValueFor(p => p.FileExtension)</td>
+        <th>@Html.LabelFor(p => p.Owner)</th>
+        <td>@Html.ValueFor(p => p.Owner)</td>
+        <th>@Html.LabelFor(p => p.UploadedOn)</th>
+        <td>@Html.ValueFor(p => p.UploadedOn)</td>
+    </tr>
+    <tr>
+        <th>@Html.LabelFor(p => p.MD5Checksum)</th>
+        <td>@Html.ValueFor(p => p.MD5Checksum)</td>
+        <td>@Html.LabelFor(p => p.FileSizeInMB)</td>
+        <td>@Html.ValueFor(p => p.FileSizeInMB)</td>
+        <th>@Html.LabelFor(p => p.SHA1Checksum)</th>
+        <td colspan="3">@Html.ValueFor(p => p.SHA1Checksum)</td>
+    </tr>
+    @if(PoolRightHelper.HasRight(rights, PoolRight.ManageFileStorage))
+    {
+        <tr>
+            <td>@Html.LabelFor(p => p.IsVisible)</td>
+            <td>@Html.ValueFor(p => p.IsVisible)</td>
+            <td colspan="5">@HttpContext.GetGlobalResourceObject(null, "Button.Hide")</td>
+            <td style="background-color:#ff6464;">@HttpContext.GetGlobalResourceObject(null, "Button.Remove")</td>
+        </tr>
+    }
+</table>
+
+<div style="border: 1px solid #0094ff;">
+    @if (Model.Content != null)
+    {
+        if (imageFormats.Contains(Model.FileExtension.ToLower()))
+        {
+            <a href="@Url.Action("Download", new { puid = Request.QueryString["puid"], fl = Request["fl"], dl = false })">
+                <img src="@string.Format("data:image/{0};base64,{1}", Model.FileExtension, Convert.ToBase64String(Model.Content))" style="max-width:100%;" />
+            </a>
+        }
+        else if (videoFormats.Contains(Model.FileExtension.ToLower()))
+        {
+            <video controls loop autoplay>
+                <source type="video/@Model.FileExtension" src="@string.Format("data:video/{0};base64,{1}", Model.FileExtension, Convert.ToBase64String(Model.Content))">
+                @HttpContext.GetGlobalResourceObject(null, "Label.UnsupportedVideoTag")
+            </video>
+        }
+        else if (audioFormats.Contains(Model.FileExtension.ToLower()))
+        {
+            <audio controls loop autoplay src="@string.Format("data:audio/{0};base64,{1}", Model.FileExtension, Convert.ToBase64String(Model.Content))" />
+        }
+        else if (textFormats.Contains(Model.FileExtension.ToLower()))
+        {
+            <p>@Html.Raw(System.Text.Encoding.UTF8.GetString(Model.Content).Replace(Environment.NewLine, "<br />"))</p>
+        }
+        else
+        {
+            <p>@HttpContext.GetGlobalResourceObject(null, "Label.NoPreviewAvailable")</p>
+        }
+    }
+    else
+    {
+        <p>@HttpContext.GetGlobalResourceObject(null, "Label.NoPreviewAvailable")</p>
+    }
+</div>

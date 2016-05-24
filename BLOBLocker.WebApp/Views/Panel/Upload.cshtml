@@ -1,0 +1,11 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.NewFileViewModel
+
+@{
+    ViewBag.Title = "Upload";
+}
+
+<h2>Upload</h2>
+
+@Html.ValidationSummary()
+
+@Html.Partial("_UploadMinimal", Model)

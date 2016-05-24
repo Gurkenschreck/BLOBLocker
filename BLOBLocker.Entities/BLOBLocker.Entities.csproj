@@ -73,6 +73,26 @@
     <Compile Include="Migrations\201605042036041_WARemoveNeedlessPassword.Designer.cs">
       <DependentUpon>201605042036041_WARemoveNeedlessPassword.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605192100059_WAAddStoredFile.cs" />
+    <Compile Include="Migrations\201605192100059_WAAddStoredFile.Designer.cs">
+      <DependentUpon>201605192100059_WAAddStoredFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605211324185_WAAddStoredFileMimeType.cs" />
+    <Compile Include="Migrations\201605211324185_WAAddStoredFileMimeType.Designer.cs">
+      <DependentUpon>201605211324185_WAAddStoredFileMimeType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605221510478_WAAddStoreFileDeleted.cs" />
+    <Compile Include="Migrations\201605221510478_WAAddStoreFileDeleted.Designer.cs">
+      <DependentUpon>201605221510478_WAAddStoreFileDeleted.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605232209557_WAAddEncryptedBoolToStoredFile.cs" />
+    <Compile Include="Migrations\201605232209557_WAAddEncryptedBoolToStoredFile.Designer.cs">
+      <DependentUpon>201605232209557_WAAddEncryptedBoolToStoredFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605282352306_WARenames.cs" />
+    <Compile Include="Migrations\201605282352306_WARenames.Designer.cs">
+      <DependentUpon>201605282352306_WARenames.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -95,6 +115,7 @@
     <Compile Include="Models\WebApp\Pool.cs" />
     <Compile Include="Models\WebApp\PoolShare.cs" />
     <Compile Include="Models\WebApp\BLWAContext.cs" />
+    <Compile Include="Models\WebApp\StoredFile.cs" />
     <Compile Include="Models\WebApp\SystemConfiguration.cs" />
     <Compile Include="Models\WebApp\StringResource.cs" />
     <Compile Include="Models\WebApp\TranslationStatus.cs" />
@@ -124,6 +145,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605042036041_WARemoveNeedlessPassword.resx">
       <DependentUpon>201605042036041_WARemoveNeedlessPassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605192100059_WAAddStoredFile.resx">
+      <DependentUpon>201605192100059_WAAddStoredFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605211324185_WAAddStoredFileMimeType.resx">
+      <DependentUpon>201605211324185_WAAddStoredFileMimeType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605221510478_WAAddStoreFileDeleted.resx">
+      <DependentUpon>201605221510478_WAAddStoreFileDeleted.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605232209557_WAAddEncryptedBoolToStoredFile.resx">
+      <DependentUpon>201605232209557_WAAddEncryptedBoolToStoredFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605282352306_WARenames.resx">
+      <DependentUpon>201605282352306_WARenames.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

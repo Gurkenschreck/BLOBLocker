@@ -2,8 +2,9 @@
 @using BLOBLocker.Code.Membership
 @using BLOBLocker.Code.Extention
 @{
-    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolMain");
-    int rights = ViewBag.Rights;
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolMain").ToString(), Model.PUID);
+   // int rights = ViewBag.Rights;
+    int rights = (int)TempData["rights"];
 }
 
 <h2>Pool - @Model.Title - @Model.OverallAssignedPoolSpace MB<small> - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.PoolSettings").As<string>(), "PoolConfig", new { puid = Model.PUID })</small></h2>
@@ -15,12 +16,21 @@
 {
     if(PoolRightHelper.HasRight(rights, PoolRight.WriteChat) || PoolRightHelper.HasRight(rights, PoolRight.ReadChat))
     {
-        <p>@Html.Action("Chat", new { puid = Request.QueryString["puid"] })</p>
+        <div style="max-height:300px; overflow-y:scroll;">
+            @Html.Action("ChatMinimal", new { puid = Request.QueryString["puid"] })
+        </div>
+        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeChat").ToString(), "Chat", new { puid = Request.QueryString["puid"] })</div>
     }
 }
-@if(Model.IsFileStorageEnabled)
+@if (Model.IsFileStorageEnabled)
 {
-    <p>Filestorage goes here</p>
+    if (PoolRightHelper.HasRight(rights, PoolRight.ReadFileStorage) || PoolRightHelper.HasRight(rights, PoolRight.UploadFileStorage))
+    {
+        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeStorage").ToString(), "Storage", new { puid = Request.QueryString["puid"] })</div>
+        <div style="border:1px solid #a1ff93;">
+            @Html.Action("StorageMinimal", new { puid = Request.QueryString["puid"] })
+        </div>
+    }
 }
 @if(Model.IsLinkRepoEnabled)
 {

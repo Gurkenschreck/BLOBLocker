@@ -1,0 +1,21 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.StorageViewModel
+@using BLOBLocker.Code.Membership
+@using BLOBLocker.Code.ViewModels.WebApp
+@{
+    int rights = (int)TempData["rights"];
+
+    var nfvm = new NewFileViewModel();
+    nfvm.PUID = Model.PUID;
+}
+
+@if (PoolRightHelper.HasRight(rights, PoolRight.ReadFileStorage))
+{
+    <div style="overflow-y:scroll">
+        @Html.Partial("_StorageFiles", Model)
+    </div>
+}
+
+@if(PoolRightHelper.HasRight(rights, PoolRight.UploadFileStorage))
+{
+    @Html.Partial("_UploadMinimal", nfvm)    
+}

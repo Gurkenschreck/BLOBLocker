@@ -1,4 +1,4 @@
-﻿using BLOBLocker.Entities.Models.Models.WebApp;
+﻿using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -37,6 +37,7 @@ namespace BLOBLocker.Entities.Models.WebApp
         public virtual Account Owner { get; set; }
         public virtual ICollection<AssignedMemory> AssignedMemory { get; set; }
         public virtual ICollection<PoolShare> Participants { get; set; }
+        public virtual ICollection<StoredFile> Files { get; set; }
         public Nullable<DateTime> CreatedOn { get; set; }
         public bool IsActive { get; set; }
         public virtual ICollection<Message> Messages { get; set; }

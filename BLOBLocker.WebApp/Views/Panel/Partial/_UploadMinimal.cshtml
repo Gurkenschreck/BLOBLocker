@@ -1,0 +1,16 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.NewFileViewModel
+
+@using (Html.BeginForm("UploadMinimal", "Panel", FormMethod.Post,
+    new { enctype = "multipart/form-data" }))
+{
+    <table>
+        <tr>
+            <td>@Html.LabelFor(p => p.Files)</td>
+            <td>@Html.TextBoxFor(m => m.Files, new { type = "file", multiple = "multiple" })</td>
+            <td>@Html.LabelFor(p => p.Description)</td>
+            <td>@Html.EditorFor(p => p.Description)</td>
+            <td>@Html.AntiForgeryToken()<button type="submit">Upload</button>@Html.HiddenFor(p => p.PUID)</td>
+            <td>@Html.ValidationMessageFor(p => p.Files)</td>
+        </tr>
+    </table>
+}

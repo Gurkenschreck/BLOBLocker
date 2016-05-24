@@ -1,4 +1,4 @@
-﻿using BLOBLocker.Entities.Models.Models.WebApp;
+﻿using BLOBLocker.Entities.Models.WebApp;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -26,6 +26,8 @@ namespace BLOBLocker.Entities.Models.WebApp
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<StringResource> StringResources { get; set; }
+
+        public DbSet<StoredFile> StoredFiles { get; set; }
 
         public BLWAContext()
 #if DEBUG
@@ -74,6 +76,7 @@ namespace BLOBLocker.Entities.Models.WebApp
                 .WithMany()
                 .HasForeignKey(p => p.BaseResourceKey)
                 .WillCascadeOnDelete();
+
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLOBLocker.Entities.Models.Models.WebApp
+namespace BLOBLocker.Entities.Models.WebApp
 {
     public class AssignedMemory
     {

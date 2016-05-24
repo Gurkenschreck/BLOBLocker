@@ -2,19 +2,26 @@
 
 @using (Html.BeginForm("DisableNotification", "Panel", FormMethod.Post))
 {
-    <table>
+    if (Model.Count() != 0) 
+    {
+        <table>
+            @foreach (BLOBLocker.Entities.Models.WebApp.Notification not in Model)
+            {
+                <tr>
+                    <td>@not.Description</td>
+                    <td>@not.CreatedOn</td>
+                    <td><button type="submit" name="id" value="@not.ID">X</button></td>
+                </tr>
+            }
+        
+        </table>
 
-        @foreach (BLOBLocker.Entities.Models.WebApp.Notification not in Model)
-        {
-            <tr>
-                <td>@not.Description</td>
-                <td>@not.CreatedOn</td>
-                <td><button type="submit" name="id" value="@not.ID">X</button></td>
-            </tr>
-        }
-    </table>
-
-    <span id="notificationAntiForgeryToken">@Html.AntiForgeryToken()</span>
+        <span id="notificationAntiForgeryToken">@Html.AntiForgeryToken()</span>
+    }
+    else
+    {
+        <p>@HttpContext.GetGlobalResourceObject(null, "Label.NoNewNotifications")</p>
+    }
 }
 
 <script>

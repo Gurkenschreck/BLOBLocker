@@ -1,0 +1,11 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.StorageViewModel
+
+@{
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.Storage").ToString(), Model.PUID);
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.Back").ToString(), "Pool", new { puid=Model.PUID })
+<div style="width:100%;">
+    @Html.Partial("_Storage", Model)
+</div>

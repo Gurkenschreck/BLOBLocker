@@ -313,7 +313,7 @@
     <Content Include="Views\Panel\AssignMemory.cshtml" />
     <Content Include="Views\Panel\Partial\_ShowNotifications.cshtml" />
     <Content Include="Views\Panel\InviteUser.cshtml" />
-    <Content Include="Views\Panel\Chat.cshtml" />
+    <Content Include="Views\Panel\Partial\_Chat.cshtml" />
     <Content Include="Views\Panel\Partial\_SendMessage.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\PoolRightViewModel.cshtml" />
     <Content Include="Views\Panel\Partial\_PoolShareList.cshtml" />
@@ -330,6 +330,13 @@
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Account\PasswordChanged.cshtml" />
     <Content Include="Views\Account\Partial\_ChangePassword.cshtml" />
+    <Content Include="Views\Panel\Upload.cshtml" />
+    <Content Include="Views\Panel\Partial\_UploadMinimal.cshtml" />
+    <Content Include="Views\Panel\Partial\_Storage.cshtml" />
+    <Content Include="Views\Panel\Partial\_StorageFiles.cshtml" />
+    <Content Include="Views\Panel\Preview.cshtml" />
+    <Content Include="Views\Panel\Storage.cshtml" />
+    <Content Include="Views\Panel\Chat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

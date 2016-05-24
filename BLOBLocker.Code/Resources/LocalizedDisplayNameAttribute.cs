@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Compilation;
 using BLOBLocker.Code.Extention;
-using BLOBLocker.Entities.Models.Models.WebApp;
+using BLOBLocker.Entities.Models.WebApp;
 
 namespace BLOBLocker.Code.Attributes
 {

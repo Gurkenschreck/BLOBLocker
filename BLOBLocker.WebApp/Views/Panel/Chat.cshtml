@@ -1,18 +1,13 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.ChatViewModel
+
 @{
-    Layout = null;   
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.Chat").ToString(), Model.PUID);
 }
 
-<div style="width:100%;">
-    @if (BLOBLocker.Code.Membership.PoolRightHelper.HasRight(ViewBag.Rights, BLOBLocker.Code.Membership.PoolRight.WriteChat)) { 
-        @Html.Partial("_SendMessage", Model.NewMessage)
-    }
+<h2>@ViewBag.Title</h2>
 
-    @if(BLOBLocker.Code.Membership.PoolRightHelper.HasRight(ViewBag.Rights, BLOBLocker.Code.Membership.PoolRight.ReadChat)) {
-        @Html.Partial("_ChatMessages", Model.Messages)
 
-        <div style="width:100%; text-align:center;">
-            @Html.ActionLink("Load more messages...", "Pool", new { puid = Request.QueryString["puid"], smc = Model.NextAmountShowLastMessageCount })
-        </div>
-    }
+@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.Back").ToString(), "Pool", new { puid = Model.PUID })
+<div style="width:100%; ">
+    @Html.Partial("_Chat", Model)
 </div>
