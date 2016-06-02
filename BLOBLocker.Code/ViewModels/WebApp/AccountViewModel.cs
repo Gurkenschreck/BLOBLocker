@@ -20,6 +20,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [Required]
         [LocalizedDisplayName("Account.ConfirmNewPassword")]
         public string ConfirmPassword { get; set; }
+        [DataType(DataType.EmailAddress)]
         [LocalizedDisplayName("Account.Email")]
         public string ContactEmail { get; set; }
         [LocalizedDisplayName("Account.RegistrationCode")]
