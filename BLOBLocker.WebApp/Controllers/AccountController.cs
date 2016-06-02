@@ -139,7 +139,7 @@ namespace BLOBLocker.WebApp.Controllers
             bool loginEnabled = HttpContext.Application["system.EnableLogin"].As<bool>();
             if (!loginEnabled)
             {
-                ModelState.AddModelError("LoginClosed", HttpContext.GetGlobalResourceObject(null, "Account.LoginDisabled").As<string>());
+                ModelState.AddModelError("Alias", HttpContext.GetGlobalResourceObject(null, "Account.LoginDisabled").As<string>());
             }
             if(ModelState.IsValid)
             {
@@ -169,10 +169,10 @@ namespace BLOBLocker.WebApp.Controllers
                                 Response.Redirect(Request.QueryString["ReturnUrl"]);
                             break;
                         case 2:
-                            ModelState.AddModelError("WrongAliasOrPassword", HttpContext.GetGlobalResourceObject(null, "Account.WrongLoginOrPassword").As<string>());
+                            ModelState.AddModelError("Alias", HttpContext.GetGlobalResourceObject(null, "Account.WrongLoginOrPassword").As<string>());
                             break;
                         case 3:
-                            ModelState.AddModelError("AccountIsDisabledError", HttpContext.GetGlobalResourceObject(null, "Account.Disabled").As<string>());
+                            ModelState.AddModelError("Alias", HttpContext.GetGlobalResourceObject(null, "Account.Disabled").As<string>());
                             break;
                         default:
 
@@ -183,7 +183,7 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("WrongAliasOrPassword", HttpContext.GetGlobalResourceObject(null, "Account.WrongLoginOrPassword").As<string>());
+                    ModelState.AddModelError("Alias", HttpContext.GetGlobalResourceObject(null, "Account.WrongLoginOrPassword").As<string>());
                 }
             }
             return View(acc);

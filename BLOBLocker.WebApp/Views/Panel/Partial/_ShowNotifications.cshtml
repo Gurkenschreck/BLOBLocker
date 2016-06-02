@@ -36,6 +36,7 @@
                 cache: false
             }).done(function (data, status, req) {
                 clickedBtn.parent().parent().toggle(250);
+                clickedBtn.hide();
             }).error(function (req, textStatus, errorThrown) {
                 alert("Error:" + req.status);
             });

@@ -1,5 +1,6 @@
 ﻿using BLOBLocker.Code.Attributes;
 using BLOBLocker.Code.Controllers;
+using BLOBLocker.Code.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,26 +16,22 @@ namespace BLOBLocker.WebApp.Controllers
         [RequiredParameters("id")]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public string DisableNotificationAsync(int id)
+        public JsonResult DisableNotificationAsync(int id)
         {
-            if (id < 0)
-                return "id<0";
-            var notification = context.Notifications.Where(p => p.ID == id).FirstOrDefault();
-            if (notification == null)
-                return "notificationNotExistent";
-            else
+            var accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+            var notification = curAcc.Addition.Notifications.Where(p => p.ID == id).FirstOrDefault();
+            if (notification != null)
             {
                 notification.IsVisible = false;
-                try
-                {
-                    context.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    return ex.Message;
-                }
+                context.SaveChanges();
             }
-            return "ok";
+            else{
+                return Json(new { result = "error" }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(
+                new { result = "ok"}, JsonRequestBehavior.AllowGet
+            );
         }
     }
 }
