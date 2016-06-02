@@ -17,18 +17,18 @@
     if(PoolRightHelper.HasRight(rights, PoolRight.WriteChat) || PoolRightHelper.HasRight(rights, PoolRight.ReadChat))
     {
         <div style="max-height:300px; overflow-y:scroll;">
-            @Html.Action("ChatMinimal", new { puid = Request.QueryString["puid"] })
+            @Html.Action("ChatMinimal", new { puid = ViewContext.RouteData.Values["puid"] })
         </div>
-        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeChat").ToString(), "Chat", new { puid = Request.QueryString["puid"] })</div>
+        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeChat").ToString(), "Chat", new { puid = ViewContext.RouteData.Values["puid"] })</div>
     }
 }
 @if (Model.IsFileStorageEnabled)
 {
     if (PoolRightHelper.HasRight(rights, PoolRight.ReadFileStorage) || PoolRightHelper.HasRight(rights, PoolRight.UploadFileStorage))
     {
-        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeStorage").ToString(), "Storage", new { puid = Request.QueryString["puid"] })</div>
+        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeStorage").ToString(), "Storage", new { puid = ViewContext.RouteData.Values["puid"] })</div>
         <div style="border:1px solid #a1ff93;">
-            @Html.Action("StorageMinimal", new { puid = Request.QueryString["puid"] })
+            @Html.Action("StorageMinimal", new { puid = ViewContext.RouteData.Values["puid"] })
         </div>
     }
 }

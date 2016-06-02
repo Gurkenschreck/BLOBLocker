@@ -337,6 +337,8 @@
     <Content Include="Views\Panel\Preview.cshtml" />
     <Content Include="Views\Panel\Storage.cshtml" />
     <Content Include="Views\Panel\Chat.cshtml" />
+    <Content Include="Views\Shared\Partial\_VerticalMenu.cshtml" />
+    <Content Include="Views\Shared\Partial\_MinimalFeedbackBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

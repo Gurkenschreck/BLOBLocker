@@ -29,8 +29,16 @@ namespace BLOBLocker.Code.ViewModels.WebApp
             {
                 VirtualFile vf = new VirtualFile();
                 vf.Description = Description;
-                vf.FileName = file.FileName.Split('.')[0];
-                vf.FileExtension = file.FileName.Split('.')[1];
+                if (file.FileName.Contains('.'))
+                {
+                    vf.FileName = file.FileName.Split('.')[0];
+                    vf.FileExtension = file.FileName.Split('.')[1];
+                }
+                else
+                {
+                    vf.FileName = file.FileName;
+                    vf.FileExtension = string.Empty;
+                }
                 using (var binaryReader = new BinaryReader(file.InputStream))
                 {
                     vf.Content = binaryReader.ReadBytes((int)file.InputStream.Length);

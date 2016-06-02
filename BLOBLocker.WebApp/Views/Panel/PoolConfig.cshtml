@@ -6,7 +6,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-<p>@Html.ActionLink("Back", "Pool", new { puid = Request.QueryString["puid"] })</p>
+<p>@Html.ActionLink("Back To Pool", "Pool", new { puid = ViewContext.RouteData.Values["puid"] })</p>
 
 <p>
     @Html.Partial("_EditTitleAndDescription", Model.TitleDescriptionViewModel)

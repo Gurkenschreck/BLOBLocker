@@ -147,6 +147,8 @@ namespace BLOBLocker.WebApp.Controllers
             return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
+        [RequiredParameters("puid")]
+        [RestoreModelState]
         [HttpGet]
         public ActionResult Storage(string puid)
         {
@@ -272,6 +274,70 @@ namespace BLOBLocker.WebApp.Controllers
                     return RedirectToAction("JoinPool", puid);
                 }
             }
+        }
+
+        [ValidateAntiForgeryToken]
+        [RequiredParameters("puid", "fl")]
+        [HttpPost]
+        public ActionResult ToggleFile(string puid, string fl)
+        {
+            var accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
+            {
+                if (canAccess)
+                {
+                    try
+                    {
+                        poolHandler.ToggleFile(fl);
+                        context.SaveChanges();
+                    }
+                    catch (PoolFileNotFoundException ex)
+                    {
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", new { puid = puid });
+                }
+            }
+
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
+        }
+
+        [ValidateAntiForgeryToken]
+        [RequiredParameters("puid", "fl")]
+        [HttpPost]
+        public ActionResult DeleteFile(string puid, string fl)
+        {
+            var accRepo = new AccountRepository(context);
+            var curAcc = accRepo.GetByKey(User.Identity.Name);
+
+            bool canAccess;
+            using (var poolHandler = new PoolHandler(curAcc, puid, out canAccess))
+            {
+                if (canAccess)
+                {
+                    try
+                    {
+                        string baseFilePath = HttpContext.Application["system.PoolBasePath"].ToString();
+                        poolHandler.DeleteFile(fl, baseFilePath);
+                        context.SaveChanges();
+                    }
+                    catch (PoolFileNotFoundException ex)
+                    {
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("JoinPool", new { puid = puid });
+                }
+            }
+            return RedirectToAction("Pool", new { puid = puid });
         }
 
         [OutputCache(NoStore=true, Duration=0)]

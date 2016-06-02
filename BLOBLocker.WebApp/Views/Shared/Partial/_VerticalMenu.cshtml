@@ -1,0 +1,47 @@
+﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.Pool>
+
+<ul>
+    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+
+    <li style="list-style:none;"><hr style="margin-top:0px; margin-bottom:0px;" /></li>
+
+        @if (User.Identity.IsAuthenticated) { 
+            <li style="list-style:square;">Account</li>
+            <li style="list-style:none;">
+                <ul>
+                    
+                    <li>@Html.ActionLink("Overview", "Overview", "Account")</li>
+                    <li>@Html.ActionLink("Sign Out", "SignOut", "Account")</li>
+                </ul>
+            </li>
+
+            <li style="list-style:none;"><hr style="margin-top:0px; margin-bottom:0px;" /></li>
+            <li>@Html.ActionLink("Panel", "Index", "Panel")</li>
+        }
+        else
+        {
+            <li style="list-style:none;">
+                <ul>
+                    <li>@Html.ActionLink("Sign In", "SignIn", "Account")</li>
+                    <li>@Html.ActionLink("Sign Up", "SignUp", "Account")</li>
+                </ul>
+            </li>
+        }
+    
+    @if (User.Identity.IsAuthenticated)
+    {
+        <li style="list-style:square;">Pools</li>
+        if (Model != null)
+        {
+            foreach (var pool in Model)
+            {
+            <li style="list-style:none;"><hr style="margin-top:0px; margin-bottom:0px;" />
+                <ul>
+                    <li>@Html.ActionLink(pool.Title, "Pool", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
+                    <li>@Html.ActionLink("Configuration", "PoolConfig", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
+                </ul>
+            </li>
+            }
+        }
+    }
+</ul>

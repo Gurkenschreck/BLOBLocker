@@ -297,6 +297,49 @@ namespace BLOBLocker.Code.Data
             }
         }
 
+        public bool ToggleFile(string storedFileName)
+        {
+            if (!CanAccessPool)
+                throw new UnauthorizedPoolAccessException();
+
+            var poolFile = Pool.Files.FirstOrDefault(p => p.StoredFileName == storedFileName);
+
+            if (poolFile == null)
+            {
+                throw new PoolFileNotFoundException(string.Format("there is no file called {0}", storedFileName));
+            }
+
+            poolFile.IsVisible = !poolFile.IsVisible;
+
+            return poolFile.IsVisible;
+        }
+
+        public bool DeleteFile(string storedFileName, string baseFilePath)
+        {
+            if (!CanAccessPool)
+                throw new UnauthorizedPoolAccessException();
+
+            var poolFile = Pool.Files.FirstOrDefault(p => p.StoredFileName == storedFileName);
+
+            if (poolFile == null)
+            {
+                throw new PoolFileNotFoundException(string.Format("there is no file called {0}", storedFileName));
+            }
+
+            string localFilePath = string.Format("{0}/{1}/{2}.locked",
+                    baseFilePath, currentPool.UniqueIdentifier, storedFileName);
+
+            if (!File.Exists(localFilePath))
+                throw new PoolFileNotFoundException(string.Format("{0} is not stored on the local drive", localFilePath));
+
+            File.Delete(localFilePath);
+
+            poolFile.IsVisible = !poolFile.IsVisible;
+            poolFile.IsDeleted = true;
+
+            return poolFile.IsVisible;
+        }
+
         public Message SendMessage(string message)
         {
             if (!initialized)

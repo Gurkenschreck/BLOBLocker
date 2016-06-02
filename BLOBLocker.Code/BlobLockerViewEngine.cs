@@ -14,6 +14,7 @@ namespace BLOBLocker.Code
             var newLocationFormat = new[]
                                         {
                                             "~/Views/{1}/Partial/{0}.cshtml",
+                                            "~/Views/Shared/Partial/{0}.cshtml"
                                         };
 
             PartialViewLocationFormats = PartialViewLocationFormats.Union(newLocationFormat).ToArray();

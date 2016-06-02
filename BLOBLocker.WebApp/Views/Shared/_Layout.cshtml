@@ -12,12 +12,11 @@
     }
 }
 @using BLOBLocker.Code.Extention;
-
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0" />-->
         <title>@ViewBag.Title - BLOBLocker</title>
         <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
         <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -72,44 +71,20 @@
             </span>
         </p>
 
-        <div class="container body-content">
-            @RenderBody()
-            <hr />
-            <footer>
-                <p>&copy; @DateTime.Now.Year - BLOBLocker</p>
-            </footer>
-        </div>
-        <div id="FeedbackBox" style="display:none; position:fixed; bottom:0; right:0; height:50px; width:50px; background-color:#DDDDDD;border-left:1px groove black;border-top:1px groove black;">
-            <div style="display:none; width:inherit; background-color:yellow; text-align:center;">
-                Hello my friends. Feedback is real
+        <div style="display:flex">
+            <div style="display:inline-block; vertical-align:top; width:250px;">
+                @Html.Action("VerticalMenu", "Home")
+            </div>
+            
+            <div style="flex: 1; width:100%;">
+                @RenderBody()
+                <hr />
+                <footer>
+                    <p>&copy; @DateTime.Now.Year - BLOBLocker</p>
+                </footer>
             </div>
         </div>
-        <script>
-            $(function () {
-                var minimized = true;
-
-                $("#FeedbackBox").show();
-                $("#FeedbackBox").click(function () {
-                    var fb = $(this);
-                    if (minimized) {
-                        fb.animate({
-                            height: '250px',
-                            width: '300px'
-                        });
-                        fb.children("div").show(300);
-                        minimized = false;
-                    }
-                    else {
-                        fb.animate({
-                            height: '50px',
-                            width: '50px'
-                        });
-                        fb.children("div").hide(300);
-                        minimized = true;
-                    }
-                });
-            });
-        </script>
+        @Html.Partial("_MinimalFeedbackBox")
 
         @RenderSection("scripts", required: false)
     </body>

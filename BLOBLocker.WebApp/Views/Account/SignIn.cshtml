@@ -5,19 +5,18 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("SignIn", "Account", FormMethod.Post))
 {
-    <p>
-        @Html.ValidationSummary()
-    </p>
     <table>
         <tr>
             <td>@Html.LabelFor(model => model.Alias)</td>
             <td>@Html.TextBoxFor(model => model.Alias)</td>
+            <td>@Html.ValidationMessageFor(p => p.Alias)</td>
         </tr>
         <tr>
             <td>@Html.LabelFor(model => model.Password)</td>
             <td>@Html.PasswordFor(model => model.Password)</td>
+            <td>@Html.ValidationMessageFor(p => p.Password)</td>
         </tr>
         <tr>
             <td>@Html.AntiForgeryToken()</td>

@@ -66,9 +66,11 @@
     <Compile Include="Data\VirtualFile.cs" />
     <Compile Include="Exception\FailedLoginException.cs" />
     <Compile Include="Exception\NotEnoughPoolSpaceException.cs" />
+    <Compile Include="Exception\PoolFileNotFoundException.cs" />
     <Compile Include="Exception\UnauthorizedPoolAccessException.cs" />
     <Compile Include="Extention\EnumExtentions.cs" />
     <Compile Include="Helper\EnumDropdownList.cs" />
+    <Compile Include="Helper\VerticalMenu.cs" />
     <Compile Include="Resources\LocalizedDisplayNameAttribute.cs" />
     <Compile Include="Attributes\LocalOnlyAttribute.cs" />
     <Compile Include="Attributes\PreserveModelStateAttribute.cs" />

@@ -5,8 +5,11 @@
     background-color: #fff;
 }
 
-header, footer, nav, section {
-    display: block;
+/* Styles for nav bar
+-----------------------------------------------------------*/
+
+.verticalNav{
+
 }
 
 

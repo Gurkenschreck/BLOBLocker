@@ -1,36 +1,35 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.StorageViewModel
 
-@{
-    string[] possiblePreviewExtensions ={
-                                          "jpg", "pdf", "webm"  
-                                        }; // not used yet
-}
-
 <div style="width:100%;">
     @if (Model.Files.Count() != 0) { 
         foreach (var file in Model.Files)
         {
-            <a href="@string.Format("/Panel/Preview?puid={0}&fl={1}", Request.QueryString["puid"], file.StoredFileName)">
-            <div style="display:inline-block; border:1px solid #45e010;">
-                <div style="margin:auto;text-align:center;">
-                    @file.FileExtension Icon
-                </div>
-                <div style="text-align:center; line-break:normal;">
-                    @string.Format("{0}.{1}",file.OriginalFileName, file.FileExtension)
-                </div>
-                <div style="text-align:center;">
-                    @Html.ActionLink("Preview", "Download",
-                    new { puid = Request.QueryString["puid"], fl = file.StoredFileName, dl = false })
+            <a href="@Url.Action("Preview", new { puid = ViewContext.RouteData.Values["puid"], fl=file.StoredFileName })">
+                <div style="display:inline-block; border:1px solid #45e010;">
+                    <div style="margin:auto;text-align:center;">
+                        @file.FileExtension Icon
+                    </div>
+                    <div style="text-align:center; line-break:normal;">
+                        @string.Format("{0}.{1}",file.OriginalFileName, file.FileExtension)
+                    </div>
+                    <div style="text-align:center;">
+                        @Html.ActionLink("Preview", "Download",
+                            new { puid = ViewContext.RouteData.Values["puid"], fl = file.StoredFileName, dl = false })
 
-                    @Html.ActionLink("InTab", "Download",
-                    new { puid = Request.QueryString["puid"], fl = file.StoredFileName, dl = false }, new { target="_blank" })
+                        @Html.ActionLink("InTab", "Download",
+                            new { puid = ViewContext.RouteData.Values["puid"], fl = file.StoredFileName, dl = false }, new { target = "_blank" })
 
-                    |
+                        |
 
-                    @Html.ActionLink("Download", "Download",
-                    new { puid = Request.QueryString["puid"], fl = file.StoredFileName, dl = true })
+                        @Html.ActionLink("Download", "Download",
+                            new { puid = ViewContext.RouteData.Values["puid"], fl = file.StoredFileName, dl = true })
+
+                        @if (!file.IsVisible)
+                        {
+                            <p>(Hidden)</p>
+                        }
+                    </div>
                 </div>
-            </div>
             
             </a>
         }
