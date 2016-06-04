@@ -3,42 +3,28 @@
     ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.PanelIndex");
 }
 
-<h2>@ViewBag.Title</h2>
-
-<table>
-    <tr>
-        <td style="vertical-align:top; text-align:left;">
-            @Html.Partial("_PoolList", Model.Pools)
-        </td>
-        <td style="vertical-align:top; text-align:left;">
-            @HttpContext.GetGlobalResourceObject(null, "Label.AddAccountToContacts")
-
+<div class="row">
+    <div class="small-7 column">
+        @Html.Partial("_PoolList", Model.Pools)
+    </div>
+    <div class="small-5 column">
+        <div>
             @Html.Partial("_AddContact", new BLOBLocker.Code.ViewModels.WebApp.AddContactViewModel())
+        </div>
+        <div>
+            @Html.Partial("_ShareContacts")
+        </div>
 
-            @HttpContext.GetGlobalResourceObject(null, "Label.ShareContacts")
-            <p>
-                @using (Html.BeginForm("ShareContacts", "Panel", FormMethod.Post))
-                {
-                    Html.ValidationSummary();
-                    <text>@HttpContext.GetGlobalResourceObject(null, "Label.ShareWith") @Html.TextBox("shareWithAlias")</text>
-                    @Html.AntiForgeryToken()
-                    <input type="submit" value="@HttpContext.GetGlobalResourceObject(null, "Button.Share")" />
-                }
-            </p>
+        @Html.Partial("_ContactList", Model.Addition)
+    </div>
+</div>
+<div class="row">
+    <div class="small-7 column">
+        @Html.Partial("_PoolShareList", Model.PoolShares)
+    </div>
+    <div class="small-5 column">
+        @HttpContext.GetGlobalResourceObject(null, "Label.YourNotifications")
 
-            @BLOBLocker.WebApp.Resources.Panel.Strings.ContactList
-
-            @Html.Partial("_ContactList", Model.Addition)
-        </td>
-    </tr>
-    <tr>
-        <td style="vertical-align:top; text-align:left;">
-            @Html.Partial("_PoolShareList", Model.PoolShares)
-        </td>
-        <td style="vertical-align:top; text-align:left;">
-            @BLOBLocker.WebApp.Resources.Panel.Strings.Notifications
-
-            @Html.Partial("_ShowNotifications", Model.Notifications)
-        </td>
-    </tr>
-</table>
+        @Html.Partial("_ShowNotifications", Model.Notifications)
+    </div>
+</div>

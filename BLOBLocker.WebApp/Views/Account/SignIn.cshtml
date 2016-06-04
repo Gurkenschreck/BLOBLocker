@@ -7,20 +7,34 @@
 
 @using (Html.BeginForm("SignIn", "Account", FormMethod.Post))
 {
-    <table>
-        <tr>
-            <td>@Html.LabelFor(model => model.Alias)</td>
-            <td>@Html.TextBoxFor(model => model.Alias)</td>
-            <td>@Html.ValidationMessageFor(p => p.Alias)</td>
-        </tr>
-        <tr>
-            <td>@Html.LabelFor(model => model.Password)</td>
-            <td>@Html.PasswordFor(model => model.Password)</td>
-            <td>@Html.ValidationMessageFor(p => p.Password)</td>
-        </tr>
-        <tr>
-            <td>@Html.AntiForgeryToken()</td>
-            <td><button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.SignIn")</button></td>
-        </tr>
-    </table>
+    <div class="row">
+        <div class="small-3 column middle">
+            @Html.LabelFor(model => model.Alias)
+        </div>
+        <div class="small-4 column">
+            @Html.TextBoxFor(model => model.Alias, new { @placeholder="Display Name" })
+        </div>
+        <div class="column">
+            @Html.ValidationMessageFor(p => p.Alias)
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-3 column middle">
+            @Html.LabelFor(model => model.Password)
+        </div>
+        <div class="small-4 column">
+            @Html.PasswordFor(model => model.Password, new { @placeholder = "************" })
+        </div>
+        <div class="column">
+            @Html.ValidationMessageFor(p => p.Password)
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-3 column">
+            @Html.AntiForgeryToken()
+        </div>
+        <div class="small-4 small-offset-4 column end">
+            <button type="submit" class="button">@HttpContext.GetGlobalResourceObject(null, "Button.SignIn")</button>
+        </div>
+    </div>
 }

@@ -1,8 +1,20 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.AddContactViewModel
 
-@using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
-{
-    <text>@Html.LabelFor(p => p.AddAlias) @Html.TextBoxFor(p => p.AddAlias) @Html.ValidationMessageFor(p => p.AddAlias)</text>
-    @Html.AntiForgeryToken()
-    <input type="submit" value="@HttpContext.GetGlobalResourceObject(null, "Button.Add")" />
-}
+@HttpContext.GetGlobalResourceObject(null, "Label.AddAccountToContacts")
+
+
+<div class="row column">
+    @using (Html.BeginForm("AddContact", "Panel", FormMethod.Post))
+    {
+        <div class="input-group">
+            <span class="input-group-label">
+                @Html.LabelFor(p => p.AddAlias)
+            </span>
+            @Html.TextBoxFor(p => p.AddAlias, null, new { @class = "input-group-field" }) @Html.ValidationMessageFor(p => p.AddAlias)
+            <div class="input-group-button">
+                @Html.AntiForgeryToken()
+                <input type="submit" value="@HttpContext.GetGlobalResourceObject(null, "Button.Add")" class="button" />
+            </div>
+        </div>
+    }
+</div>

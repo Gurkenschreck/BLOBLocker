@@ -1,0 +1,11 @@
+﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.PoolShare>
+
+@HttpContext.GetGlobalResourceObject(null, "Pool.Participants")
+
+<ul>
+    @foreach (var usr in Model)
+    {
+        <li>@usr.SharedWith.Alias</li>
+    }
+</ul>
+

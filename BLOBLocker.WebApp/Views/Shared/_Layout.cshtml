@@ -16,76 +16,117 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0" />-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewBag.Title - BLOBLocker</title>
+        <link href="~/Content/foundation.min.css" rel="stylesheet" type="text/css" />
         <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
-        <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
         @Scripts.Render("~/bundles/jquery")
+
+        <script src="~/Scripts/foundation.min.js"></script>
     </head>
-
     <body>
-        <div class="navbar navbar-inverse">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        @Html.ActionLink("BLOBLocker", "Index", "Panel", new { area = "" }, new { @class = "navbar-brand" })
-
-                    }
-                    else 
-                    { 
-                        @Html.ActionLink("BLOBLocker", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                    }
+        <div class="off-canvas-wrapper">
+            <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+                <div class="off-canvas position-left reveal-for-large" id="menu" data-off-canvas data-position="left">
+                    <div class="row column">
+                        @Html.Action("VerticalMenu", "Home")
+                    </div>
                 </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav"></ul>
+                <div class="off-canvas-content" data-off-canvas-content>
+                    <div class="title-bar hide-for-large">
+                        <div class="title-bar-left">
+                            <button class="menu-icon" type="button" data-open="menu"></button>
+                            <span class="title-bar-title">Menu</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="top-bar">
+                            <div id="responsive-menu">
+                                <div class="top-bar-left">
+                                    @using (Html.BeginForm("SetSessionCulture", "Globalization", FormMethod.Get))
+                                    {
+                                        <ul class="menu">
+                                            <li>@Html.DropDownList("culture", cultures, new { onchange = "this.form.submit();", @class = "input-group-field" })</li>
+                                            <li>
+                                                <button type="submit" class="small secondary button">@HttpContext.GetGlobalResourceObject(null, "Button.ChangeLanguage")</button>
+                                            </li>
+                                        </ul>
+                                    }
+                                </div>
+
+                                <strong>@ViewBag.Title</strong>
+
+                                <div class="top-bar-right">
+                                    <div class="menu">
+                                        @if (HttpContext.Current.User.Identity.IsAuthenticated)
+                                        {
+                                            <text>
+                                                @HttpContext.Current.User.Identity.Name
+                                            </text>
+                                            <text>
+                                                @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.TitleOverview").ToString(),
+                                                         "Index", "Panel", null, new { @class = "secondary button" })
+                                            </text>
+                                            <text>
+                                                @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.AccountSettings").As<string>(),
+                                                         "Overview", "Account",null , new { @class = "secondary button" })
+                                            </text>
+                                            <text>
+                                                @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignOut").ToString(),
+                                                        "SignOut", "Account",null , new { @class="secondary button" })
+                                            </text>
+                                        }
+                                        else
+                                        {
+                                            <text>
+                                                @HttpContext.GetGlobalResourceObject(null, "Label.NotLoggedIn")
+                                            </text>
+                                            <text>
+                                                @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignIn").As<string>(),
+                                                        "SignIn", "Account", null, new { @class="secondary button" })
+                                            </text>
+                                            <text>
+                                                @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignUp").As<string>(),
+                                                        "SignUp", "Account", null, new { @class="secondary button" })
+                                            </text>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row column">
+                        @RenderBody()
+                    </div>
+
+                    <div class="row column">
+
+                        <hr />
+                        <footer>
+                            <p>&copy; @DateTime.Now.Year - BLOBLocker</p>
+                        </footer>
+
+                        <noscript>
+                            <div class="warning callout">
+                                @HttpContext.GetGlobalResourceObject(null, "Label.NoScriptDisclaimer")
+                            </div>
+                        </noscript>
+                    </div>
                 </div>
             </div>
         </div>
-        <noscript>
-            @HttpContext.GetGlobalResourceObject(null, "Label.NoScriptDisclaimer")
-            <hr />
-        </noscript>
-        <p>
-        @if(HttpContext.Current.User.Identity.IsAuthenticated)
-        {
-            <span>@Html.ActionLink("Panel Overview", "Index", "Panel") - @HttpContext.Current.User.Identity.Name - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.AccountSettings").As<string>(), "Overview", "Account") - @Html.ActionLink("logout", "SignOut", "Account")</span>
-        }
-        else{
-            <span>@HttpContext.GetGlobalResourceObject(null, "Label.NotLoggedIn") @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignIn").As<string>(), "SignIn", "Account") 
-            - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.SignUp").As<string>(), "SignUp", "Account")</span>
-        }
-        </p>
-        <p>
-            <span style="float:right;" id="counter">
-            @using (Html.BeginForm("SetSessionCulture", "Globalization", FormMethod.Get))
-            {
-                @Html.DropDownList("culture", cultures, new { onchange="this.form.submit();" })
-                <button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.ChangeLanguage")</button>
-            }
-            </span>
-        </p>
 
-        <div style="display:flex">
-            <div style="display:inline-block; vertical-align:top; width:250px;">
-                @Html.Action("VerticalMenu", "Home")
-            </div>
-            
-            <div style="flex: 1; width:100%;">
-                @RenderBody()
-                <hr />
-                <footer>
-                    <p>&copy; @DateTime.Now.Year - BLOBLocker</p>
-                </footer>
-            </div>
-        </div>
         @Html.Partial("_MinimalFeedbackBox")
 
         @RenderSection("scripts", required: false)
+
+        <script>
+            $(document).foundation();
+        </script>
     </body>
 </html>
+

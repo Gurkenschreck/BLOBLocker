@@ -13,6 +13,8 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [LocalizedDisplayName("Pool.PUID")]
         [Required]
         public string PUID { get; set; }
+        [LocalizedDisplayName("Pool.Title")]
+        public string PoolTitle { get; set; }
         [LocalizedDisplayName("Pool.Messages")]
         public ICollection<Message> Messages { get; set; }
         [LocalizedDisplayName("Chat.NewMessage")]

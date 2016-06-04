@@ -1,14 +1,22 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.ManageModulesViewModel
 
-@using (Html.BeginForm("ManageModules", "Panel", FormMethod.Post)) { 
-    <table>
-        <tr>
-            <td>@Html.EditorFor(p => p.EnableChat) @Html.LabelFor(p => p.EnableChat)</td>
-            <td>@Html.EditorFor(p => p.EnableFileStorage) @Html.LabelFor(p => p.EnableFileStorage)</td>
-            <td>@Html.EditorFor(p => p.EnableLinkRepository) @Html.LabelFor(p => p.EnableLinkRepository)</td>
-        </tr>
-        <tr>
-            <td colspan="3">@Html.HiddenFor(p => p.PUID) @Html.AntiForgeryToken() <button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.Apply")</button></td>
-        </tr>
-    </table>
+@using (Html.BeginForm("ManageModules", "Panel", FormMethod.Post)) 
+{
+    <div class="row">
+        <div class="small-10 column">
+            <fieldset class="fieldset inline-blocks">
+                <legend>Modules</legend>
+                @Html.CheckBoxFor(p => p.EnableChat) @Html.LabelFor(p => p.EnableChat)
+                @Html.CheckBoxFor(p => p.EnableFileStorage) @Html.LabelFor(p => p.EnableFileStorage)
+                @Html.CheckBoxFor(p => p.EnableLinkRepository) @Html.LabelFor(p => p.EnableLinkRepository)
+            </fieldset>
+        </div>
+        
+        <div class="small-2 column">
+            <button type="submit" class="success button">@HttpContext.GetGlobalResourceObject(null, "Button.Apply")</button>
+
+            @Html.HiddenFor(p => p.PUID) @Html.AntiForgeryToken()
+        </div>
+    </div> 
+    
 }

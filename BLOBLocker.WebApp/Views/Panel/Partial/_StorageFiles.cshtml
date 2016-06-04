@@ -1,6 +1,6 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.StorageViewModel
 
-<div style="width:100%;">
+<div>
     @if (Model.Files.Count() != 0) { 
         foreach (var file in Model.Files)
         {
@@ -21,22 +21,30 @@
 
                         |
 
-                        @Html.ActionLink("Download", "Download",
-                            new { puid = ViewContext.RouteData.Values["puid"], fl = file.StoredFileName, dl = true })
 
-                        @if (!file.IsVisible)
-                        {
-                            <p>(Hidden)</p>
-                        }
+                        <a href="@Url.Action("Download", "Panel",
+                            new { puid = ViewContext.RouteData.Values["puid"], fl = file.StoredFileName, dl = true })" >
+                            @HttpContext.GetGlobalResourceObject(null, "Label.Download")
+                        </a>
+                        <p>
+                            @if (file.IsVisible)
+                            {
+
+                            }
+                            else
+                            {
+                                <text>@HttpContext.GetGlobalResourceObject(null, "Label.Hidden")</text>
+                            }
+                        </p>
                     </div>
                 </div>
             
             </a>
         }
-        <div>Total used (MB): @Model.SizeInMP</div>
+        <div>@HttpContext.GetGlobalResourceObject(null, "Label.TotalUsedMB") @Model.SizeInMP</div>
     }
     else
     {
-        <div>No files available.</div>
+        <div>@HttpContext.GetGlobalResourceObject(null, "Label.NoFilesAvailable")</div>
     }
 </div>

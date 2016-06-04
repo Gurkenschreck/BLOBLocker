@@ -3,14 +3,32 @@
 @using (Html.BeginForm("UploadMinimal", "Panel", FormMethod.Post,
     new { enctype = "multipart/form-data" }))
 {
-    <table>
-        <tr>
-            <td>@Html.LabelFor(p => p.Files)</td>
-            <td>@Html.TextBoxFor(m => m.Files, new { type = "file", multiple = "multiple" })</td>
-            <td>@Html.LabelFor(p => p.Description)</td>
-            <td>@Html.EditorFor(p => p.Description)</td>
-            <td>@Html.AntiForgeryToken()<button type="submit">Upload</button>@Html.HiddenFor(p => p.PUID)</td>
-            <td>@Html.ValidationMessageFor(p => p.Files)</td>
-        </tr>
-    </table>
+    <div class="row">
+        <div class="small-5 column">
+            <div class="input-group">
+                <span class="input-group-label">
+                    @Html.LabelFor(p => p.Files)
+                </span>
+                @Html.TextBoxFor(m => m.Files, new { type = "file", multiple = "multiple", @class = "input-group-field" })
+
+                @Html.ValidationMessageFor(p => p.Files)
+            </div>
+        </div>
+
+        <div class="small-7 column">
+            <div class="input-group">
+                <span class="input-group-label">
+                    @Html.LabelFor(p => p.Description)
+                </span>
+                @Html.EditorFor(p => p.Description, new { @class = "input-group-field" })
+                <div class="input-group-button">
+                    <button type="submit" class="success button">@HttpContext.GetGlobalResourceObject(null, "Button.Upload")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.ValidationMessageFor(p => p.Files)
+
+    @Html.HiddenFor(p => p.PUID)
+    @Html.AntiForgeryToken()
 }

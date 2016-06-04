@@ -1,15 +1,14 @@
 ﻿@model BLOBLocker.Entities.Models.WebApp.Account
 @{
-    ViewBag.Title = "AddContact";
-
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.AddContact").ToString();
 }
 
-<h2>AddContact</h2>
-
-Add a new contact
 <p>
-    
     @Html.Partial("_AddContact", new BLOBLocker.Code.ViewModels.WebApp.AddContactViewModel())
+</p>
+
+<p>
+    @Html.Partial("_ShareContacts")
 </p>
 
 <p>

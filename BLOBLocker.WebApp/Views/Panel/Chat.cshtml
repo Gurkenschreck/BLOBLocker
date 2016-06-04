@@ -1,13 +1,24 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.ChatViewModel
 
 @{
-    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.Chat").ToString(), Model.PUID);
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.Chat").ToString(), Model.PoolTitle);
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="menu-centered">
+    <ul class="menu">
+        <li>
+            <a href="@Request.RawUrl" class="hollow button">
+                @string.Format(HttpContext.GetGlobalResourceObject(null, "Label.NavPoolChatTitle").ToString(), Model.PoolTitle)
+            </a>
+        </li>
+        <li>
+            @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.Back").ToString(),
+                "Pool", new { puid = Model.PUID }, new { @class = "button" })
+        </li>
+    </ul>
+</div>
 
 
-@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.Back").ToString(), "Pool", new { puid = Model.PUID })
-<div style="width:100%; ">
+<div>
     @Html.Partial("_Chat", Model)
 </div>

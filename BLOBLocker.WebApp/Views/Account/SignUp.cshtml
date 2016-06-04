@@ -5,39 +5,76 @@
 
 <h2>@ViewBag.Title</h2>
 
-<p>
-    @Html.ValidationSummary()
-</p>
-
 @using (Html.BeginForm())
 {
-    <table>
-        <tr>
-            <th>@Html.LabelFor(model => model.Alias)</th>
-            <td>@Html.EditorFor(model => model.Alias)</td>
-        </tr>
-        <tr>
-            <th>@Html.LabelFor(model => model.Password)</th>
-            <td>@Html.PasswordFor(model => model.Password)</td>
-        </tr>
-        <tr>
-            <th>@Html.LabelFor(model => model.ConfirmPassword)</th>
-            <td>@Html.PasswordFor(model => model.ConfirmPassword)</td>
-        </tr>
-        <tr>
-            <th>@Html.LabelFor(model => model.ContactEmail)</th>
-            <td>@Html.EditorFor(model => model.ContactEmail)</td>
-        </tr>
-        @if (ViewBag.IsRegistrationRestricted)
-        {
-            <tr>
-                <th>@HttpContext.GetGlobalResourceObject(null, "Account.RegistrationCode")</th>
-                <td>@Html.TextBox("registrationCode", "")</td>
-            </tr>
-        }
-        <tr>
-            <th>@Html.AntiForgeryToken()</th>
-            <td><button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.SignUp")</button></td>
-        </tr>
-    </table>
+    <div class="row">
+        <div class="small-3 column">
+            @Html.LabelFor(model => model.Alias)
+        </div>
+        <div class="small-4 column">
+            @Html.TextBoxFor(model => model.Alias, new { @placeholder = "Display Name" })
+            <p class="help-text">The name how others can see you.</p>
+        </div>
+        <div class="small-5 column">
+            @Html.ValidationMessageFor(model => model.Alias)
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-3 column">
+            @Html.LabelFor(model => model.Password)
+        </div>
+        <div class="small-4 column">
+            @Html.PasswordFor(model => model.Password, new { @placeholder = "************" })
+            <p class="help-text">Choose your password used for the login.</p>
+        </div>
+        <div class="small-5 column">
+            @Html.ValidationMessageFor(model => model.Password)
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-3 column">
+            @Html.LabelFor(model => model.ConfirmPassword)
+        </div>
+        <div class="small-4 column">
+            @Html.PasswordFor(model => model.ConfirmPassword, new { @placeholder = "************" })
+        </div>
+        <div class="small-5 column">
+            @Html.ValidationMessageFor(model => model.ConfirmPassword)
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-3 column">
+            @Html.LabelFor(model => model.ContactEmail)
+        </div>
+        <div class="small-4 column">
+            @Html.EditorFor(model => model.ContactEmail, new { @placeholder = "Optional@....XYZ" })
+            <p class="help-text">Optional mail if we need to contact you.</p>
+        </div>
+        <div class="small-5 column">
+            @Html.ValidationMessageFor(model => model.ContactEmail)
+        </div>
+    </div>
+    if (ViewBag.IsRegistrationRestricted)
+    {
+        <div class="row">
+            <div class="small-3 column">
+                @HttpContext.GetGlobalResourceObject(null, "Account.RegistrationCode")
+            </div>
+            <div class="small-4 column">
+                @Html.TextBox("registrationCode", "", new { @placeholder = "Code" })
+                <p class="help-text">Since the registration is currently restricted, you need to provide a registration code.</p>
+            </div>
+            <div class="small-5 column">
+                @Html.ValidationMessage("registrationCode")
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="small-3 column">
+            @Html.AntiForgeryToken()
+        </div>
+        <div class="small-4 small-offset-4 columns end">
+            <button type="submit" class="button">@HttpContext.GetGlobalResourceObject(null, "Button.SignUp")</button>
+        </div>
+    </div>
 }

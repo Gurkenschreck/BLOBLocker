@@ -1,5 +1,8 @@
 ﻿@model BLOBLocker.Entities.Models.WebApp.AccountAddition
 
+@HttpContext.GetGlobalResourceObject(null, "Label.YourContacts")
+
+
 <ul>
     @foreach (BLOBLocker.Entities.Models.WebApp.Contact acc in Model.Contacts)
     {

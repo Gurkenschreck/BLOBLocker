@@ -1,0 +1,18 @@
+﻿
+
+@HttpContext.GetGlobalResourceObject(null, "Label.ShareContacts")
+
+@using (Html.BeginForm("ShareContacts", "Panel", FormMethod.Post))
+{
+    <div class="input-group">
+        <span class="input-group-label">
+            @HttpContext.GetGlobalResourceObject(null, "Label.ShareWith")
+        </span>
+        @Html.TextBox("shareWithAlias", null, new { @class="input-group-field" }) @Html.ValidationMessage("shareWithAlias")
+
+        <div class="input-group-button">
+            @Html.AntiForgeryToken()
+            <input type="submit" value="@HttpContext.GetGlobalResourceObject(null, "Button.Share")" class="button" />
+        </div>
+    </div>
+}

@@ -6,50 +6,65 @@
     bool canChanceDescription = PoolRightHelper.HasRight(Model.Rights, PoolRight.ChangeDescription);
 }
 
-@using (Html.BeginForm("ChangeTitleAndDescription", "Panel", FormMethod.Post)) { 
-    <table>
-        <tr>
-            <th>@Html.LabelFor(p => p.Title)</th>
-            <td>
-                @if (canChangeTitle) { 
-                    <text>
-                        @Html.EditorFor(p => p.Title)
+@using (Html.BeginForm("ChangeTitleAndDescription", "Panel", FormMethod.Post))
+{
+    <div class="row">
+        <div class="small-10 column">
+            <fieldset class="fieldset">
+                <legend>Title and Description</legend>
+                <div class="row">
+                    <div class="small-1 column text-right">
+                        @Html.LabelFor(p => p.Title)
                         @Html.ValidationMessageFor(p => p.Title)
-                    </text>
-                    
-                }
-                else{
-                    <text>
-                        @Html.ValueFor(p => p.Title)
-                        @Html.HiddenFor(p => p.Title)
-                    </text>
-                }
-            </td>
-            @if(canChangeTitle || canChanceDescription) { 
-                <td rowspan="2">
-                    <button type="submit">Change</button>
-                    @Html.HiddenFor(p => p.PUID)
-                    @Html.AntiForgeryToken()
-                </td>
-            }
-        </tr>
-            <tr>
-                <th>@Html.LabelFor(p => p.Description)</th>
-                <td>
-                    @if (canChanceDescription) {
-                        <text>
-                            @Html.TextAreaFor(p => p.Description)
-                            @Html.ValidationMessageFor(p => p.Description)
-                        </text>
-                    }
-                    else
-                    {
-                        <text>
-                            @Html.ValueFor(p => p.Description)
-                            @Html.HiddenFor(p => p.Description)
-                        </text>
-                    }
-                </td>
-            </tr>
-    </table>
+                    </div>
+                    <div class="small-11 column">
+                        @if (canChangeTitle)
+                        {
+                            <text>
+                                @Html.EditorFor(p => p.Title)
+                                @Html.ValidationMessageFor(p => p.Title)
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                                @Html.ValueFor(p => p.Title)
+                                @Html.HiddenFor(p => p.Title)
+                            </text>
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="small-1 column text-right">
+                        @Html.LabelFor(p => p.Description)
+                    </div>
+                    <div class="small-11 column">
+                        @if (canChanceDescription)
+                        {
+                            <text>
+                                @Html.TextAreaFor(p => p.Description)
+                                @Html.ValidationMessageFor(p => p.Description)
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                                @Html.ValueFor(p => p.Description)
+                                @Html.HiddenFor(p => p.Description)
+                            </text>
+                        }
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        @if (canChangeTitle || canChanceDescription)
+        {
+            <div class="small-2 column middle">
+                <button type="submit" class="success button middle">@HttpContext.GetGlobalResourceObject(null, "Button.Apply")</button>
+                @Html.HiddenFor(p => p.PUID)
+                @Html.AntiForgeryToken()
+            </div>
+        }
+    </div>
 }

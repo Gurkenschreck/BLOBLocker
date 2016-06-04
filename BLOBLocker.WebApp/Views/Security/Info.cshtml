@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Info";
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.Info");
     if (ViewBag.NoLayout != null)
     {
         if (ViewBag.NoLayout) { 
@@ -7,8 +7,6 @@
         }
     }
 }
-
-<h2>Info</h2>
 
 These are the infos we could find out about you:
 

@@ -1,29 +1,32 @@
 ﻿@model IEnumerable<BLOBLocker.Entities.Models.WebApp.Pool>
 
-<h4>Your pools</h4>
+<h4>@HttpContext.GetGlobalResourceObject(null, "Label.YourPools")</h4>
 @if (Model.Count() > 0)
 {
-    <table border="1">
+    <table class="table hover">
         <tr>
-            <th>@Html.Label("Name")</th>
-            <th>@Html.Label("Is active")</th>
-            <th>@Html.Label("Creation date")</th>
-            <th>@Html.Label("Participants")</th>
+            <th>@HttpContext.GetGlobalResourceObject(null, "Label.Title")</th>
+            <th>@HttpContext.GetGlobalResourceObject(null, "Label.Active")</th>
+            <th>@HttpContext.GetGlobalResourceObject(null, "Label.CreatedOn")</th>
+            <th>@HttpContext.GetGlobalResourceObject(null, "Label.AssignedMemoryMB")</th>
+            <th>@HttpContext.GetGlobalResourceObject(null, "Label.ParticipantCount")</th>
         </tr>
         @foreach (BLOBLocker.Entities.Models.WebApp.Pool p in Model)
         {
             <tr>
                 <td>@p.Title</td>
                 <td>@p.IsActive</td>
-                <td>@p.CreatedOn</td>
+                <td>@p.CreatedOn.Value.ToShortDateString()</td>
+                <td>@p.AssignedMemory.Where(q => q.IsEnabled).Select(q => q.Space).Sum()</td>
                 <td>@p.Participants.Count</td>
                 <td>@Html.ActionLink("Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
             </tr>
         }
     </table>
-    @Html.ActionLink("Build some more!", "Build")
+    @Html.ActionLink("Build some more!", "Build", null, new { @class="button" })
 }
 else
 {
-    <text>It seems like you cannot call yourself the owner of a pool. @Html.ActionLink("Build your own here!", "Build")</text>
+    <text>@HttpContext.GetGlobalResourceObject(null, "Label.NoPools") @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.BuildFirstPool").ToString(),
+    "Build")</text>
 }

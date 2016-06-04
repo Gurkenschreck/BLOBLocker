@@ -13,7 +13,6 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
-using BLOBLocker.WebApp.Resources;
 using BLOBLocker.Code.Attributes;
 using BLOBLocker.Code.Controllers;
 using BLOBLocker.Entities.Models.WebApp;
@@ -161,6 +160,7 @@ namespace BLOBLocker.WebApp.Controllers
                 {
                     var svm = new StorageViewModel();
                     svm.PUID = puid;
+                    svm.PoolTitle = poolHandler.Pool.Title;
                     svm.Files = poolHandler.GetFiles();
                     TempData["rights"] = poolHandler.PoolShare.Rights;
                     return View(svm);
@@ -185,6 +185,7 @@ namespace BLOBLocker.WebApp.Controllers
             {
                 var svm = new StorageViewModel();
                 svm.PUID = puid;
+                svm.PoolTitle = poolHandler.Pool.Title;
 
                 svm.Files = poolHandler.GetFiles();
                 return PartialView("_Storage", svm);
@@ -400,6 +401,7 @@ namespace BLOBLocker.WebApp.Controllers
                         {
                             poolHandler.Initialize(css["PrivRSAKey"]);
                         }
+                        poolHandler.Pool.Title = tdvm.Title;
                         using (var cipher = poolHandler.GetPoolCipher())
                         {
                             poolHandler.Pool.Description = cipher.EncryptToString(tdvm.Description);
@@ -462,6 +464,7 @@ namespace BLOBLocker.WebApp.Controllers
                 if (canAccess)
                 {
                     ChatViewModel cvm = new ChatViewModel();
+                    cvm.PoolTitle = poolHandler.Pool.Title;
                     cvm.PoolShare = poolHandler.PoolShare;
                     ViewBag.Rights = cvm.PoolShare;
                     cvm.PUID = puid;
@@ -508,6 +511,7 @@ namespace BLOBLocker.WebApp.Controllers
                 if (canAccess)
                 {
                     ChatViewModel cvm = new ChatViewModel();
+                    cvm.PoolTitle = poolHandler.Pool.Title;
                     cvm.PoolShare = poolHandler.PoolShare;
                     ViewBag.Rights = cvm.PoolShare;
                     cvm.PUID = puid;
@@ -602,13 +606,13 @@ namespace BLOBLocker.WebApp.Controllers
             InvitationViewModel ivm = new InvitationViewModel();
             ivm.PoolUID = puid;
             ivm.ShowSince = DateTime.Now;
-            return View(ivm);
+            return PartialView("_InviteUser", ivm);
         }
 
         [RequiredParameters("ivm")]
         [PreserveModelState]
         [HttpPost]
-        public ActionResult InviteUser(InvitationViewModel ivm)
+        public ActionResult InviteUserMinimal(InvitationViewModel ivm)
         {
             var accRepo = new AccountRepository(context);
             var corAcc = accRepo.GetByKey(ivm.InviteAlias);
@@ -662,7 +666,7 @@ namespace BLOBLocker.WebApp.Controllers
         [RequiredParameters("puid")]
         [RestoreModelState]
         [HttpGet, ChildActionOnly]
-        public ActionResult AssignMemory(string puid)
+        public ActionResult AssignMemoryMinimal(string puid)
         {
             var accRepo = new AccountRepository(context);
             Account curAcc = accRepo.GetByKey(User.Identity.Name);
@@ -673,7 +677,7 @@ namespace BLOBLocker.WebApp.Controllers
                 {
                     MemoryViewModel mvm = new MemoryViewModel();
                     mvm.Populate(curAcc, poolHandler.Pool);
-                    return View(mvm);
+                    return PartialView("_AssignMemory", mvm);
                 }
                 else
                 {
@@ -852,7 +856,7 @@ namespace BLOBLocker.WebApp.Controllers
                     ModelState.AddModelError("shareWithAlias", HttpContext.GetGlobalResourceObject(null, "Contact.AccountNonexistent").As<string>());
                 }
             }
-            return RedirectToAction("AddContact");
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 
         [RequiredParameters("id")]

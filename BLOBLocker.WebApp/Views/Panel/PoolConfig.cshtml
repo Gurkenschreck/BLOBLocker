@@ -1,38 +1,53 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.PoolConfigModel
 @using BLOBLocker.Code.Membership
 @{
-    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolConfig");
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolConfig").ToString(), Model.Pool.Title);
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="menu-centered">
+    <ul class="menu">
+        <li>
+            <a href="@Request.RawUrl" class="hollow button">
+                @string.Format(HttpContext.GetGlobalResourceObject(null, "Label.NavPoolConfigTitle").ToString(), Model.Pool.Title)
+            </a>
+        </li>
+        <li>
+            @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.BackToPool").ToString(),
+                "Pool", new { puid = ViewContext.RouteData.Values["puid"] }, new { @class = "button" })
+        </li>
+    </ul>
+</div>
 
-<p>@Html.ActionLink("Back To Pool", "Pool", new { puid = ViewContext.RouteData.Values["puid"] })</p>
+@if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ChangeTitle)
+    || PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ChangeDescription))
+{
+    <p>
+        @Html.Partial("_EditTitleAndDescription", Model.TitleDescriptionViewModel)
+    </p>
+}
 
-<p>
-    @Html.Partial("_EditTitleAndDescription", Model.TitleDescriptionViewModel)
-</p>
-
-<p>
-    @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ManageModules))
-    {
+@if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ManageModules))
+{
+    <p>
         @Html.Partial("_ManageModules", Model.ManageModulesViewModel)
-    }
-</p>
+    </p>
+}
 
 <p>
-    @Html.Action("AssignMemory")
+    @Html.Action("AssignMemoryMinimal")
 </p>
 
-<p>
-    @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.InviteUser)) { 
+@if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.InviteUser))
+{
+    <p>
         @Html.Action("InviteUser")
-    }
-</p>
+    </p>
+}
 
-<p>
-    @if(PoolRightHelper.HasRight(Model.PoolShare, PoolRight.AssignRights))
-    {
+@if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.AssignRights))
+{
+    <p>
         @Html.Partial("_EditDefaultRights", Model.RightsEditViewModel)
-    }
-</p>
+    </p>
+}
 

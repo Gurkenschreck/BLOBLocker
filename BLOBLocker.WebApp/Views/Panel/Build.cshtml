@@ -3,37 +3,52 @@
     ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.BuildPool");
 }
 
-<h2>@HttpContext.GetGlobalResourceObject(null, "Label.BuildPoolHead")</h2>
-
-
-
-@using(Html.BeginForm())
+@using(Html.BeginForm("Build", "Panel", FormMethod.Post))
 {
-    <table>
-        <tr>
-            <td>@Html.ValidationSummary()</td>
-        </tr>
-        <tr>
-            <td>@Html.LabelFor(p => p.Title)</td>
-            <td>@Html.EditorFor(p => p.Title)</td>
-        </tr>
-        <tr>
-            <td>@Html.LabelFor(p => p.Description)</td>
-            <td>@Html.TextAreaFor(p => p.Description)</td>
-        </tr>
-        <tr>
-            <td colspan="2">@Html.EditorFor(p => p.IsChatEnabled) @Html.LabelFor(p => p.IsChatEnabled)
-                @Html.EditorFor(p => p.IsFileStorageEnabled) @Html.LabelFor(p => p.IsFileStorageEnabled) 
+    <div class="row">
+        <div class="small-6 column">
+            <fieldset class="fieldset">
+                <legend>Title and Description</legend>
+                <div class="row">
+                    <div class="small-2">
+                        @Html.LabelFor(p => p.Title)
+                    </div>
+                    <div class="small-10">
+                        @Html.EditorFor(p => p.Title)
+                    </div>
+                    @Html.ValidationMessageFor(p => p.Title)
+                </div>
+                <div class="row">
+                    <div class="small-2">
+                        @Html.LabelFor(p => p.Description)
+                    </div>
+                    <div class="small-10">
+                        @Html.TextAreaFor(p => p.Description)
+                    </div>
+                    @Html.ValidationMessageFor(p => p.Description)
+                </div>
+            </fieldset>
+        </div>
+        <div class="small-6 column">
+            <fieldset class="fieldset inline-blocks">
+                <legend>Modules</legend>
+                @Html.EditorFor(p => p.IsChatEnabled) @Html.LabelFor(p => p.IsChatEnabled)
+                @Html.EditorFor(p => p.IsFileStorageEnabled) @Html.LabelFor(p => p.IsFileStorageEnabled)
                 @Html.EditorFor(p => p.IsLinkRepositoryEnabled) @Html.LabelFor(p => p.IsLinkRepositoryEnabled)
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">@Html.LabelFor(p => p.Rights)<br /> @Html.EditorFor(p => p.Rights)</td>
-        </tr>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row column">
+        <div class="inline-blocks">
+            <fieldset class="fieldset">
+                <legend>Initial Pool Rights</legend>
 
-        <tr>
-            <td>@Html.AntiForgeryToken()</td>
-            <td><button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.BuildPool")</button></td>
-        </tr>
-    </table>
+                @Html.EditorFor(p => p.Rights)
+            </fieldset>
+        </div>
+    </div>
+    <div class="row column">
+        <button type="submit" class="success large button">@HttpContext.GetGlobalResourceObject(null, "Button.BuildPool")</button>
+        @Html.AntiForgeryToken()
+    </div>
 }

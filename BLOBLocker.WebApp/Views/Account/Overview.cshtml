@@ -3,9 +3,20 @@
     ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.AccountOverview");
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="menu-centered">
+    <ul class="menu">
+        <li>
+            <a href="@Request.RawUrl" class="hollow button">
+                @ViewBag.Title
+            </a>
+        </li>
+        <li>
+            @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.ChangePassword").ToString(), "ChangePassword", null, new { @class = "button" })
+        </li>
+    </ul>
+</div>
 
-@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.ChangePassword").ToString(), "ChangePassword")
+
 
 <p>Here does the user get an overview of his account status, some options and so on.</p>
 Some cool stuff would be
@@ -78,18 +89,4 @@ Your memory pool
         <td>@Html.LabelFor(p => p.MemoryPool.AssignedMemory)</td>
         <td>@Model.MemoryPool.AssignedMemory.Where(p => p.IsEnabled).Select(q => q.Space).Sum()</td>
     </tr>
-</table>
-<hr />
-Your pools
-<table>
-    @foreach(var pool in Model.Pools)
-    {
-        <tr>
-            <td>Pool ID: @pool.Title</td>
-            <td>Is active: @pool.IsActive</td>
-            <td>Description: @pool.Description</td>
-            <td>Participant count: @pool.Participants.Count</td>
-            <td>Creation date: @pool.CreatedOn</td>
-        </tr>
-    }
 </table>

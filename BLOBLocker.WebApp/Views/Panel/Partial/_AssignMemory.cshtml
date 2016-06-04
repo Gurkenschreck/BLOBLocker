@@ -1,0 +1,53 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.MemoryViewModel
+
+<fieldset class="fieldset">
+    <legend>View assigned memory, assign memory yourself.</legend>
+    <div class="row">
+        <div class="small-6 column">
+            @Html.Partial("_MemoryOverview", Model.MemoryOverviewModel)
+        </div>
+        <div class="small-6 column">
+            @using (Html.BeginForm("AssignMemory", "Panel", FormMethod.Post))
+            {
+                <div class="row">
+                    <div class="small-4 column">
+                        @HttpContext.GetGlobalResourceObject(null, "Label.MemoryLeft")
+                    </div>
+                    <div class="small-4 column">
+                        @Model.FreeBasicMemory MB @HttpContext.GetGlobalResourceObject(null, "MemoryPool.BasicMemory")
+                    </div>
+                    <div class="small-4 column">
+                        @Model.FreeAdditionalMemory MB @HttpContext.GetGlobalResourceObject(null, "MemoryPool.AdditionalMemory")
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-4 column">
+                        @Html.LabelFor(p => p.BasicMemoryToAdd)
+                    </div>
+                    <div class="small-4 column">
+                        @Html.EditorFor(p => p.BasicMemoryToAdd) MB
+                    </div>
+                    <div class="small-4 column">
+                        @Html.ValidationMessageFor(p => p.BasicMemoryToAdd)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-4 column">
+                        @Html.LabelFor(p => p.AdditionalMemoryToAdd)
+                    </div>
+                    <div class="small-4 column">
+                        @Html.ValidationMessageFor(p => p.AdditionalMemoryToAdd)
+                    </div>
+                    <div class="small-4 column">
+                        @Html.EditorFor(p => p.AdditionalMemoryToAdd) MB
+                    </div>
+                </div>
+                <div class="row column">
+                    <button type="submit" class="success button float-right">@HttpContext.GetGlobalResourceObject(null, "Button.AssignMemory")</button>
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(p => p.PoolUniqueIdentifier)
+                </div>
+            }
+        </div>
+    </div>
+</fieldset>

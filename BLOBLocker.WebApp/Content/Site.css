@@ -5,39 +5,18 @@
     background-color: #fff;
 }
 
-/* Styles for nav bar
+/* Custom elements
 -----------------------------------------------------------*/
-
-.verticalNav{
-
+.inline-blocks *{
+    display:inline-block
 }
 
 
-/* Styles for basic forms
+/* Foundation overwriting rules
 -----------------------------------------------------------*/
-fieldset {
-    border: 1px solid #ddd;
-    padding: 0 1.4em 1.4em 1.4em;
-    margin: 0 0 1.5em 0;
+.row {
+    max-width: 87rem;
 }
-
-legend {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-textarea {
-    min-height: 75px;
-}
-
-.editor-label {
-    margin: 1em 0 0 0;
-}
-
-.editor-field {
-    margin: 0.5em 0 0 0;
-}
-
 
 /* Styles for validation helpers
 -----------------------------------------------------------*/

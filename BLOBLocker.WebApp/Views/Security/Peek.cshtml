@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Peek";
+    ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.Peek");
     Layout = "~/Views/Shared/_MinimalLayout.cshtml";
     List<string> sandBoxTags = new List<string>();
     

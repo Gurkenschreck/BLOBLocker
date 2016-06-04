@@ -481,7 +481,7 @@ namespace BLOBLocker.Code.Data
                 string localFilePath = string.Format("{0}/{1}/{2}.locked",
                     filePath, currentPool.UniqueIdentifier, storedFile.StoredFileName);
 
-                if (!storedFile.IsDeleted || File.Exists(localFilePath))
+                if (!storedFile.IsDeleted && File.Exists(localFilePath))
                 {
                     if ((storedFile.FileSize <= maxByteSizeForPreview && previewAble.Contains(storedFile.FileExtension))
                         || (maxByteSizeForPreview == -1 && previewAble == null))
@@ -511,7 +511,7 @@ namespace BLOBLocker.Code.Data
                 }
                 else
                 {
-                    throw new FileNotFoundException(localFilePath + " does not exist");
+                    throw new FileNotFoundException(string.Format("{0} does not exist or db entry is invalid {1}", localFilePath, storedFile.IsDeleted));
                 }
 
                 return vf;

@@ -3,45 +3,91 @@
 @using BLOBLocker.Code.Extention
 @{
     ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolMain").ToString(), Model.PUID);
-   // int rights = ViewBag.Rights;
+   
     int rights = (int)TempData["rights"];
+    
+    
 }
 
-<h2>Pool - @Model.Title - @Model.OverallAssignedPoolSpace MB<small> - @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.PoolSettings").As<string>(), "PoolConfig", new { puid = Model.PUID })</small></h2>
-<div style="background-color:#9cf3ff;">
-    @Html.Raw(Model.Description)
-</div>
-
-@if(Model.IsChatEnabled)
-{
-    if(PoolRightHelper.HasRight(rights, PoolRight.WriteChat) || PoolRightHelper.HasRight(rights, PoolRight.ReadChat))
-    {
-        <div style="max-height:300px; overflow-y:scroll;">
-            @Html.Action("ChatMinimal", new { puid = ViewContext.RouteData.Values["puid"] })
-        </div>
-        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeChat").ToString(), "Chat", new { puid = ViewContext.RouteData.Values["puid"] })</div>
-    }
-}
-@if (Model.IsFileStorageEnabled)
-{
-    if (PoolRightHelper.HasRight(rights, PoolRight.ReadFileStorage) || PoolRightHelper.HasRight(rights, PoolRight.UploadFileStorage))
-    {
-        <div>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeStorage").ToString(), "Storage", new { puid = ViewContext.RouteData.Values["puid"] })</div>
-        <div style="border:1px solid #a1ff93;">
-            @Html.Action("StorageMinimal", new { puid = ViewContext.RouteData.Values["puid"] })
-        </div>
-    }
-}
-@if(Model.IsLinkRepoEnabled)
-{
-    <p>Link repository goes here</p>
-}
-
-@if (PoolRightHelper.HasRight(rights, PoolRight.ViewParticipants)) { 
-    <ul>
-        @foreach(var usr in Model.Participants)
+<div class="menu-centered">
+    <ul class="menu">
+        <li>
+            <a href="@Request.RawUrl" class="hollow button">
+                @string.Format(HttpContext.GetGlobalResourceObject(null, "Label.NavPoolTitle").ToString(), Model.Title, Model.OverallAssignedPoolSpace)
+            </a>
+        </li>
+        <li>
+            @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.PoolSettings").As<string>(),
+                        "PoolConfig", new { puid = Model.PUID }, new { @class = "button" })
+        </li>
+        @if (Model.IsChatEnabled && (PoolRightHelper.HasRight(rights, PoolRight.WriteChat) || PoolRightHelper.HasRight(rights, PoolRight.ReadChat)))
         {
-            <li>@usr.SharedWith.Alias</li>
+            <li>
+                @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeChat").ToString(),
+                        "Chat", new { puid = ViewContext.RouteData.Values["puid"] }, new { @class = "button" })
+            </li>
+        }
+        @if (Model.IsFileStorageEnabled && (PoolRightHelper.HasRight(rights, PoolRight.UploadFileStorage) || PoolRightHelper.HasRight(rights, PoolRight.ReadFileStorage)))
+        {
+            <li>
+                @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.MaximizeStorage").ToString(),
+                        "Storage", new { puid = ViewContext.RouteData.Values["puid"] }, new { @class = "button" })
+            </li>
         }
     </ul>
+</div>
+
+@if (Model.Description != null) { 
+    <div class="callout">
+        @Html.Raw(Model.Description.Replace(Environment.NewLine, "<br />"))
+    </div>
+}
+
+@if (Model.IsChatEnabled || PoolRightHelper.HasRight(rights, PoolRight.ViewParticipants))
+{
+    <div class="row">
+        <div class="small-9 column">
+            @if (Model.IsChatEnabled)
+            {
+                if (PoolRightHelper.HasRight(rights, PoolRight.WriteChat) || PoolRightHelper.HasRight(rights, PoolRight.ReadChat))
+                {
+                    <div>
+                        @Html.Action("ChatMinimal", new { puid = ViewContext.RouteData.Values["puid"] })
+                    </div>
+                }
+            }
+        </div>
+        <div class="small-3 column">
+            @if (PoolRightHelper.HasRight(rights, PoolRight.ViewParticipants))
+            {
+                <div>
+                    @Html.Partial("_ParticipantList", Model.Participants)
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@if (Model.IsFileStorageEnabled || Model.IsLinkRepoEnabled)
+{
+    <hr />
+    <div class="row">
+        <div class="small-9 column">
+            @if (Model.IsFileStorageEnabled)
+            {
+                if (PoolRightHelper.HasRight(rights, PoolRight.ReadFileStorage) || PoolRightHelper.HasRight(rights, PoolRight.UploadFileStorage))
+                {
+                    <div>
+                        @Html.Action("StorageMinimal", new { puid = ViewContext.RouteData.Values["puid"] })
+                    </div>
+                }
+            }
+        </div>
+        <div class="small-3 column">
+            @if (Model.IsLinkRepoEnabled)
+            {
+                <p>Link repository goes here</p>
+            }
+        </div>
+    </div>
 }

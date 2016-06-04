@@ -11,6 +11,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
     public class StorageViewModel
     {
         public string PUID { get; set; }
+        public string PoolTitle { get; set; }
         public IEnumerable<StoredFile> Files { get; set; }
 
         public double SizeInMP

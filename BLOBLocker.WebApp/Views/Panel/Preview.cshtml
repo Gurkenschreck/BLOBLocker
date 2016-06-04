@@ -22,71 +22,73 @@
     int rights = ViewBag.Rights;
 }
 
-<h2>@ViewBag.Title</h2>
-
 @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.BackToPool").ToString(), "Pool", new { puid = ViewContext.RouteData.Values["puid"] })
 @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.BackToStorage").ToString(), "Storage", new { puid = ViewContext.RouteData.Values["puid"] })
 
-<table style="width:100%;" border="1">
-    <tr>
-        <td>@Html.LabelFor(p => p.Description)</td>
-        <td colspan="5">@Html.ValueFor(p => p.Description)</td>
-        <td>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.ViewInTab").ToString(), "Download", new { puid = ViewContext.RouteData.Values["puid"], fl = Request["fl"], dl = false }, new { target = "_blank" })</td>
-        <td>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.Download").ToString(), "Download", new { puid = ViewContext.RouteData.Values["puid"], fl = Request["fl"], dl = true })</td>
-    </tr>
-    <tr>
-        <th>@Html.LabelFor(p => p.FileName)</th>
-        <td>@Html.ValueFor(p => p.FileName)</td>
-        <th>@Html.LabelFor(p => p.FileExtension)</th>
-        <td>@Html.ValueFor(p => p.FileExtension)</td>
-        <th>@Html.LabelFor(p => p.Owner)</th>
-        <td>@Html.ValueFor(p => p.Owner)</td>
-        <th>@Html.LabelFor(p => p.UploadedOn)</th>
-        <td>@Html.ValueFor(p => p.UploadedOn)</td>
-    </tr>
-    <tr>
-        <th>@Html.LabelFor(p => p.MD5Checksum)</th>
-        <td>@Html.ValueFor(p => p.MD5Checksum)</td>
-        <td>@Html.LabelFor(p => p.FileSizeInMB)</td>
-        <td>@Html.ValueFor(p => p.FileSizeInMB)</td>
-        <th>@Html.LabelFor(p => p.SHA1Checksum)</th>
-        <td colspan="3">@Html.ValueFor(p => p.SHA1Checksum)</td>
-    </tr>
-    @if(PoolRightHelper.HasRight(rights, PoolRight.ManageFileStorage))
-    {
+<div class="panel panel-default">
+    <table class="table-bordered" style="width:100%;">
         <tr>
-            <td>@Html.LabelFor(p => p.IsVisible)</td>
-            <td>@Html.ValueFor(p => p.IsVisible)</td>
-            <td colspan="5">
-                @using (Html.BeginForm("ToggleFile", "Panel", new { puid = ViewContext.RouteData.Values["puid"] }, FormMethod.Post))
-                {
-                    <button type="submit" name="fl" value="@Request.QueryString["fl"]">
-                        @if (Model.IsVisible)
-                        {
-                        @:@HttpContext.GetGlobalResourceObject(null, "Button.Hide")
+            <td>@Html.LabelFor(p => p.Description)</td>
+            <td colspan="5">@Html.ValueFor(p => p.Description)</td>
+            <td>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.ViewInTab").ToString(), "Download", new { puid = ViewContext.RouteData.Values["puid"], fl = Request["fl"], dl = false }, new { target = "_blank" })</td>
+            <td>@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.Download").ToString(), "Download", new { puid = ViewContext.RouteData.Values["puid"], fl = Request["fl"], dl = true })</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.FileName)</th>
+            <td>@Html.ValueFor(p => p.FileName)</td>
+            <th>@Html.LabelFor(p => p.FileExtension)</th>
+            <td>@Html.ValueFor(p => p.FileExtension)</td>
+            <th>@Html.LabelFor(p => p.Owner)</th>
+            <td>@Html.ValueFor(p => p.Owner)</td>
+            <th>@Html.LabelFor(p => p.UploadedOn)</th>
+            <td>@Html.ValueFor(p => p.UploadedOn)</td>
+        </tr>
+        <tr>
+            <th>@Html.LabelFor(p => p.MD5Checksum)</th>
+            <td>@Html.ValueFor(p => p.MD5Checksum)</td>
+            <td>@Html.LabelFor(p => p.FileSizeInMB)</td>
+            <td>@Html.ValueFor(p => p.FileSizeInMB)</td>
+            <th>@Html.LabelFor(p => p.SHA1Checksum)</th>
+            <td colspan="3">@Html.ValueFor(p => p.SHA1Checksum)</td>
+        </tr>
+        @if (PoolRightHelper.HasRight(rights, PoolRight.ManageFileStorage))
+        {
+            <tr>
+                <td>@Html.LabelFor(p => p.IsVisible)</td>
+                <td>
+                    @Html.ValueFor(p => p.IsVisible)
+                </td>
+                <td colspan="5">
+                    @using (Html.BeginForm("ToggleFile", "Panel", new { puid = ViewContext.RouteData.Values["puid"] }, FormMethod.Post))
+                    {
+                        <button type="submit" name="fl" value="@Request.QueryString["fl"]" class="small warning button">
+                            @if (Model.IsVisible)
+                            {
+                                @:@HttpContext.GetGlobalResourceObject(null, "Button.Hide")
                         }
-                        else
-                        {
-                        @:@HttpContext.GetGlobalResourceObject(null, "Button.Show")
+                            else
+                            {
+                                @:@HttpContext.GetGlobalResourceObject(null, "Button.Show")
                         }
-                    </button>
-                    @Html.Hidden("puid", ViewContext.RouteData.Values["puid"])
-                    @Html.AntiForgeryToken()
-                }
-            </td>
-            <td style="background-color:#ff6464;">
-                @using (Html.BeginForm("DeleteFile", "Panel", new { puid = ViewContext.RouteData.Values["puid"] }, FormMethod.Post))
-                {
-                    <button type="submit" name="fl" value="@Request.QueryString["fl"]">
-                        @HttpContext.GetGlobalResourceObject(null, "Button.Remove")
+                        </button>
                         @Html.Hidden("puid", ViewContext.RouteData.Values["puid"])
                         @Html.AntiForgeryToken()
-                    </button>
-                }
-            </td>
-        </tr>
-    }
-</table>
+                    }
+                </td>
+                <td>
+                    @using (Html.BeginForm("DeleteFile", "Panel", new { puid = ViewContext.RouteData.Values["puid"] }, FormMethod.Post))
+                    {
+                        <button type="submit" name="fl" value="@Request.QueryString["fl"]" class="small alert button">
+                            @HttpContext.GetGlobalResourceObject(null, "Button.Remove")
+                            @Html.Hidden("puid", ViewContext.RouteData.Values["puid"])
+                            @Html.AntiForgeryToken()
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>
 
 <div style="border: 1px solid #0094ff;">
     @if (Model.Content != null)

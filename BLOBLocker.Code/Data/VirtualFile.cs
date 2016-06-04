@@ -66,5 +66,11 @@ namespace BLOBLocker.Code.Data
                 return default(double);
             }
         }
+
+        public VirtualFile()
+        {
+            IsVisible = true;
+            UploadedOn = DateTime.Now;
+        }
     }
 }

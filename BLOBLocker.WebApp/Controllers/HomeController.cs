@@ -39,6 +39,8 @@ namespace BLOBLocker.WebApp.Controllers
             return View();
         }
 
+        [AcceptVerbs("POST", "GET")]
+        [OutputCache(Duration=1)]
         public ActionResult VerticalMenu()
         {
             ICollection<Pool> pools = null;

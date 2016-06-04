@@ -1,11 +1,19 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.RightsEditViewModel
 
-@using(Html.BeginForm("EditDefaultRights", "Panel", FormMethod.Post))
+@using (Html.BeginForm("EditDefaultRights", "Panel", FormMethod.Post))
 {
-    @Html.LabelFor(p => p.Rights)<br />
-    @Html.EditorFor(p => p.Rights)
-    <br />
-    @Html.HiddenFor(p => p.PoolUID) @Html.AntiForgeryToken()
-    
-    <button type="submit">@HttpContext.GetGlobalResourceObject(null, "Button.Save")</button>
+    <div class="row">
+        <div class="small-10 column inline-blocks">
+            <fieldset class="fieldset">
+                <legend>Initial Pool Rights</legend>
+
+                @Html.EditorFor(p => p.Rights)
+            </fieldset>
+        </div>
+        <div class="small-2 column">
+            <button type="submit" class="success button">@HttpContext.GetGlobalResourceObject(null, "Button.Save")</button>
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.PoolUID) 
+        </div>
+    </div>
 }

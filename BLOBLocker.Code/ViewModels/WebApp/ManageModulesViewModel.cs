@@ -12,13 +12,10 @@ namespace BLOBLocker.Code.ViewModels.WebApp
     {
         [Required]
         public string PUID { get; set; }
-        [Required]
         [LocalizedDisplayName("Pool.IsChatEnabled")]
         public bool EnableChat { get; set; }
-        [Required]
         [LocalizedDisplayName("Pool.IsStorageEnabled")]
         public bool EnableFileStorage { get; set; }
-        [Required]
         [LocalizedDisplayName("Pool.IsLinkRepositoryEnabled")]
         public bool EnableLinkRepository { get; set; }
     }

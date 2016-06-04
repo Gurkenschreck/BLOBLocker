@@ -1,11 +1,24 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.StorageViewModel
 
 @{
-    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.Storage").ToString(), Model.PUID);
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.Storage").ToString(), Model.PoolTitle);
 }
 
-<h2>@ViewBag.Title</h2>
-@Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.Back").ToString(), "Pool", new { puid=Model.PUID })
-<div style="width:100%;">
+<div class="menu-centered">
+    <ul class="menu">
+        <li>
+            <a href="@Request.RawUrl" class="hollow button">
+                @string.Format(HttpContext.GetGlobalResourceObject(null, "Label.NavPoolStorageTitle").ToString(), Model.PoolTitle)
+            </a>
+        </li>
+        <li>
+            @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.Back").ToString(),
+                    "Pool", new { puid = Model.PUID }, new { @class = "button" })
+        </li>
+    </ul>
+</div>
+
+
+<div>
     @Html.Partial("_Storage", Model)
 </div>
