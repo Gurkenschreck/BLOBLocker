@@ -601,7 +601,7 @@ namespace BLOBLocker.WebApp.Controllers
         [RestoreModelState]
         [ChildActionOnly]
         [HttpGet]
-        public ActionResult InviteUser(string puid)
+        public ActionResult InviteUserMinimal(string puid)
         {
             InvitationViewModel ivm = new InvitationViewModel();
             ivm.PoolUID = puid;
@@ -778,7 +778,7 @@ namespace BLOBLocker.WebApp.Controllers
                     pool.Title);
 
                 poolRepo.Add(pool);
-                return RedirectToAction("Index");
+                return RedirectToAction("Pool", new { puid = pool.UniqueIdentifier });
             }
             return View(poolViewModel);
         }

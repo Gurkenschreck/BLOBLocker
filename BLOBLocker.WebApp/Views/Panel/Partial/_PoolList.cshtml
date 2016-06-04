@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<BLOBLocker.Entities.Models.WebApp.Pool>
+@using BLOBLocker.Code.Helper
 
 <h4>@HttpContext.GetGlobalResourceObject(null, "Label.YourPools")</h4>
 @if (Model.Count() > 0)
@@ -19,14 +20,16 @@
                 <td>@p.CreatedOn.Value.ToShortDateString()</td>
                 <td>@p.AssignedMemory.Where(q => q.IsEnabled).Select(q => q.Space).Sum()</td>
                 <td>@p.Participants.Count</td>
-                <td>@Html.ActionLink("Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
+                <td>@Html.LocalizedActionLink("Button.Browse", "Pool", new { puid = p.UniqueIdentifier })</td>
             </tr>
         }
     </table>
-    @Html.ActionLink("Build some more!", "Build", null, new { @class="button" })
+    @Html.LocalizedActionLink("Button.BuildMore", "Build", null, new { @class="button" })
 }
 else
 {
-    <text>@HttpContext.GetGlobalResourceObject(null, "Label.NoPools") @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Button.BuildFirstPool").ToString(),
-    "Build")</text>
+    <text>
+    @HttpContext.GetGlobalResourceObject(null, "Label.NoPools") 
+    @Html.LocalizedActionLink("Button.BuildFirstPool", "Build")
+</text>
 }

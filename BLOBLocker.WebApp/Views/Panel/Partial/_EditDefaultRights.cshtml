@@ -5,7 +5,7 @@
     <div class="row">
         <div class="small-10 column inline-blocks">
             <fieldset class="fieldset">
-                <legend>Initial Pool Rights</legend>
+                <legend>@HttpContext.GetGlobalResourceObject(null, "Label.InitialRights")</legend>
 
                 @Html.EditorFor(p => p.Rights)
             </fieldset>

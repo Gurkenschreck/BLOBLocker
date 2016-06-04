@@ -1,42 +1,40 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.InvitationViewModel
+@using BLOBLocker.Code.Helper
 
 @using (Html.BeginForm("InviteUserMinimal", "Panel", FormMethod.Post))
 {
     <div class="row">
         <div class="small-10 column">
             <fieldset class="fieldset">
-                <legend>Add user to pool</legend>
+                <legend>@HttpContext.GetGlobalResourceObject(null, "Label.AddUserToPool")</legend>
                 <div class="row">
-                    <div class="small-4 column">
+                    <div class="small-3 column text-right">
                         @Html.LabelFor(p => p.InviteAlias)
                     </div>
                     <div class="small-4 column">
                         @Html.EditorFor(p => p.InviteAlias)
                     </div>
-                    <div class="small-4 column">
+                    <div class="small-5 column">
                         @Html.ValidationMessageFor(p => p.InviteAlias)
                     </div>
                 </div>
                 <div class="row">
-                    <div class="small-4 column">
+                    <div class="small-3 column text-right">
                         @Html.LabelFor(p => p.ShowAll)
                     </div>
-                    <div class="small-4 column">
+                    <div class="small-4 column end">
                         @Html.CheckBoxFor(p => p.ShowAll, new { id = "ShowAllCheckBox" })
-                    </div>
-                    <div class="small-4 column">
-
                     </div>
                 </div>
                 <div id="ShowSinceDateTimeField" class="row">
-                    <div class="small-4 column">
+                    <div class="small-3 column text-right">
                         @Html.LabelFor(p => p.ShowSince)
                     </div>
                     <div class="small-4 column">
                         @Html.EditorFor(p => p.ShowSince)
                     </div>
-                    <div class="small-4 column">
-                        Examples:<br /> @DateTime.Now <br /> @DateTime.Now.AddDays(-2) <br /> @(new DateTime(2015, 2, 14, 13, 37, 42))
+                    <div class="small-5 column">
+                        @Html.LocalizedLabel("Label.Examples") @DateTime.Now <br /> @DateTime.Now.AddDays(-2) <br /> @(new DateTime(2015, 2, 14, 13, 37, 42))
                     </div>
                 </div>
             </fieldset>
@@ -54,7 +52,6 @@
         $("#ShowSinceDateTimeField").toggle();
         $("#ShowAllCheckBox").click(function () {
             $("#ShowSinceDateTimeField").toggle();
-
         });
     });
 </script>

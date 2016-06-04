@@ -1,50 +1,49 @@
 ﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.Pool>
-
-
+@using BLOBLocker.Code.Helper
 
 <div class="text-center">
     <h3>
-        @Html.ActionLink("BLOBLocker", "Index", User.Identity.IsAuthenticated ? "Panel" : "Home")
+        @Html.LocalizedActionLink("Label.BLOBLocker", "Index", User.Identity.IsAuthenticated ? "Panel" : "Home")
     </h3>
 </div>
 
 <ul class="vertical menu" data-accordion-menu>
-    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+    <li>@Html.LocalizedActionLink("Label.Home", "Index", "Home")</li>
 
     @if (User.Identity.IsAuthenticated)
     {
-        <li>Main Controls</li>
+        <li>@Html.LocalizedLabel("Label.MainControls")</li>
 
         <li>
             @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.Membership").ToString(), "Overview", "Account")
             <ul class="menu vertical nested">
-                <li>@Html.ActionLink("Overview", "Overview", "Account")</li>
-                <li>@Html.ActionLink("Change Password", "ChangePassword", "Account")</li>
-                <li>@Html.ActionLink("Sign Out", "SignOut", "Account")</li>
+                <li>@Html.LocalizedActionLink("Label.Overview", "Overview", "Account")</li>
+                <li>@Html.LocalizedActionLink("Label.ChangePassword", "ChangePassword", "Account")</li>
+                <li>@Html.LocalizedActionLink("Label.SignOut", "SignOut", "Account")</li>
             </ul>
         </li>
 
         <li>
-            @Html.ActionLink("Panel", "Index", "Panel")
+            @Html.LocalizedActionLink("Label.Panel", "Index", "Panel")
             <ul class="menu vertical nested">
-                <li>@Html.ActionLink("Panel", "Index", "Panel")</li>
-                <li>@Html.ActionLink("Build New", "Build", "Panel")</li>
+                <li>@Html.LocalizedActionLink("Label.Panel", "Index", "Panel")</li>
+                <li>@Html.LocalizedActionLink("Label.BuildNew", "Build", "Panel")</li>
             </ul>
         </li>
     }
     else
     {
         <li>
-            @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.Membership").ToString(), "Overview", "Account")
+            @Html.LocalizedActionLink("Label.Membership", "Overview", "Account")
             <ul class="menu vertical nested">
-                <li>@Html.ActionLink("Sign In", "SignIn", "Account")</li>
-                <li>@Html.ActionLink("Sign Up", "SignUp", "Account")</li>
+                <li>@Html.LocalizedActionLink("Label.SignIn", "SignIn", "Account")</li>
+                <li>@Html.LocalizedActionLink("Label.SignUp", "SignUp", "Account")</li>
             </ul>
         </li>
     }
     @if (User.Identity.IsAuthenticated)
     {
-        <li>@HttpContext.GetGlobalResourceObject(null, "Label.Pools")</li>
+        <li>@Html.LocalizedLabel("Label.Pools")</li>
         if (Model != null)
         {
             bool puidSet = ViewContext.RequestContext.RouteData.Values["puid"] != null;
@@ -61,8 +60,8 @@
                 <li @if(isActive) { <text>class="active"</text> }>
                     @Html.ActionLink(pool.Title, "Pool", "Panel", new { puid = pool.UniqueIdentifier }, null)
                     <ul class="menu vertical dropdown nested">
-                        <li>@Html.ActionLink("Overview", "Pool", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
-                        <li>@Html.ActionLink("Configuration", "PoolConfig", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
+                        <li>@Html.LocalizedActionLink("Label.Overview", "Pool", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
+                        <li>@Html.LocalizedActionLink("Label.Configuration", "PoolConfig", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
                     </ul>
                 </li>
             }

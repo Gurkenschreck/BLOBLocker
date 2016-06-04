@@ -2,11 +2,9 @@
 @using BLOBLocker.Code.Membership
 @using BLOBLocker.Code.Extention
 @{
-    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolMain").ToString(), Model.PUID);
+    ViewBag.Title = string.Format(HttpContext.GetGlobalResourceObject(null, "PageTitle.PoolMain").ToString(), Model.Title, Model.PUID);
    
     int rights = (int)TempData["rights"];
-    
-    
 }
 
 <div class="menu-centered">
@@ -68,9 +66,14 @@
     </div>
 }
 
-@if (Model.IsFileStorageEnabled || Model.IsLinkRepoEnabled)
+@if ((Model.IsChatEnabled || PoolRightHelper.HasRight(rights, PoolRight.ViewParticipants))
+    && (Model.IsFileStorageEnabled || Model.IsLinkRepoEnabled))
 {
     <hr />
+}
+
+@if (Model.IsFileStorageEnabled || Model.IsLinkRepoEnabled)
+{
     <div class="row">
         <div class="small-9 column">
             @if (Model.IsFileStorageEnabled)

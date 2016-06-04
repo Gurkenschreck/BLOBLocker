@@ -8,63 +8,63 @@
 @using (Html.BeginForm())
 {
     <div class="row">
-        <div class="small-3 column">
+        <div class="small-4 column text-right">
             @Html.LabelFor(model => model.Alias)
         </div>
         <div class="small-4 column">
-            @Html.TextBoxFor(model => model.Alias, new { @placeholder = "Display Name" })
-            <p class="help-text">The name how others can see you.</p>
+            @Html.TextBoxFor(model => model.Alias, new { @placeholder = HttpContext.GetGlobalResourceObject(null, "Label.DisplayName").ToString() })
+            <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.AliasHelpText")</p>
         </div>
-        <div class="small-5 column">
+        <div class="columns">
             @Html.ValidationMessageFor(model => model.Alias)
         </div>
     </div>
     <div class="row">
-        <div class="small-3 column">
+        <div class="small-4 column text-right">
             @Html.LabelFor(model => model.Password)
         </div>
         <div class="small-4 column">
             @Html.PasswordFor(model => model.Password, new { @placeholder = "************" })
-            <p class="help-text">Choose your password used for the login.</p>
         </div>
-        <div class="small-5 column">
+        <div class="columns">
             @Html.ValidationMessageFor(model => model.Password)
         </div>
     </div>
     <div class="row">
-        <div class="small-3 column">
+        <div class="small-4 column text-right">
             @Html.LabelFor(model => model.ConfirmPassword)
         </div>
         <div class="small-4 column">
             @Html.PasswordFor(model => model.ConfirmPassword, new { @placeholder = "************" })
+            <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.PasswordHelpText")</p>
         </div>
-        <div class="small-5 column">
+        <div class="columns">
             @Html.ValidationMessageFor(model => model.ConfirmPassword)
         </div>
     </div>
     <div class="row">
-        <div class="small-3 column">
+        <div class="small-4 column text-right">
             @Html.LabelFor(model => model.ContactEmail)
         </div>
         <div class="small-4 column">
-            @Html.EditorFor(model => model.ContactEmail, new { @placeholder = "Optional@....XYZ" })
-            <p class="help-text">Optional mail if we need to contact you.</p>
+            @Html.EditorFor(model => model.ContactEmail, new { @placeholder = HttpContext.GetGlobalResourceObject(null, "Label.OptionalEmailPlaceHolder") })
+            <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.EmailHelpText")</p>
         </div>
-        <div class="small-5 column">
+        <div class="columns">
             @Html.ValidationMessageFor(model => model.ContactEmail)
         </div>
     </div>
     if (ViewBag.IsRegistrationRestricted)
     {
         <div class="row">
-            <div class="small-3 column">
+            <div class="small-4 column text-right">
                 @HttpContext.GetGlobalResourceObject(null, "Account.RegistrationCode")
             </div>
             <div class="small-4 column">
-                @Html.TextBox("registrationCode", "", new { @placeholder = "Code" })
-                <p class="help-text">Since the registration is currently restricted, you need to provide a registration code.</p>
+                @Html.TextBox("registrationCode", "", new { @placeholder = HttpContext.GetGlobalResourceObject(null, "Label.RegistrationCodePlaceHolder") })
+                <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.RegistrationCodelHelpText")</p>
             </div>
-            <div class="small-5 column">
+            <div class="columns">
                 @Html.ValidationMessage("registrationCode")
             </div>
         </div>

@@ -5,7 +5,7 @@
     <div class="row">
         <div class="small-10 column">
             <fieldset class="fieldset inline-blocks">
-                <legend>Modules</legend>
+                <legend>@HttpContext.GetGlobalResourceObject(null, "Label.Modules")</legend>
                 @Html.CheckBoxFor(p => p.EnableChat) @Html.LabelFor(p => p.EnableChat)
                 @Html.CheckBoxFor(p => p.EnableFileStorage) @Html.LabelFor(p => p.EnableFileStorage)
                 @Html.CheckBoxFor(p => p.EnableLinkRepository) @Html.LabelFor(p => p.EnableLinkRepository)

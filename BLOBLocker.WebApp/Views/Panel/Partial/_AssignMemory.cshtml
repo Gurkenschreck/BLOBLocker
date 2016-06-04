@@ -1,7 +1,7 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.MemoryViewModel
 
 <fieldset class="fieldset">
-    <legend>View assigned memory, assign memory yourself.</legend>
+    <legend>@HttpContext.GetGlobalResourceObject(null, "Label.ViewAndAssignMemory")</legend>
     <div class="row">
         <div class="small-6 column">
             @Html.Partial("_MemoryOverview", Model.MemoryOverviewModel)

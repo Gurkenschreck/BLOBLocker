@@ -8,24 +8,24 @@
 @using (Html.BeginForm("SignIn", "Account", FormMethod.Post))
 {
     <div class="row">
-        <div class="small-3 column middle">
+        <div class="small-4 column text-right">
             @Html.LabelFor(model => model.Alias)
         </div>
         <div class="small-4 column">
-            @Html.TextBoxFor(model => model.Alias, new { @placeholder="Display Name" })
+            @Html.TextBoxFor(model => model.Alias, new { @placeholder=HttpContext.GetGlobalResourceObject(null, "Label.DisplayName").ToString() })
         </div>
-        <div class="column">
+        <div class="columns">
             @Html.ValidationMessageFor(p => p.Alias)
         </div>
     </div>
     <div class="row">
-        <div class="small-3 column middle">
+        <div class="small-4 column text-right">
             @Html.LabelFor(model => model.Password)
         </div>
         <div class="small-4 column">
             @Html.PasswordFor(model => model.Password, new { @placeholder = "************" })
         </div>
-        <div class="column">
+        <div class="columns">
             @Html.ValidationMessageFor(p => p.Password)
         </div>
     </div>

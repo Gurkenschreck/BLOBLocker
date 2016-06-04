@@ -23,8 +23,7 @@ namespace BLOBLocker.WebApp.Controllers
             Thread.CurrentThread.CurrentUICulture = culinfo;
 
             Session["customCulture"] = culinfo;
-            var caller = Request.UrlReferrer.OriginalString;
-            return Redirect(caller);
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
     }
 }
