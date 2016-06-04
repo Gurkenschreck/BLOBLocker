@@ -7,13 +7,13 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class WARenamedBaseResourceKey : IMigrationMetadata
+    public sealed partial class WAInitial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(WARenamedBaseResourceKey));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(WAInitial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201604240245064_WARenamedBaseResourceKey"; }
+            get { return "201606042029281_WAInitial"; }
         }
         
         string IMigrationMetadata.Source

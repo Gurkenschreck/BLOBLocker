@@ -22,7 +22,6 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
                     {
                         ID = c.Int(nullable: false, identity: true),
                         Alias = c.String(),
-                        Password = c.String(),
                         Salt = c.Binary(),
                         ConfigID = c.Int(nullable: false),
                         AdditionID = c.Int(nullable: false),
@@ -145,6 +144,34 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
                 .Index(t => t.OwnerID);
             
             CreateTable(
+                "dbo.StoredFiles",
+                c => new
+                    {
+                        ID = c.Int(nullable: false, identity: true),
+                        OwnerID = c.Int(nullable: false),
+                        OriginalFileName = c.String(),
+                        StoredFileName = c.String(),
+                        FileExtension = c.String(),
+                        MimeType = c.String(),
+                        FileSize = c.Int(nullable: false),
+                        FileSignature = c.String(),
+                        Description = c.String(),
+                        UploadedOn = c.DateTime(),
+                        IPv4Address = c.String(),
+                        MD5Checksum = c.String(),
+                        SHA1Checksum = c.String(),
+                        IsVisible = c.Boolean(nullable: false),
+                        IsDeleted = c.Boolean(nullable: false),
+                        Encrypted = c.Boolean(nullable: false),
+                        Pool_ID = c.Int(),
+                    })
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.Accounts", t => t.OwnerID, cascadeDelete: true)
+                .ForeignKey("dbo.Pools", t => t.Pool_ID)
+                .Index(t => t.OwnerID)
+                .Index(t => t.Pool_ID);
+            
+            CreateTable(
                 "dbo.Messages",
                 c => new
                     {
@@ -202,29 +229,33 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
                 "dbo.StringResources",
                 c => new
                     {
-                        Key = c.String(nullable: false, maxLength: 128),
+                        ID = c.Int(nullable: false, identity: true),
+                        Key = c.String(nullable: false),
                         Type = c.Byte(nullable: false),
                         Base = c.String(),
                         Comment = c.String(),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion"),
                     })
-                .PrimaryKey(t => t.Key);
+                .PrimaryKey(t => t.ID);
             
             CreateTable(
                 "dbo.LocalizedStrings",
                 c => new
                     {
                         ID = c.Int(nullable: false, identity: true),
-                        BaseResourceKey = c.String(maxLength: 128),
+                        BaseResourceKey = c.Int(nullable: false),
                         UICulture = c.String(),
                         Translation = c.String(),
                         LiveTranslation = c.String(),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion"),
                         Status = c.Byte(nullable: false),
+                        StringResource_ID = c.Int(),
                     })
                 .PrimaryKey(t => t.ID)
-                .ForeignKey("dbo.StringResources", t => t.BaseResourceKey)
-                .Index(t => t.BaseResourceKey);
+                .ForeignKey("dbo.StringResources", t => t.BaseResourceKey, cascadeDelete: true)
+                .ForeignKey("dbo.StringResources", t => t.StringResource_ID)
+                .Index(t => t.BaseResourceKey)
+                .Index(t => t.StringResource_ID);
             
             CreateTable(
                 "dbo.SystemConfigurations",
@@ -240,6 +271,7 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
         
         public override void Down()
         {
+            DropForeignKey("dbo.LocalizedStrings", "StringResource_ID", "dbo.StringResources");
             DropForeignKey("dbo.LocalizedStrings", "BaseResourceKey", "dbo.StringResources");
             DropForeignKey("dbo.AccountRoleLinks", "Role_ID", "dbo.AccountRoles");
             DropForeignKey("dbo.AccountRoleLinks", "Account_ID", "dbo.Accounts");
@@ -249,6 +281,8 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
             DropForeignKey("dbo.Pools", "OwnerID", "dbo.Accounts");
             DropForeignKey("dbo.Messages", "Sender_ID", "dbo.Accounts");
             DropForeignKey("dbo.Messages", "PoolID", "dbo.Pools");
+            DropForeignKey("dbo.StoredFiles", "Pool_ID", "dbo.Pools");
+            DropForeignKey("dbo.StoredFiles", "OwnerID", "dbo.Accounts");
             DropForeignKey("dbo.Pools", "ConfigID", "dbo.CryptoConfigurations");
             DropForeignKey("dbo.AssignedMemories", "Pool_ID", "dbo.Pools");
             DropForeignKey("dbo.MemoryPools", "ID", "dbo.Accounts");
@@ -258,6 +292,7 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
             DropForeignKey("dbo.Notifications", "AccountAddition_ID", "dbo.AccountAdditions");
             DropForeignKey("dbo.Contacts", "AccountAddition_ID", "dbo.AccountAdditions");
             DropForeignKey("dbo.Contacts", "AccountID", "dbo.Accounts");
+            DropIndex("dbo.LocalizedStrings", new[] { "StringResource_ID" });
             DropIndex("dbo.LocalizedStrings", new[] { "BaseResourceKey" });
             DropIndex("dbo.AccountRoleLinks", new[] { "Role_ID" });
             DropIndex("dbo.AccountRoleLinks", new[] { "Account_ID" });
@@ -266,6 +301,8 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
             DropIndex("dbo.PoolShares", new[] { "PoolID" });
             DropIndex("dbo.Messages", new[] { "Sender_ID" });
             DropIndex("dbo.Messages", new[] { "PoolID" });
+            DropIndex("dbo.StoredFiles", new[] { "Pool_ID" });
+            DropIndex("dbo.StoredFiles", new[] { "OwnerID" });
             DropIndex("dbo.Pools", new[] { "OwnerID" });
             DropIndex("dbo.Pools", new[] { "ConfigID" });
             DropIndex("dbo.AssignedMemories", new[] { "Pool_ID" });
@@ -282,6 +319,7 @@ namespace BLOBLocker.Entities.Models.Migrations.CP
             DropTable("dbo.AccountRoleLinks");
             DropTable("dbo.PoolShares");
             DropTable("dbo.Messages");
+            DropTable("dbo.StoredFiles");
             DropTable("dbo.Pools");
             DropTable("dbo.AssignedMemories");
             DropTable("dbo.MemoryPools");
