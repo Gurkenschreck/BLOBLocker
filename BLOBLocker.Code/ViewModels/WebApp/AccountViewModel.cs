@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using BLOBLocker.Code.Extention;
+using BLOBLocker.Code.Resources;
 
 namespace BLOBLocker.Code.ViewModels.WebApp
 {
@@ -20,7 +21,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [Required]
         [LocalizedDisplayName("Account.ConfirmNewPassword")]
         public string ConfirmPassword { get; set; }
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         [LocalizedDisplayName("Account.Email")]
         public string ContactEmail { get; set; }
         [LocalizedDisplayName("Account.RegistrationCode")]
@@ -35,7 +36,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
                 yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.EmptyPasswordError").As<string>(), new[] { "Password" });
 
             if (!Password.Equals(ConfirmPassword))
-                yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.PasswordsDoNotMatch").As<string>(), new[] { "NewPassword" });
+                yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.PasswordsDoNotMatch").As<string>(), new[] { "ConfirmPassword" });
         }
     }
 }
