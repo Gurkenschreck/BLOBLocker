@@ -32,8 +32,24 @@
 .navbar-side li .nested{
     list-style-position: outside;
     /*list-style-image: url();*/
-    background-color: #88ff5f;
     padding-left:10px;
+}
+
+/* General background colors */
+.bg-red{
+    background-color:#ff5959;
+}
+
+.bg-blue{
+    background-color:#3ab1ff;
+}
+
+.bg-yellow{
+    background-color:#fdff5e;
+}
+
+.bg-green{
+    background-color: #95ff70;
 }
 
 .top-bar{

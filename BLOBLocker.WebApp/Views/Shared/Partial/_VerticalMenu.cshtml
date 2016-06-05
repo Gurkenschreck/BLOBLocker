@@ -16,7 +16,7 @@
 
         <li>
             @Html.LocalizedActionLink("Label.Membership", "Overview", "Account")
-            <ul class="menu vertical nested">
+            <ul class="menu vertical nested bg-yellow">
                 <li>@Html.LocalizedActionLink("Label.Overview", "Overview", "Account")</li>
                 <li>@Html.LocalizedActionLink("Label.ChangePassword", "ChangePassword", "Account")</li>
                 <li>@Html.LocalizedActionLink("Label.SignOut", "SignOut", "Account")</li>
@@ -25,7 +25,7 @@
 
         <li>
             @Html.LocalizedActionLink("Label.Panel", "Index", "Panel")
-            <ul class="menu vertical nested">
+            <ul class="menu vertical nested bg-blue">
                 <li>@Html.LocalizedActionLink("Label.Panel", "Index", "Panel")</li>
                 <li>@Html.LocalizedActionLink("Label.BuildNew", "Build", "Panel")</li>
             </ul>
@@ -35,7 +35,7 @@
     {
         <li>
             @Html.LocalizedActionLink("Label.Membership", "Overview", "Account")
-            <ul class="menu vertical nested">
+            <ul class="menu vertical nested bg-yellow">
                 <li>@Html.LocalizedActionLink("Label.SignIn", "SignIn", "Account")</li>
                 <li>@Html.LocalizedActionLink("Label.SignUp", "SignUp", "Account")</li>
             </ul>
@@ -59,7 +59,7 @@
                 
                 <li @if(isActive) { <text>class="active"</text> }>
                     @Html.ActionLink(pool.Title, "Pool", "Panel", new { puid = pool.UniqueIdentifier }, null)
-                    <ul class="menu vertical dropdown nested">
+                    <ul class="menu vertical dropdown nested bg-green">
                         <li>@Html.LocalizedActionLink("Label.Overview", "Pool", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
                         <li>@Html.LocalizedActionLink("Label.Configuration", "PoolConfig", "Panel", new { puid = pool.UniqueIdentifier }, null)</li>
                     </ul>
