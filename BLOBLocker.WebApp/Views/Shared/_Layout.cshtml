@@ -61,7 +61,8 @@
                                         @if (HttpContext.Current.User.Identity.IsAuthenticated)
                                         {
                                             <text>
-                                                @HttpContext.Current.User.Identity.Name
+                                                @string.Format(HttpContext.GetGlobalResourceObject(null, "Label.LoggedInAs").ToString(),
+                                                                User.Identity.Name)
                                             </text>
                                             <text>
                                                 @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.TitleOverview").ToString(),
@@ -95,7 +96,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <div class="row column">
                         @RenderBody()
