@@ -402,9 +402,16 @@ namespace BLOBLocker.WebApp.Controllers
                             poolHandler.Initialize(css["PrivRSAKey"]);
                         }
                         poolHandler.Pool.Title = tdvm.Title;
-                        using (var cipher = poolHandler.GetPoolCipher())
+                        if (tdvm.Description != null)
                         {
-                            poolHandler.Pool.Description = cipher.EncryptToString(tdvm.Description);
+                            using (var cipher = poolHandler.GetPoolCipher())
+                            {
+                                poolHandler.Pool.Description = cipher.EncryptToString(tdvm.Description);
+                            }
+                        }
+                        else
+                        {
+                            poolHandler.Pool.Description = null;
                         }
                         context.SaveChanges();
                     }
