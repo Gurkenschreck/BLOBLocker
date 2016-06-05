@@ -7,6 +7,43 @@
 
 /* Custom elements
 -----------------------------------------------------------*/
+
+.title{
+    background-color: #f3f3f3;
+    padding: 4px;
+    border-bottom: 2px ridge black;
+    border-right: 2px solid black;
+}
+
+.title *{
+    color: black;
+    font-weight: bold;
+}
+
+.navbar-side{
+    border-right: 1px solid black;
+}
+
+.navbar-side li{
+    background-color: #f3f3f3;
+    padding-left:10px;
+}
+
+.navbar-side li .nested{
+    list-style-position: outside;
+    /*list-style-image: url();*/
+    background-color: #88ff5f;
+    padding-left:10px;
+}
+
+.top-bar{
+    background-color: #f3f3f3;
+    border-left: 1px ridge black;
+    border-bottom: 1px ridge black;
+    border-right: 1px ridge black;
+}
+
+
 .inline-blocks *{
     display:inline-block
 }

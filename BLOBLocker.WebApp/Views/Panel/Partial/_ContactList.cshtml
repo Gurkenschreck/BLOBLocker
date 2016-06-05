@@ -1,10 +1,10 @@
-﻿@model BLOBLocker.Entities.Models.WebApp.AccountAddition
+﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.Contact>
 
 @HttpContext.GetGlobalResourceObject(null, "Label.YourContacts")
 
 
 <ul>
-    @foreach (BLOBLocker.Entities.Models.WebApp.Contact acc in Model.Contacts)
+    @foreach (BLOBLocker.Entities.Models.WebApp.Contact acc in Model)
     {
         <li>@acc.Account.Alias</li>
     }

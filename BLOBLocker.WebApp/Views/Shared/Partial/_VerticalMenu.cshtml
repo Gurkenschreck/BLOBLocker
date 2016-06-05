@@ -1,13 +1,13 @@
 ﻿@model ICollection<BLOBLocker.Entities.Models.WebApp.Pool>
 @using BLOBLocker.Code.Helper
 
-<div class="text-center">
+<div class="text-center title">
     <h3>
         @Html.LocalizedActionLink("Label.BLOBLocker", "Index", User.Identity.IsAuthenticated ? "Panel" : "Home")
     </h3>
 </div>
 
-<ul class="vertical menu" data-accordion-menu>
+<ul class="vertical menu navbar-side" data-accordion-menu>
     <li>@Html.LocalizedActionLink("Label.Home", "Index", "Home")</li>
 
     @if (User.Identity.IsAuthenticated)
@@ -15,7 +15,7 @@
         <li>@Html.LocalizedLabel("Label.MainControls")</li>
 
         <li>
-            @Html.ActionLink(HttpContext.GetGlobalResourceObject(null, "Label.Membership").ToString(), "Overview", "Account")
+            @Html.LocalizedActionLink("Label.Membership", "Overview", "Account")
             <ul class="menu vertical nested">
                 <li>@Html.LocalizedActionLink("Label.Overview", "Overview", "Account")</li>
                 <li>@Html.LocalizedActionLink("Label.ChangePassword", "ChangePassword", "Account")</li>
