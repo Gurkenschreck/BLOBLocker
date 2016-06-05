@@ -10,10 +10,10 @@
 <ul class="vertical menu navbar-side" data-accordion-menu>
     <li>@Html.LocalizedActionLink("Label.Home", "Index", "Home")</li>
 
+    <li>@Html.LocalizedLabel("Label.MainControls")</li>
+
     @if (User.Identity.IsAuthenticated)
     {
-        <li>@Html.LocalizedLabel("Label.MainControls")</li>
-
         <li>
             @Html.LocalizedActionLink("Label.Membership", "Overview", "Account")
             <ul class="menu vertical nested bg-yellow">
@@ -22,11 +22,10 @@
                 <li>@Html.LocalizedActionLink("Label.SignOut", "SignOut", "Account")</li>
             </ul>
         </li>
-
         <li>
             @Html.LocalizedActionLink("Label.Panel", "Index", "Panel")
             <ul class="menu vertical nested bg-blue">
-                <li>@Html.LocalizedActionLink("Label.Panel", "Index", "Panel")</li>
+                <li>@Html.LocalizedActionLink("Label.PanelIndex", "Index", "Panel")</li>
                 <li>@Html.LocalizedActionLink("Label.BuildNew", "Build", "Panel")</li>
             </ul>
         </li>

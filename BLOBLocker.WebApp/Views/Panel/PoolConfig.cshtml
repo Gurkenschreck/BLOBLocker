@@ -21,6 +21,7 @@
 @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ChangeTitle)
     || PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ChangeDescription))
 {
+    <hr />
     <p>
         @Html.Partial("_EditTitleAndDescription", Model.TitleDescriptionViewModel)
     </p>
@@ -28,17 +29,20 @@
 
 @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.ManageModules))
 {
+    <hr />
     <p>
         @Html.Partial("_ManageModules", Model.ManageModulesViewModel)
     </p>
 }
 
 <p>
+    <hr />
     @Html.Action("AssignMemoryMinimal")
 </p>
 
 @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.InviteUser))
 {
+    <hr />
     <p>
         @Html.Action("InviteUserMinimal")
     </p>
@@ -46,6 +50,7 @@
 
 @if (PoolRightHelper.HasRight(Model.PoolShare, PoolRight.AssignRights))
 {
+    <hr />
     <p>
         @Html.Partial("_EditDefaultRights", Model.RightsEditViewModel)
     </p>

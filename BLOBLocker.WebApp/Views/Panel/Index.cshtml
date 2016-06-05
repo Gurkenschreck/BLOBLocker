@@ -8,6 +8,18 @@
         @Html.Partial("_PoolList", Model.Pools)
     </div>
     <div class="small-5 column">
+        <h4>
+            @HttpContext.GetGlobalResourceObject(null, "Label.YourNotifications")
+        </h4>
+
+        @Html.Partial("_ShowNotifications", Model.Notifications)
+    </div>
+</div>
+<div class="row">
+    <div class="small-7 column">
+        @Html.Partial("_PoolShareList", Model.PoolShares)
+    </div>
+    <div class="small-5 column">
         <div>
             @Html.Partial("_AddContact", new BLOBLocker.Code.ViewModels.WebApp.AddContactViewModel())
         </div>
@@ -16,15 +28,5 @@
         </div>
 
         @Html.Partial("_ContactList", Model.Addition.Contacts)
-    </div>
-</div>
-<div class="row">
-    <div class="small-7 column">
-        @Html.Partial("_PoolShareList", Model.PoolShares)
-    </div>
-    <div class="small-5 column">
-        @HttpContext.GetGlobalResourceObject(null, "Label.YourNotifications")
-
-        @Html.Partial("_ShowNotifications", Model.Notifications)
     </div>
 </div>
