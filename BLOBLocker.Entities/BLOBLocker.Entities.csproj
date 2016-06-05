@@ -111,6 +111,7 @@
   <ItemGroup>
     <Content Include="Scripts\AdminTool\160413_dbo.Roles.data.sql" />
     <Content Include="Scripts\AdminTool\160424_Update-Database_From-Source.sql" />
+    <Content Include="Scripts\Elmah\ELMAH-1.2-db-SQLServer.sql" />
     <Content Include="Scripts\WebApp\160413_dbo.AccountRoles.data.sql" />
     <Content Include="Scripts\WebApp\160413_dbo.SystemConfigurations.data.sql" />
     <Content Include="Scripts\WebApp\160424_dbo.SystemConfigurations.data.sql" />
