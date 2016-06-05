@@ -10,7 +10,7 @@ using System.Web;
 
 namespace BLOBLocker.Code.ViewModels.WebApp
 {
-    public class NewFileViewModel
+    public class NewFileViewModel : IValidatableObject
     {
         [Required]
         public string PUID { get; set; }
@@ -18,6 +18,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [Required]
         [DataType(DataType.Upload)]
         public IEnumerable<HttpPostedFileBase> Files { get; set; }
+
         public string Description { get; set; }
 
 
@@ -48,6 +49,13 @@ namespace BLOBLocker.Code.ViewModels.WebApp
             }
 
             return files;
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Files.Any(p => p == null))
+                yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "File.NoFilesProvidedError").ToString(),
+                    new string[] { "Files" });
         }
     }
 }
