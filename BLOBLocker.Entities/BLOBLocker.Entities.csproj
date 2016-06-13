@@ -119,6 +119,8 @@
     <Content Include="Scripts\WebApp\160514_dbo.LocalizedStrings.data.sql" />
     <Content Include="Scripts\WebApp\160514_dbo.StringResources.data.sql" />
     <Content Include="Scripts\WebApp\160604_Update-Database_From-Source.sql" />
+    <Content Include="Scripts\WebApp\160613_dbo.LocalizedStrings.data.sql" />
+    <Content Include="Scripts\WebApp\160613_dbo.StringResources.data.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
