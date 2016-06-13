@@ -26,6 +26,7 @@ using BLOBLocker.Code.Web;
 using System.IO;
 using System.Net.Mime;
 using BLOBLocker.Code.Exception;
+using System.Web.UI;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -341,7 +342,7 @@ namespace BLOBLocker.WebApp.Controllers
             return RedirectToAction("Pool", new { puid = puid });
         }
 
-        [OutputCache(NoStore=true, Duration=0)]
+        [NoCache]
         [RequiredParameters("puid")]
         [RestoreModelState]
         [HttpGet]

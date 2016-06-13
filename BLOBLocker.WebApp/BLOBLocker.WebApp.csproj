@@ -220,6 +220,8 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="Properties\PublishProfiles\stage.bloblocker.com - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\Stage_WebApp_BL.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Content\images\1460291885821.gif" />
     <Content Include="Scripts\foundation.js" />

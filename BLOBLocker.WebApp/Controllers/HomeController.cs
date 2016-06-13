@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Code.Controllers;
+﻿using BLOBLocker.Code.Attributes;
+using BLOBLocker.Code.Controllers;
 using BLOBLocker.Code.Data;
 using BLOBLocker.Entities.Models.WebApp;
 using BLOBLocker.WebApp.Controllers;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -39,8 +41,7 @@ namespace BLOBLocker.WebApp.Controllers
             return View();
         }
 
-        [AcceptVerbs("POST", "GET")]
-        [OutputCache(Duration=1)]
+        [NoCache]
         public ActionResult VerticalMenu()
         {
             ICollection<Pool> pools = null;
