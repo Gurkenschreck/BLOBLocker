@@ -639,7 +639,7 @@ namespace BLOBLocker.WebApp.Controllers
                 {
                     if (canAccess)
                     {
-                        if (poolHandler.IsUserInPool(ivm.InviteAlias))
+                        if (!poolHandler.IsUserInPool(ivm.InviteAlias))
                         {
                             int poolShareSymKeySize = Convert.ToInt32(HttpContext.Application["security.PoolShareKeySize"]);
 
