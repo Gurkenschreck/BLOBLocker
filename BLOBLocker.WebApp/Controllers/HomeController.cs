@@ -48,7 +48,8 @@ namespace BLOBLocker.WebApp.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                pools = new AccountRepository().GetByKey(User.Identity.Name).Pools.Where(p => p.IsActive).ToArray();
+                pools = new AccountRepository().GetByKey(User.Identity.Name)
+                    .PoolShares.Select(p => p.Pool).Where(p => p.IsActive).OrderBy(p => p.Title).ToArray();
             }
             return PartialView("_VerticalMenu", pools);
         }
