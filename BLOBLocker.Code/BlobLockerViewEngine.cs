@@ -11,7 +11,7 @@ namespace BLOBLocker.Code
     {
         public BlobLockerViewEngine()
         {
-            var newLocationFormat = new[]
+            var newLocationFormat = new string[]
                                         {
                                             "~/Views/{1}/Partial/{0}.cshtml",
                                             "~/Views/Shared/Partial/{0}.cshtml"
