@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 
-namespace BLOBLocker.Code.Helper
+namespace BLOBLocker.Code.Web.Helper
 {
     public static class EnumDropDownList
     {
@@ -18,6 +18,7 @@ namespace BLOBLocker.Code.Helper
             if (!typeOfProperty.IsEnum)
                 throw new ArgumentException(string.Format("Type {0} is not an enum", typeOfProperty));
             var enumValues = new SelectList(Enum.GetValues(typeOfProperty));
+            htmlHelper.Hidden("baw");
             return htmlHelper.DropDownListFor(modelExpression, enumValues, firstElement);
         }
     }

@@ -1,4 +1,5 @@
 ﻿@model BLOBLocker.Code.ViewModels.WebApp.LoginViewModel
+@using BLOBLocker.Code.Web.Helper
 @{
     ViewBag.Title = @HttpContext.GetGlobalResourceObject(null, "PageTitle.SignIn");
 }
@@ -32,6 +33,7 @@
     <div class="row">
         <div class="small-3 column">
             @Html.AntiForgeryToken()
+            @Html.HiddenFromQueryString("ReturnUrl")
         </div>
         <div class="small-4 small-offset-4 column end">
             <button type="submit" class="button">@HttpContext.GetGlobalResourceObject(null, "Button.SignIn")</button>

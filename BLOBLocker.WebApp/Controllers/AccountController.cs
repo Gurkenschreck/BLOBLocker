@@ -134,7 +134,7 @@ namespace BLOBLocker.WebApp.Controllers
 
         [RequiredParameters("acc")]
         [ValidateAntiForgeryToken, AllowAnonymous, HttpPost]
-        public ActionResult SignIn(LoginViewModel acc)
+        public ActionResult SignIn(LoginViewModel acc, string ReturnUrl)
         {
             bool loginEnabled = HttpContext.Application["system.EnableLogin"].As<bool>();
             if (!loginEnabled)
@@ -163,10 +163,11 @@ namespace BLOBLocker.WebApp.Controllers
                             }
                             
                             FormsAuthentication.SetAuthCookie(correspondingAcc.Alias, createPersistentAuthCookie);
-                            if (Request.QueryString["ReturnUrl"] == null)
+
+                            if (string.IsNullOrWhiteSpace(ReturnUrl))
                                 return RedirectToAction("Index", "Panel");
                             else
-                                Response.Redirect(Request.QueryString["ReturnUrl"]);
+                                Response.Redirect(ReturnUrl);
                             break;
                         case 2:
                             ModelState.AddModelError("Alias", HttpContext.GetGlobalResourceObject(null, "Account.WrongLoginOrPassword").As<string>());

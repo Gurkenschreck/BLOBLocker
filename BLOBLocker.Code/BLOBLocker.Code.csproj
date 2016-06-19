@@ -70,8 +70,9 @@
     <Compile Include="Exception\PoolFileNotFoundException.cs" />
     <Compile Include="Exception\UnauthorizedPoolAccessException.cs" />
     <Compile Include="Extention\EnumExtentions.cs" />
-    <Compile Include="Helper\EnumDropdownList.cs" />
-    <Compile Include="Helper\Localized.cs" />
+    <Compile Include="Web\Helper\EnumDropdownList.cs" />
+    <Compile Include="Web\Helper\Hidden.cs" />
+    <Compile Include="Web\Helper\Localized.cs" />
     <Compile Include="Resources\LocalizedDisplayNameAttribute.cs" />
     <Compile Include="Attributes\LocalOnlyAttribute.cs" />
     <Compile Include="Attributes\PreserveModelStateAttribute.cs" />
