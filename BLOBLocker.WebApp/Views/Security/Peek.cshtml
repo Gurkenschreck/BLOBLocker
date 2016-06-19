@@ -1,7 +1,7 @@
-﻿
+﻿@using BLOBLocker.Code.Web.Helper
 @{
     ViewBag.Title = HttpContext.GetGlobalResourceObject(null, "PageTitle.Peek");
-    Layout = "~/Views/Shared/_MinimalLayout.cshtml";
+    
     List<string> sandBoxTags = new List<string>();
     
     if(ViewBag.ActivateJS != null && ViewBag.ActivateJS == true){
@@ -29,22 +29,27 @@
     string tags = String.Join(" ", sandBoxTags);
 }
 
-<i>This does not work with non-https websites. Some sites disallow the embedding in iframes, like we do.</i>
+<i>@Html.LocalizedLabel("Label.PeekHint")</i>
 @using (Html.BeginForm("Peek", "Security", FormMethod.Get)) //http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
 {
     <text>
-        @Html.Label("Url:") @Html.TextBox("url", null, new { style="min-width:300px; width:50%;" }) <button type="submit">Go</button>
-        @Html.CheckBox("activateProxy") @Html.Label("Activate Proxy", new { @for="activateProxy" })
+        <div class="inline-blocks">
+            @Html.LocalizedLabel("Label.URL") @Html.TextBox("url", null, new { style = "min-width:300px; width:50%;" }) <button type="submit" class="button tiny">@Html.LocalizedLabel("Button.Browse")</button>
+        </div>
+        <div class="inline-blocks">
+            @Html.LocalizedLabel("Label.SandboxRights")
+            @Html.CheckBox("activateProxy") @Html.LocalizedLabel("Label.ActivateProxy", new { @for = "activateProxy", @title=HttpContext.GetGlobalResourceObject(null, "Label.ActivateProxyToolTip").ToString() })
 
-        @Html.CheckBox("activateJS") @Html.Label("Allow JS", new { @for = "activateJS" })
-        @Html.CheckBox("activateForms") @Html.Label("Allow Forms", new { @for = "activateForms" })
-        @Html.CheckBox("activatePopups") @Html.Label("Allow Popups", new { @for = "activatePopups" })
-        @Html.CheckBox("activatePointerLock") @Html.Label("Allow Pointer Lock", new { @for = "activatePointerLock" })
-        @Html.CheckBox("activateSameOrigin") @Html.Label("Allow Same Origin", new { @for = "activateSameOrigin" })
-        @Html.CheckBox("activateTopNavigation") @Html.Label("Allow Top Navigation", new { @for = "activateTopNavigation" })
-    </text>
+            @Html.CheckBox("activateJS") @Html.LocalizedLabel("Label.AllowJS", new { @for = "activateJS", @title=HttpContext.GetGlobalResourceObject(null, "Label.AllowJSToolTip").ToString() })
+            @Html.CheckBox("activateForms") @Html.LocalizedLabel("Label.AllowForms", new { @for = "activateForms", @title = HttpContext.GetGlobalResourceObject(null, "Label.AllowFormsToolTip").ToString() })
+            @Html.CheckBox("activatePopups") @Html.LocalizedLabel("Label.AllowPopups", new { @for = "activatePopups", @title = HttpContext.GetGlobalResourceObject(null, "Label.AllowPopupsToolTip").ToString() })
+            @Html.CheckBox("activatePointerLock") @Html.LocalizedLabel("Label.AllowPointerLock", new { @for = "activatePointerLock", @title = HttpContext.GetGlobalResourceObject(null, "Label.AllowPointerLockToolTip").ToString() })
+            @Html.CheckBox("activateSameOrigin") @Html.LocalizedLabel("Label.AllowSameOrigin", new { @for = "activateSameOrigin", @title = HttpContext.GetGlobalResourceObject(null, "Label.AllowSameOriginToolTip").ToString() })
+            @Html.CheckBox("activateTopNavigation") @Html.LocalizedLabel("Label.AllowTopNavigation", new { @for = "activateTopNavigation", @title = HttpContext.GetGlobalResourceObject(null, "Label.AllowTopNavigationToolTip").ToString() })
+        </div>
+</text>
 }
 
-<iframe src="@ViewBag.URL" sandbox="@tags" style=" height:75%;">
-    Your frame must support iframes.
+<iframe src="@ViewBag.URL" sandbox="@tags" style="height:500px; width:100%;">
+    @Html.LocalizedLabel("Label.IFramesNotSupported")
 </iframe>

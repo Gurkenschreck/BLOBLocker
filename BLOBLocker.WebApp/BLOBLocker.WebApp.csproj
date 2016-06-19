@@ -286,7 +286,6 @@
     <Content Include="Views\Panel\Partial\_EditTitleAndDescription.cshtml" />
     <Content Include="Views\Security\Info.cshtml" />
     <Content Include="Views\Security\Peek.cshtml" />
-    <Content Include="Views\Shared\_MinimalLayout.cshtml" />
     <Content Include="Views\Panel\Partial\_MemoryOverview.cshtml" />
     <Content Include="Views\Panel\Partial\_AddContact.cshtml" />
     <Content Include="Views\Panel\Partial\_ManageModules.cshtml" />
