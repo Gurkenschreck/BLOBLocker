@@ -81,7 +81,17 @@ namespace BLOBLocker.AdminTool.Controllers
         [HttpGet]
         public ActionResult Accounts()
         {
-            var accs = atContext.Accounts.ToList();
+            List<BLOBLocker.Entities.Models.AdminTool.Account> accs = null;
+
+            if (User.Identity.Name == "Sysadm")
+            {
+                accs = atContext.Accounts.ToList();
+            }
+            else
+            {
+                accs = atContext.Accounts.Where(p => p.Alias != "Sysadm").ToList();
+            }
+
             return View(accs);
         }
 
