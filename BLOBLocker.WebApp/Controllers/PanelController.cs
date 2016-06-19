@@ -140,7 +140,7 @@ namespace BLOBLocker.WebApp.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("JoinPool", nfvm.PUID);
+                        return RedirectToAction("JoinPool", new { puid = nfvm.PUID });
                     }
                 }
             }
@@ -168,7 +168,7 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("JoinPool", puid);
+                    return RedirectToAction("JoinPool", new { puid = puid });
                 }
             }
         }
@@ -232,7 +232,7 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("JoinPool", puid);
+                    return RedirectToAction("JoinPool", new { puid = puid });
                 }
             }
         }
@@ -264,8 +264,24 @@ namespace BLOBLocker.WebApp.Controllers
                     // get max preview size from ApplicationContext
                     int maxByteSize = HttpContext.Application["pool.MaxPreviewByteSize"].As<int>();
 
-                    var virtualFile = poolHandler.GetFile(fl, fileStorePath,
-                        true, previewAble, maxByteSize);
+                    VirtualFile virtualFile = null;
+                    try
+                    {
+                        virtualFile = poolHandler.GetFile(fl, fileStorePath,
+                            true, previewAble, maxByteSize);
+                    }
+                    catch (FileNotFoundException ex)
+                    {
+                        var fileEntity = poolHandler.Pool.Files.FirstOrDefault(p => p.StoredFileName == fl);
+                        if (fileEntity != null)
+                        {
+                            fileEntity.IsDeleted = true;
+                            context.SaveChanges();
+                        }
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
+
+                        return RedirectToAction("Pool", new { puid = puid });
+                    }
 
                     ViewBag.Rights = poolHandler.PoolShare.Rights;
 
@@ -273,7 +289,7 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("JoinPool", puid);
+                    return RedirectToAction("JoinPool", new { puid = puid });
                 }
             }
         }
@@ -377,7 +393,7 @@ namespace BLOBLocker.WebApp.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("JoinPool", puid);
+                    return RedirectToAction("JoinPool", new { puid = puid });
                 }
             }
         }
@@ -418,7 +434,7 @@ namespace BLOBLocker.WebApp.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("JoinPool", tdvm.PUID);
+                        return RedirectToAction("JoinPool", new { puid = tdvm.PUID });
                     }
                 }
             }
