@@ -141,6 +141,7 @@ namespace BLOBLocker.AdminTool.Controllers
                             Account = newAcc
                         });
                     }
+                    newAcc.IsActive = aeam.IsActive;
                     atContext.Accounts.Add(newAcc);
                     atContext.SaveChanges();
                 }
