@@ -80,6 +80,10 @@
     white-space:pre-wrap;
 }
 
+table .button {
+    margin:0;
+}
+
 /* Styles for validation helpers
 -----------------------------------------------------------*/
 .field-validation-error {

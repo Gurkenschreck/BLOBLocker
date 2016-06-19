@@ -97,9 +97,9 @@
                 {
                     <button type="submit" name="fl" value="@Request.QueryString["fl"]" class="alert button">
                         @HttpContext.GetGlobalResourceObject(null, "Button.Remove")
-                        @Html.Hidden("puid", ViewContext.RouteData.Values["puid"])
-                        @Html.AntiForgeryToken()
                     </button>
+                    @Html.Hidden("puid", ViewContext.RouteData.Values["puid"])
+                    @Html.AntiForgeryToken()
                 }
             </td>
         </tr>

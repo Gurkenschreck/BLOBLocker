@@ -19,7 +19,7 @@
                 <span class="input-group-label">
                     @Html.LabelFor(p => p.Description)
                 </span>
-                @Html.EditorFor(p => p.Description, new { @class = "input-group-field" })
+                @Html.TextBoxFor(p => p.Description, new { @class = "input-group-field" })
                 <div class="input-group-button">
                     <button type="submit" class="success button">@HttpContext.GetGlobalResourceObject(null, "Button.Upload")</button>
                 </div>
