@@ -15,7 +15,7 @@
             @Html.TextBoxFor(model => model.Alias, new { @placeholder = HttpContext.GetGlobalResourceObject(null, "Label.DisplayName").ToString() })
             <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.AliasHelpText")</p>
         </div>
-        <div class="columns">
+        <div class="small-4 columns">
             @Html.ValidationMessageFor(model => model.Alias)
         </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="small-4 column">
             @Html.PasswordFor(model => model.Password, new { @placeholder = "************" })
         </div>
-        <div class="columns">
+        <div class="small-4 columns">
             @Html.ValidationMessageFor(model => model.Password)
         </div>
     </div>
@@ -38,7 +38,7 @@
             @Html.PasswordFor(model => model.ConfirmPassword, new { @placeholder = "************" })
             <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.PasswordHelpText")</p>
         </div>
-        <div class="columns">
+        <div class="small-4 columns">
             @Html.ValidationMessageFor(model => model.ConfirmPassword)
         </div>
     </div>
@@ -50,7 +50,7 @@
             @Html.EditorFor(model => model.ContactEmail, new { @placeholder = HttpContext.GetGlobalResourceObject(null, "Label.OptionalEmailPlaceHolder") })
             <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.EmailHelpText")</p>
         </div>
-        <div class="columns">
+        <div class="small-4 columns">
             @Html.ValidationMessageFor(model => model.ContactEmail)
         </div>
     </div>
@@ -64,11 +64,24 @@
                 @Html.TextBox("registrationCode", "", new { @placeholder = HttpContext.GetGlobalResourceObject(null, "Label.RegistrationCodePlaceHolder") })
                 <p class="help-text">@HttpContext.GetGlobalResourceObject(null, "Label.RegistrationCodelHelpText")</p>
             </div>
-            <div class="columns">
+            <div class="small-4 columns">
                 @Html.ValidationMessage("registrationCode")
             </div>
         </div>
     }
+
+    <div class="row">
+        <div class="small-4 column text-right">
+            @Html.LabelFor(model => model.UserCaptchaInput)
+        </div>
+        <div class="small-4 column">
+            <img src="@string.Format("data:image/{0};base64,{1}", "gif", Model.Captcha.ImageAsBase64)" alt="captcha error" />
+            @Html.TextBoxFor(model => model.UserCaptchaInput, new { @placeholder = "Captcha Content" })
+        </div>
+        <div class="small-4 columns">
+            @Html.ValidationMessageFor(p => p.UserCaptchaInput)
+        </div>
+    </div>
     <div class="row">
         <div class="small-3 column">
             @Html.AntiForgeryToken()

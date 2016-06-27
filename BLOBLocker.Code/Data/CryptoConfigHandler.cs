@@ -30,7 +30,7 @@ namespace BLOBLocker.Code.Data
             newConfig.RSAKeySize = properties.RSAKeySize;
 
             byte[] iv;
-            using (var symC = new SymmetricCipher<AesManaged>(password, out salt, out iv, properties.SaltByteLength, newConfig.KeySize, iterations: newConfig.IterationCount))
+            using (var symC = new SymmetricCipher<AesManaged>(password, out salt, out iv, properties.SaltByteLength, newConfig.KeySize, 0, newConfig.IterationCount))
             {
                 newConfig.IV = iv;
 

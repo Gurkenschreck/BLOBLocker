@@ -27,6 +27,7 @@ using BLOBLocker.Code.ViewModels.Validation;
 using BLOBLocker.Code.Data;
 using BLOBLocker.Code.Web;
 using BLOBLocker.Code.Security.Cryptography;
+using BLOBLocker.Code.Media.Bitmaps;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -38,90 +39,111 @@ namespace BLOBLocker.WebApp.Controllers
         [HttpGet]
         public ActionResult SignUp()
         {
+            AccountViewModel accvm = new AccountViewModel();
+
+            CaptchaFactory captchaFactory = new CaptchaFactory();
+            accvm.Captcha = captchaFactory.CreateNew(200, 70);
+            Session["latestCaptcha"] = accvm.Captcha.Value;
+
             ViewBag.IsRegistrationRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
-            return View();
+            return View(accvm);
         }
 
         [RequiredParameters("acc")]
-        [CustomValidate(typeof(AccountViewModelValidation))]
+        [CustomValidate(typeof(AccountViewModelValidation))] // Validation for: Registration enabled, Registration Restricted, Account limit reached
         [ValidateAntiForgeryToken, AllowAnonymous, HttpPost]
         public ActionResult SignUp(AccountViewModel acc)
         {
             bool isRegRestricted = HttpContext.Application["system.RestrictRegistration"].As<bool>();
             ViewBag.IsRegistrationRestricted = isRegRestricted;
+
             // Check if info is correct
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                AccountHandler accHandler = new AccountHandler();
-                AccountRepository accRepo = new AccountRepository(context);
-                Account newAcc = accRepo.GetByKey(acc.Alias);
-
-                if(newAcc == null)
+                string latestCaptcha = Session["latestCaptcha"].ToString();
+                if (!acc.UserCaptchaInput.Equals(latestCaptcha))
                 {
-                    int basicMemoryPoolSize = HttpContext.Application["account.InitialMemoryPoolSize"].As<int>();
-                    int saltByteLength = HttpContext.Application["security.SaltByteLength"].As<int>();
-                    int accountSymKeySize = HttpContext.Application["security.AccountKeySize"].As<int>();
-                    int accountRSAKeySizeRSAKeySize = HttpContext.Application["security.AccountRSAKeySize"].As<int>();
-                    int hashIterations = HttpContext.Application["security.HashIterationCount"].As<int>();
-                    string basicRoleName = HttpContext.Application["account.DefaultRole"].As<string>();
-
-                    AccountRole defaultAccRole = context.AccountRoles.First(p => p.Definition == basicRoleName);
- 
-                    var accProperties = new AccountHandler.AccountProperties
-                    {
-                        Alias = acc.Alias,
-                        Password = acc.Password, 
-                        Roles = new List<AccountRole>()
-                    };
-                    accProperties.Roles.Add(defaultAccRole);
-                    
-                    var cryptoProperties = new CryptoConfigHandler.CryptoConfigProperties
-                    {
-                        SaltByteLength = saltByteLength,
-                        SymmetricKeySize = accountSymKeySize,
-                        RSAKeySize = accountRSAKeySizeRSAKeySize,
-                        HashIterations = hashIterations
-                    };
-
-                    var additionProperties = new AccountAdditionHandler.AccountAdditionProperties
-                    {
-                        Email = acc.ContactEmail
-                    };
-
-                    var memPoolProperties = new MemoryPoolHandler.MemoryPoolProperties
-                    {
-                        BasicMemory = basicMemoryPoolSize,
-                        AdditionalMemory = 0
-                    };
-
-                    newAcc = accHandler.SetupAccount(accProperties,
-                        cryptoProperties,
-                        additionProperties,
-                        memPoolProperties);
-
-                    bool createPersistentCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
-                    int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>();
-
-                    BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(newAcc,
-                        HttpContext.GetGlobalResourceObject(null, "Notification.WelcomeMessage").As<string>(),
-                        newAcc.Alias);
-
-                    accRepo.Add(newAcc);
-
-                    using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV))
-                    {
-                        using(var css = new CryptoSessionStore("AccPriKey",
-                            Session, Request, Response))
-                        {
-                            css["PrivRSAKey"] = symC.Decrypt(newAcc.Config.PrivateKey);
-                        }
-                    }
-                    FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
-                    return RedirectToAction("Index", "Panel");
+                    ModelState.AddModelError("UserCaptchaInput", HttpContext.GetGlobalResourceObject(null, "Account.CaptchaInputDoesNotMatch").As<string>());
                 }
-                ModelState.AddModelError("AliasAlreadyExists", HttpContext.GetGlobalResourceObject(null, "Account.AccountAlreadyExists").As<string>());
+                else
+                {
+                    AccountHandler accHandler = new AccountHandler();
+                    AccountRepository accRepo = new AccountRepository(context);
+                    Account newAcc = accRepo.GetByKey(acc.Alias);
+
+                    if (newAcc == null)
+                    {
+                        int basicMemoryPoolSize = HttpContext.Application["account.InitialMemoryPoolSize"].As<int>();
+                        int saltByteLength = HttpContext.Application["security.SaltByteLength"].As<int>();
+                        int accountSymKeySize = HttpContext.Application["security.AccountKeySize"].As<int>();
+                        int accountRSAKeySizeRSAKeySize = HttpContext.Application["security.AccountRSAKeySize"].As<int>();
+                        int hashIterations = HttpContext.Application["security.HashIterationCount"].As<int>();
+                        string basicRoleName = HttpContext.Application["account.DefaultRole"].As<string>();
+
+                        AccountRole defaultAccRole = context.AccountRoles.First(p => p.Definition == basicRoleName);
+
+                        var accProperties = new AccountHandler.AccountProperties
+                        {
+                            Alias = acc.Alias,
+                            Password = acc.Password,
+                            Roles = new List<AccountRole>()
+                        };
+                        accProperties.Roles.Add(defaultAccRole);
+
+                        var cryptoProperties = new CryptoConfigHandler.CryptoConfigProperties
+                        {
+                            SaltByteLength = saltByteLength,
+                            SymmetricKeySize = accountSymKeySize,
+                            RSAKeySize = accountRSAKeySizeRSAKeySize,
+                            HashIterations = hashIterations
+                        };
+
+                        var additionProperties = new AccountAdditionHandler.AccountAdditionProperties
+                        {
+                            Email = acc.ContactEmail
+                        };
+
+                        var memPoolProperties = new MemoryPoolHandler.MemoryPoolProperties
+                        {
+                            BasicMemory = basicMemoryPoolSize,
+                            AdditionalMemory = 0
+                        };
+
+                        newAcc = accHandler.SetupAccount(accProperties,
+                            cryptoProperties,
+                            additionProperties,
+                            memPoolProperties);
+
+                        bool createPersistentCookie = HttpContext.Application["security.CreatePersistentAuthCookie"].As<bool>();
+                        int cookieKeySize = HttpContext.Application["security.CookieCryptoKeySize"].As<int>();
+
+                        BLOBLocker.Code.ModelHelper.NotificationHelper.SendNotification(newAcc,
+                            HttpContext.GetGlobalResourceObject(null, "Notification.WelcomeMessage").As<string>(),
+                            newAcc.Alias);
+
+                        accRepo.Add(newAcc);
+
+                        using (var symC = new SymmetricCipher<AesManaged>(acc.Password, newAcc.Salt, newAcc.Config.IV,
+                            accountSymKeySize, hashIterations))
+                        {
+                            using (var css = new CryptoSessionStore("AccPriKey",
+                                Session, Request, Response))
+                            {
+                                css["PrivRSAKey"] = symC.Decrypt(newAcc.Config.PrivateKey);
+                            }
+                        }
+                        FormsAuthentication.SetAuthCookie(newAcc.Alias, createPersistentCookie);
+                        return RedirectToAction("Index", "Panel");
+                    }
+                    ModelState.AddModelError("Alias", HttpContext.GetGlobalResourceObject(null, "Account.AccountAlreadyExists").As<string>());
+                }
             }
-            
+
+            CaptchaFactory captchaFactory = new CaptchaFactory();
+            acc.Captcha = captchaFactory.CreateNew(200, 70);
+            acc.UserCaptchaInput = string.Empty;
+            Session["latestCaptcha"] = acc.Captcha.Value;
+
             return View(acc);
         }
 

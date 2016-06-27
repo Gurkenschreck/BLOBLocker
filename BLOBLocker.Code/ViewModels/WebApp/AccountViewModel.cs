@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using BLOBLocker.Code.Extention;
 using BLOBLocker.Code.Resources;
+using BLOBLocker.Code.Media.Bitmaps;
 
 namespace BLOBLocker.Code.ViewModels.WebApp
 {
@@ -27,6 +28,11 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         [LocalizedDisplayName("Account.RegistrationCode")]
         public string RegistrationCode { get; set; }
 
+        [Required]
+        [LocalizedDisplayName("Account.CaptchaInput")]
+        public string UserCaptchaInput { get; set; }
+        public Captcha Captcha { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (string.IsNullOrWhiteSpace(Alias))
@@ -34,6 +40,9 @@ namespace BLOBLocker.Code.ViewModels.WebApp
             
             if(string.IsNullOrEmpty(Password))
                 yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.EmptyPasswordError").As<string>(), new[] { "Password" });
+
+            if (string.IsNullOrEmpty(UserCaptchaInput))
+                yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.CaptchaInputEmtpyError").As<string>(), new[] { "UserCaptchaInput" });
 
             if (!Password.Equals(ConfirmPassword))
                 yield return new ValidationResult(HttpContext.GetGlobalResourceObject(null, "Account.PasswordsDoNotMatch").As<string>(), new[] { "ConfirmPassword" });

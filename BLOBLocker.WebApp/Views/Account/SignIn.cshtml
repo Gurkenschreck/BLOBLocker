@@ -15,7 +15,7 @@
         <div class="small-4 column">
             @Html.TextBoxFor(model => model.Alias, new { @placeholder=HttpContext.GetGlobalResourceObject(null, "Label.DisplayName").ToString() })
         </div>
-        <div class="columns">
+        <div class="small-4 columns">
             @Html.ValidationMessageFor(p => p.Alias)
         </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="small-4 column">
             @Html.PasswordFor(model => model.Password, new { @placeholder = "************" })
         </div>
-        <div class="columns">
+        <div class="small-4 columns">
             @Html.ValidationMessageFor(p => p.Password)
         </div>
     </div>

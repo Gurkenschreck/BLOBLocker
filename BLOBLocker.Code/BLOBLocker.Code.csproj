@@ -30,7 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cipha">
+    <Reference Include="Cipha, Version=0.1.6022.41192, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Cipha\Cipha\bin\Debug\Cipha.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -45,6 +46,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -70,6 +72,10 @@
     <Compile Include="Exception\PoolFileNotFoundException.cs" />
     <Compile Include="Exception\UnauthorizedPoolAccessException.cs" />
     <Compile Include="Extention\EnumExtentions.cs" />
+    <Compile Include="Media\Bitmaps\BitmapFactory.cs" />
+    <Compile Include="Media\Bitmaps\BitmapWrapper.cs" />
+    <Compile Include="Media\Bitmaps\Captcha.cs" />
+    <Compile Include="Media\Bitmaps\CaptchaFactory.cs" />
     <Compile Include="Web\Helper\EnumDropdownList.cs" />
     <Compile Include="Web\Helper\Hidden.cs" />
     <Compile Include="Web\Helper\Localized.cs" />

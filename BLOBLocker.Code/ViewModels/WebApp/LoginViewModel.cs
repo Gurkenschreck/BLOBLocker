@@ -1,4 +1,5 @@
 ﻿using BLOBLocker.Code.Attributes;
+using BLOBLocker.Code.Media.Bitmaps;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

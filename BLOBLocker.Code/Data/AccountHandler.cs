@@ -23,9 +23,7 @@ namespace BLOBLocker.Code.Data
         }
 
         public AccountHandler()
-        {
-
-        }
+        {        }
 
         public AccountHandler(Account account)
         {
@@ -77,7 +75,8 @@ namespace BLOBLocker.Code.Data
             priRSAKey = null;
             if (account.IsEnabled)
             {
-                using (var symC = new SymmetricCipher<AesManaged>(password, account.Salt, account.Config.IV, iterations: account.Config.IterationCount))
+                using (var symC = new SymmetricCipher<AesManaged>(password, account.Salt, account.Config.IV, account.Config.KeySize,
+                    account.Config.IterationCount))
                 {
                     try
                     {
