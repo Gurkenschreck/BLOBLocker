@@ -138,6 +138,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Controllers\SecurityController.cs" />
+    <Compile Include="API\Models\SecurityInformation.cs" />
     <Compile Include="App_Start\TaskConfig.cs" />
     <Compile Include="Controllers\AjaxController.cs" />
     <Compile Include="Controllers\GlobalizationController.cs" />
