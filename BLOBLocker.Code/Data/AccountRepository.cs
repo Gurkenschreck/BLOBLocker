@@ -111,7 +111,7 @@ namespace BLOBLocker.Code.Data
 
         public Account GetByKey(string alias)
         {
-            return Get(p => p.Alias == alias);
+            return Get(p => p.Alias.ToUpper() == alias.ToUpper());
         }
 
         public void Dispose()
