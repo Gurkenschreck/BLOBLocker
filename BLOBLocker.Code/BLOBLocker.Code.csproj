@@ -66,6 +66,13 @@
     <Compile Include="Data\MemoryPoolHandler.cs" />
     <Compile Include="Data\PoolHandler.cs" />
     <Compile Include="Data\PoolRepository.cs" />
+    <Compile Include="IO\CompressionAndEncryptionProcessor.cs" />
+    <Compile Include="IO\CompressionProcessor.cs" />
+    <Compile Include="IO\CryptoProcessor.cs" />
+    <Compile Include="IO\EncryptionProcessor.cs" />
+    <Compile Include="IO\BaseProcessor.cs" />
+    <Compile Include="IO\PlainProcessor.cs" />
+    <Compile Include="IO\ProcessorFactory.cs" />
     <Compile Include="Data\VirtualFile.cs" />
     <Compile Include="Exception\FailedLoginException.cs" />
     <Compile Include="Exception\NotEnoughPoolSpaceException.cs" />
@@ -148,7 +155,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Data\Storage\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

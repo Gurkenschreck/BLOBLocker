@@ -34,14 +34,15 @@ namespace BLOBLocker.Entities.Models.WebApp
 
         public bool IsVisible { get; set; }
         public bool IsDeleted { get; set; }
-        public bool Encrypted { get; set; }
+
+        public StoringMode StoringMode { get; set; }
 
         public StoredFile()
         {
+            StoringMode = WebApp.StoringMode.CompressedAndEncrypted;
             UploadedOn = DateTime.Now;
             IsVisible = true;
             IsDeleted = false;
-            Encrypted = true;
         }
     }
 }

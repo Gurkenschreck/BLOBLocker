@@ -1,4 +1,5 @@
-﻿using BLOBLocker.Code.Exception;
+﻿using BLOBLocker.Code.IO;
+using BLOBLocker.Code.Exception;
 using BLOBLocker.Code.Membership;
 using BLOBLocker.Code.ModelHelper;
 using BLOBLocker.Code.Security.Cryptography;
@@ -361,7 +362,7 @@ namespace BLOBLocker.Code.Data
             return msg;
         }
 
-        public StoredFile StoreFile(VirtualFile file, bool encryptContent = true)
+        public StoredFile StoreFile(VirtualFile file, StoringMode storingMode)
         {
             if (!initialized)
                 throw new InvalidOperationException("poolhandler must be initialized");
@@ -383,8 +384,9 @@ namespace BLOBLocker.Code.Data
             sf.FileExtension = file.FileExtension;
             sf.OriginalFileName = file.FileName;
             sf.Description = file.Description;
-            sf.Encrypted = encryptContent;
             sf.IsVisible = file.IsVisible;
+
+            sf.StoringMode = storingMode;
 
             using (var md5Hasher = new Hasher<MD5CryptoServiceProvider>())
             {
@@ -411,30 +413,36 @@ namespace BLOBLocker.Code.Data
 
 
             // Encrypt the storedFile content and store it
-            using (var byteStream = new MemoryStream(content))
+            ProcessorFactory storerFactory = new ProcessorFactory();
+
+            BaseProcessor processor = null;
+            if (storingMode == StoringMode.Encrypted || storingMode == StoringMode.CompressedAndEncrypted)
+                processor = storerFactory.CreateProcessor(storingMode, GetPoolCipher());
+            else
+                processor = storerFactory.CreateProcessor(storingMode);
+
+            if (processor.ProcessAndSave(content, new FileInfo(pathToBe)))
             {
-                using (var fileStream = new FileStream(pathToBe, FileMode.Create))
-                {
-                    if (encryptContent)
-                    {
-                        using (var poolCipher = GetPoolCipher())
-                        {
-                            using (var cipherStream = new CipherStream<AesManaged>(poolCipher))
-                            {
-                                cipherStream.EncryptStream(byteStream, fileStream);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        byteStream.WriteTo(fileStream);
-                    }
-                }
+                // err ting rite
             }
+            else
+            {
+                // sum ting wong
+            }
+            processor.Dispose();
 
             return sf;
         }
 
+        /// <summary>
+        /// Returns a collection of StoredFiles depending on the
+        /// current user rights. If the user has the right to 
+        /// manage the file storage (PoolRight.ManageFileStorage)
+        /// he get every file that is not deleted.
+        /// A user which lacks this right, can only see visible
+        /// and not deleted files.
+        /// </summary>
+        /// <returns>A collection of StoredFiles the current user has access to.</returns>
         public ICollection<StoredFile> GetFiles()
         {
             StoredFile[] fileList;
@@ -486,27 +494,16 @@ namespace BLOBLocker.Code.Data
                     if ((storedFile.FileSize <= maxByteSizeForPreview && previewAble.Contains(storedFile.FileExtension))
                         || (maxByteSizeForPreview == -1 && previewAble == null))
                     {
-                        using (var poolCipher = GetPoolCipher())
-                        {
-                            using (var fileStream = new FileStream(localFilePath, FileMode.Open))
-                            {
-                                using (var memoryStream = new MemoryStream())
-                                {
-                                    if (decryptContent)
-                                    {
-                                        using (var cipherStream = new CipherStream<AesManaged>(poolCipher))
-                                        {
-                                            cipherStream.DecryptStream(fileStream, memoryStream);
-                                            vf.Content = memoryStream.ToArray();
-                                        }
-                                    }
-                                    else
-                                    {
-                                        vf.Content = memoryStream.ToArray();
-                                    }
-                                }
-                            }
-                        }
+
+                        ProcessorFactory processorFact = new ProcessorFactory();
+
+                        BaseProcessor processor = null;
+                        if (storedFile.StoringMode == StoringMode.Encrypted || storedFile.StoringMode == StoringMode.CompressedAndEncrypted)
+                            processor = processorFact.CreateProcessor(storedFile.StoringMode, GetPoolCipher());
+                        else
+                            processor = processorFact.CreateProcessor(storedFile.StoringMode);
+                        vf.Content = processor.LoadAndGetOriginal(new FileInfo(localFilePath));
+                        processor.Dispose();
                     }
                 }
                 else

@@ -30,6 +30,8 @@ namespace BLOBLocker.Code.Data
         public string Owner { get; set; }
         [LocalizedDisplayName("File.UploadedOn")]
         public DateTime UploadedOn { get; set; }
+        [LocalizedDisplayName("File.StoringMode")]
+        public StoringMode StoringMode { get; set; }
 
         [LocalizedDisplayName("File.IsVisible")]
         public bool IsVisible { get; set; }

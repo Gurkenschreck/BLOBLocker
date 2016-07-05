@@ -57,6 +57,10 @@
     <Compile Include="Migrations\201606042029281_WAInitial.Designer.cs">
       <DependentUpon>201606042029281_WAInitial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607041756227_WAExchangeStoredFileEncrypted.cs" />
+    <Compile Include="Migrations\201607041756227_WAExchangeStoredFileEncrypted.Designer.cs">
+      <DependentUpon>201607041756227_WAExchangeStoredFileEncrypted.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\BLATConfiguration.cs" />
     <Compile Include="Migrations\BLWAConfiguration.cs" />
     <Compile Include="Models\AdminTool\Account.cs" />
@@ -80,6 +84,7 @@
     <Compile Include="Models\WebApp\PoolShare.cs" />
     <Compile Include="Models\WebApp\BLWAContext.cs" />
     <Compile Include="Models\WebApp\StoredFile.cs" />
+    <Compile Include="Models\WebApp\StoringMode.cs" />
     <Compile Include="Models\WebApp\SystemConfiguration.cs" />
     <Compile Include="Models\WebApp\StringResource.cs" />
     <Compile Include="Models\WebApp\TranslationStatus.cs" />
@@ -98,6 +103,9 @@
     <EmbeddedResource Include="Migrations\201606042029281_WAInitial.resx">
       <DependentUpon>201606042029281_WAInitial.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607041756227_WAExchangeStoredFileEncrypted.resx">
+      <DependentUpon>201607041756227_WAExchangeStoredFileEncrypted.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Models.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Models.Designer.cs</LastGenOutput>
@@ -112,15 +120,18 @@
     <Content Include="Scripts\AdminTool\160413_dbo.Roles.data.sql" />
     <Content Include="Scripts\AdminTool\160424_Update-Database_From-Source.sql" />
     <Content Include="Scripts\Elmah\ELMAH-1.2-db-SQLServer.sql" />
-    <Content Include="Scripts\WebApp\160413_dbo.AccountRoles.data.sql" />
-    <Content Include="Scripts\WebApp\160413_dbo.SystemConfigurations.data.sql" />
-    <Content Include="Scripts\WebApp\160424_dbo.SystemConfigurations.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160413_dbo.AccountRoles.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160413_dbo.SystemConfigurations.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160424_dbo.SystemConfigurations.data.sql" />
     <Content Include="Scripts\WebApp\160424_Update-Database_From-Source.sql" />
-    <Content Include="Scripts\WebApp\160514_dbo.LocalizedStrings.data.sql" />
-    <Content Include="Scripts\WebApp\160514_dbo.StringResources.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160514_dbo.LocalizedStrings.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160514_dbo.StringResources.data.sql" />
     <Content Include="Scripts\WebApp\160604_Update-Database_From-Source.sql" />
-    <Content Include="Scripts\WebApp\160613_dbo.LocalizedStrings.data.sql" />
-    <Content Include="Scripts\WebApp\160613_dbo.StringResources.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160613_dbo.LocalizedStrings.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160613_dbo.StringResources.data.sql" />
+    <Content Include="Scripts\WebApp\Data\date_dbo.TableName.data.txt" />
+    <Content Include="Scripts\WebApp\Migrations\20160706_WAInitial-Latest.sql" />
+    <Content Include="Scripts\WebApp\Migrations\date_FromMigration-ToVersion.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

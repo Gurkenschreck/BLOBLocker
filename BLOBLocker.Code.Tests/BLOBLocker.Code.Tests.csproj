@@ -55,6 +55,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="IO\CompressionProcessorTests.cs" />
+    <Compile Include="IO\EncryptionProcessorTests.cs" />
+    <Compile Include="IO\ProcessorFactoryTests.cs" />
+    <Compile Include="IO\CompressionAndEncryptionProcessorTests.cs" />
     <Compile Include="MemberShip\CryptoCookieBakeryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -63,7 +67,12 @@
       <Project>{a1148bd2-2011-4660-b409-2538e7f973e2}</Project>
       <Name>BLOBLocker.Code</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BLOBLocker.Entities\BLOBLocker.Entities.csproj">
+      <Project>{0a2a3686-5b47-4598-ba16-7466c61d652c}</Project>
+      <Name>BLOBLocker.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

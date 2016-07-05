@@ -124,10 +124,10 @@ namespace BLOBLocker.WebApp.Controllers
                         {
                             file.FilePath = fileStorePath;
                             file.IPv4Address = Request.UserHostAddress;
-
+                            StoringMode newStoringMode = HttpContext.Application["pool.NewStoringMode"].As<StoringMode>();
                             try
                             {
-                                var storedFile = poolHandler.StoreFile(file);
+                                var storedFile = poolHandler.StoreFile(file, newStoringMode);
                             }
                             catch (NotEnoughPoolSpaceException ex)
                             {
