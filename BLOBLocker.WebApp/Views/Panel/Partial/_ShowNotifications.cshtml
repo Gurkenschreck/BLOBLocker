@@ -2,7 +2,7 @@
 
 @using (Html.BeginForm("DisableNotification", "Panel", FormMethod.Post))
 {
-    if (Model.Count() != 0) 
+    if (Model.Any()) 
     {
         <table>
             @foreach (BLOBLocker.Entities.Models.WebApp.Notification not in Model)

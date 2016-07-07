@@ -44,7 +44,7 @@ namespace BLOBLocker.Code.Attributes
             IEnumerable<ValidationResult> result = valider.Validate(settingsDict, filterContext.ActionParameters);
             foreach(var res in result)
             {
-                if (res.MemberNames.Count() > 0)
+                if (res.MemberNames.Any())
                 {
                     foreach (var name in res.MemberNames)
                     {
