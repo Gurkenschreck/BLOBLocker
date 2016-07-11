@@ -41,6 +41,13 @@ namespace BLOBLocker.WebApp.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult Robots()
+        {
+            Response.ContentType = "text/plain";
+            return View();
+        }
+
         [NoCache]
         public ActionResult VerticalMenu()
         {
