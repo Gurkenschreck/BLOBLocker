@@ -1,9 +1,13 @@
 ﻿@{
-    List<SelectListItem> cultures = new List<SelectListItem>();
-    cultures.Add(new SelectListItem{ Text = "English", Value = "en" });
-    cultures.Add(new SelectListItem{ Text = "Deutsch", Value = "de" });
-    cultures.Add(new SelectListItem{ Text = "Español", Value = "es" });
-    cultures.Add(new SelectListItem{ Text = "Polski", Value = "pl" });
+    var appl = ViewContext.HttpContext.Application;
+    string langsString = appl["system.LanguageSelection"].ToString();
+    
+    ICollection<SelectListItem> cultures = new List<SelectListItem>();
+    Dictionary<string, string> langs = langsString.Split(',').ToDictionary(key => key.Split(':')[0], val => val.Split(':')[1]);
+    
+    foreach(var pair in langs){
+        cultures.Add(new SelectListItem{Text = pair.Value, Value=pair.Key});
+    }
     
     SelectListItem selectedItem = cultures.Where(p => UICulture.Contains(p.Value)).FirstOrDefault();
     if(selectedItem != null)
