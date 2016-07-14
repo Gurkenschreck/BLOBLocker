@@ -27,6 +27,7 @@ using System.IO;
 using System.Net.Mime;
 using BLOBLocker.Code.Exception;
 using System.Web.UI;
+using System.Web.Security;
 
 namespace BLOBLocker.WebApp.Controllers
 {
@@ -64,7 +65,7 @@ namespace BLOBLocker.WebApp.Controllers
 
                     PoolShare curPoolShare = poolHandler.PoolShare;
                     povm.CurrentPoolShare = curPoolShare;
-
+                    
                     if (!string.IsNullOrWhiteSpace(corPool.Description))
                     {
                         using (var css = new CryptoSessionStore("AccPriKey",

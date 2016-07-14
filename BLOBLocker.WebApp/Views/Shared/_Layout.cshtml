@@ -109,7 +109,13 @@
 
                         <hr />
                         <footer>
-                            <p>&copy; @DateTime.Now.Year - @HttpContext.GetGlobalResourceObject(null, "Label.BLOBLocker"), Ver. @ViewContext.Controller.GetType().Assembly.GetName().Version</p>
+                            <p>
+                                &copy; @DateTime.Now.Year - @HttpContext.GetGlobalResourceObject(null, "Label.BLOBLocker"),
+                                Ver. @ViewContext.Controller.GetType().Assembly.GetName().Version
+                                @if(User.Identity.IsAuthenticated){
+                                    <text>, @HttpContext.GetGlobalResourceObject(null, "Label.AuthenticatedUntil") @DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes)</text>
+                                }
+                            </p>
                         </footer>
 
                         <noscript>

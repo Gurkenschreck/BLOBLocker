@@ -6,14 +6,14 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm("SignIn", "Account", FormMethod.Post))
+@using (Html.BeginForm("SignIn", "Account", new { returnUrl = Request.QueryString["returnUrl"] }, FormMethod.Post))
 {
     <div class="row">
         <div class="small-4 column text-right">
             @Html.LabelFor(model => model.Alias)
         </div>
         <div class="small-4 column">
-            @Html.TextBoxFor(model => model.Alias, new { @placeholder=HttpContext.GetGlobalResourceObject(null, "Label.DisplayName").ToString() })
+            @Html.TextBoxFor(model => model.Alias, new { @placeholder = HttpContext.GetGlobalResourceObject(null, "Label.DisplayName").ToString() })
         </div>
         <div class="small-4 columns">
             @Html.ValidationMessageFor(p => p.Alias)

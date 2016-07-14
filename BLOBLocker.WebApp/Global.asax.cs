@@ -93,5 +93,16 @@ namespace BLOBLocker.WebApp
                 }
             }
         }
+
+        protected void Application_PreSendRequestHeaders(object sender, EventArgs args)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                Response.AddHeader("REFRESH", string.Format("{0};URL={1}?returnUrl={2}",
+                    FormsAuthentication.Timeout.TotalSeconds,
+                    "/Account/SignOut",
+                    Request.Url.PathAndQuery));
+            }
+        }
     }
 }

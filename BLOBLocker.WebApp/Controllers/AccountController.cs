@@ -213,7 +213,7 @@ namespace BLOBLocker.WebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult SignOut()
+        public ActionResult SignOut(string returnUrl)
         {
             foreach (var cookieName in Request.Cookies.AllKeys)
             {
@@ -227,7 +227,7 @@ namespace BLOBLocker.WebApp.Controllers
             Session.Abandon();
             if(customCulture != null)
                 Session["customCulture"] = customCulture;
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("SignIn", new { returnUrl = returnUrl });
         }
 
         [HttpGet]
