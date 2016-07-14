@@ -14,6 +14,7 @@ namespace BLOBLocker.Code.Attributes
     /// Returns Code 400 if the parameter name is not found or
     /// the parameter is null.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
     public class RequiredParametersAttribute : ActionFilterAttribute
     {
         string[] attributes;

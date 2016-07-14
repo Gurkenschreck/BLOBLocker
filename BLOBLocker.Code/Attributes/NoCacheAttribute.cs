@@ -8,6 +8,9 @@ using System.Web.Mvc;
 
 namespace BLOBLocker.Code.Attributes
 {
+    /// <summary>
+    /// Prevents caching of the server response.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public sealed class NoCacheAttribute : ActionFilterAttribute
     {

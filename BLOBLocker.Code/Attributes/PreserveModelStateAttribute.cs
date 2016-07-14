@@ -7,6 +7,10 @@ using System.Web.Mvc;
 
 namespace BLOBLocker.Code.Attributes
 {
+    /// <summary>
+    /// Caches the ModelState.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class PreserveModelStateAttribute : System.Web.Mvc.ActionFilterAttribute
     {
         public override void OnActionExecuted(ActionExecutedContext filterContext)

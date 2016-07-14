@@ -7,6 +7,10 @@ using System.Web.Mvc;
 
 namespace BLOBLocker.Code.Attributes
 {
+    /// <summary>
+    /// Restores the previously cached ModelState.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class RestoreModelStateAttribute : System.Web.Mvc.ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)

@@ -20,6 +20,7 @@ namespace BLOBLocker.Code.Attributes
     /// Validate method. The resulting ValidationResults will
     /// be added into the current ModelState.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
     public class CustomValidateAttribute : ActionFilterAttribute
     {
         IActionModelValidation valider;

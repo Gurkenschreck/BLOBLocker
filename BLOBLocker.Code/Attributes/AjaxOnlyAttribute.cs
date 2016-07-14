@@ -11,6 +11,7 @@ namespace BLOBLocker.Code.Attributes
     /// The controller or actions can only be accessed
     /// via ajax requests.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class AjaxOnlyAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)

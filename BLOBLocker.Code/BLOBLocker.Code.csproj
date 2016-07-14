@@ -91,7 +91,6 @@
     <Compile Include="Attributes\PreserveModelStateAttribute.cs" />
     <Compile Include="Attributes\RequiredParametersAttribute.cs" />
     <Compile Include="Attributes\RestoreModelStateAttibute.cs" />
-    <Compile Include="Attributes\ValidateCryptoCookieAttribute.cs" />
     <Compile Include="Attributes\CustomValidateAttribute.cs" />
     <Compile Include="BlobLockerViewEngine.cs" />
     <Compile Include="Security\Cryptography\CryptoKeyInformation.cs" />
