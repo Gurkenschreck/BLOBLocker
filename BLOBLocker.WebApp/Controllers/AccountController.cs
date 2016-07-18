@@ -212,6 +212,7 @@ namespace BLOBLocker.WebApp.Controllers
             return View(acc);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult SignOut(string returnUrl)
         {
