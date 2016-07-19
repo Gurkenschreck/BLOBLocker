@@ -6,7 +6,6 @@
     <table class="table hover">
         <tr>
             <th>@HttpContext.GetGlobalResourceObject(null, "Label.Title")</th>
-            <th>@HttpContext.GetGlobalResourceObject(null, "Label.Active")</th>
             <th>@HttpContext.GetGlobalResourceObject(null, "Label.CreatedOn")</th>
             <th>@HttpContext.GetGlobalResourceObject(null, "Label.AssignedMemoryMB")</th>
             <th>@HttpContext.GetGlobalResourceObject(null, "Label.ParticipantCount")</th>
@@ -15,7 +14,6 @@
         {
             <tr>
                 <td>@fp.Pool.Title</td>
-                <td>@fp.Pool.IsActive</td>
                 <td>@fp.Pool.CreatedOn.Value.ToShortDateString()</td>
                 <td>@fp.Pool.AssignedMemory.Where(p => p.IsEnabled).Select(p => p.Space).Sum()</td>
 
