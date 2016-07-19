@@ -519,6 +519,35 @@ namespace BLOBLocker.Code.Data
             }
         }
 
+        public bool ClosePool(string filePath)
+        {
+            // set pool inactive
+            Pool.IsActive = false;
+
+            // set poolshares inactive, remove keys to access, not to validate
+            Pool.Participants.ToList().ForEach(p => p.IsActive = false);
+
+            // remove all Files and mark them as deleted
+            Pool.Files.ToList().ForEach(p =>
+            {
+                p.IsVisible = false;
+                p.IsDeleted = true;
+            });
+            string localPoolPath = string.Format("{0}/{1}", filePath, currentPool.UniqueIdentifier);
+            if (Directory.Exists(localPoolPath))
+            {
+                Directory.Delete(localPoolPath, true);
+            }
+
+            // unassign all memory
+            Pool.AssignedMemory.ToList().ForEach(p =>
+            {
+                p.IsEnabled = false;
+            });
+
+            return true;
+        }
+
         public void Dispose()
         {
             Dispose(true);

@@ -18,6 +18,7 @@ namespace BLOBLocker.Code.ViewModels.WebApp
         public RightsEditViewModel RightsEditViewModel { get; set; }
         public TitleDescriptionViewModel TitleDescriptionViewModel { get; set; }
         public ManageModulesViewModel ManageModulesViewModel { get; set; }
+        public ClosePoolViewModel ClosePoolViewModel { get; set; }
 
         public void Populate(Pool pool, Account curAcc)
         {
@@ -45,6 +46,11 @@ namespace BLOBLocker.Code.ViewModels.WebApp
                 EnableChat = pool.ChatEnabled,
                 EnableFileStorage = pool.FileStorageEnabled,
                 EnableLinkRepository = pool.LinkRepositoryEnabled
+            };
+
+            ClosePoolViewModel = new ClosePoolViewModel
+            {
+                PUID = pool.UniqueIdentifier
             };
         }
     }

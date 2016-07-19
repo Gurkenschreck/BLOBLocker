@@ -1,0 +1,19 @@
+﻿@model BLOBLocker.Code.ViewModels.WebApp.ClosePoolViewModel
+@using BLOBLocker.Code.Extention
+
+@using (Html.BeginForm("ClosePool", "Panel", FormMethod.Post))
+{
+    <div class="row">
+        <div class="small-4 column inline-blocks">
+            @HttpContext.GetGlobalResourceObject(null, "Pool.TitleConfirmationMessage")
+            @Html.LabelFor(p => p.TitleConfirmation) 
+            @Html.ValidationMessageFor(p => p.TitleConfirmation)
+        </div>
+        <div class="small-4 column">@Html.TextBoxFor(p => p.TitleConfirmation)</div>
+        <div class="small-4 column">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="alert button">@HttpContext.GetGlobalResourceObject(null, "Button.ClosePool")</button>
+            @Html.HiddenFor(p => p.PUID)
+        </div>
+    </div>
+}

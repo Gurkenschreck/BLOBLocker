@@ -83,6 +83,7 @@
     <Compile Include="Media\Bitmaps\BitmapWrapper.cs" />
     <Compile Include="Media\Bitmaps\Captcha.cs" />
     <Compile Include="Media\Bitmaps\CaptchaFactory.cs" />
+    <Compile Include="ViewModels\WebApp\ClosePoolViewModel.cs" />
     <Compile Include="Web\Helper\EnumDropdownList.cs" />
     <Compile Include="Web\Helper\Hidden.cs" />
     <Compile Include="Web\Helper\Localized.cs" />

@@ -361,7 +361,7 @@ namespace BLOBLocker.WebApp.Controllers
 
         [NoCache]
         [RequiredParameters("puid")]
-        [RestoreModelState]
+        [RestoreModelState] // ModelState is the problem
         [HttpGet]
         public ActionResult PoolConfig(string puid)
         {
@@ -682,6 +682,48 @@ namespace BLOBLocker.WebApp.Controllers
                     else
                     {
                         return RedirectToAction("JoinPool", new { puid = ivm.PoolUID });
+                    }
+                }
+            }
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
+        }
+
+        [RequiredParameters("cpvm")]
+        [PreserveModelState]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult ClosePool(ClosePoolViewModel cpvm)
+        {
+            if (ModelState.IsValid)
+            {
+                var accRepo = new AccountRepository(context);
+                var curAcc = accRepo.GetByKey(User.Identity.Name);
+
+                bool canAccess;
+                using (PoolHandler poolHandler = new PoolHandler(curAcc, cpvm.PUID, out canAccess))
+                {
+                    if (canAccess)
+                    {
+                        if (poolHandler.Pool.Title == cpvm.TitleConfirmation)
+                        {
+                            string fileStorePath = HttpContext.Application["system.PoolBasePath"].ToString();
+
+                            poolHandler.ClosePool(fileStorePath);
+
+                            context.SaveChanges();
+
+                            ModelState.Clear();
+
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("TitleConfirmation",
+                                HttpContext.GetGlobalResourceObject(null, "pool.TitleConfirmationNotMatchingError").ToString());
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("JoinPool", new { puid = cpvm.PUID });
                     }
                 }
             }

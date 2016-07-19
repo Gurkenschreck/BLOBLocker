@@ -307,6 +307,7 @@
     <Content Include="Views\Panel\Partial\_ParticipantList.cshtml" />
     <Content Include="Views\Panel\Partial\_ShareContacts.cshtml" />
     <Content Include="Views\Home\Robots.cshtml" />
+    <Content Include="Views\Panel\Partial\_ClosePool.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

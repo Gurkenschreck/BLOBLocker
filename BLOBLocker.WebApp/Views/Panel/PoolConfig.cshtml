@@ -56,3 +56,10 @@
     </p>
 }
 
+@if (Model.IsOwner)
+{
+    <hr />
+    <p>
+        @Html.Partial("_ClosePool", Model.ClosePoolViewModel)
+    </p>
+}
