@@ -129,6 +129,11 @@
     <Content Include="Scripts\WebApp\160604_Update-Database_From-Source.sql" />
     <Content Include="Scripts\WebApp\Data\160613_dbo.LocalizedStrings.data.sql" />
     <Content Include="Scripts\WebApp\Data\160613_dbo.StringResources.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160709_dbo.SystemConfigurations.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160714_dbo.LocalizedStrings.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160714_dbo.StringResources.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160719_dbo.LocalizedStrings.data.sql" />
+    <Content Include="Scripts\WebApp\Data\160719_dbo.StringResources.data.sql" />
     <Content Include="Scripts\WebApp\Data\date_dbo.TableName.data.txt" />
     <Content Include="Scripts\WebApp\Migrations\20160706_WAInitial-Latest.sql" />
     <Content Include="Scripts\WebApp\Migrations\date_FromMigration-ToVersion.txt" />
